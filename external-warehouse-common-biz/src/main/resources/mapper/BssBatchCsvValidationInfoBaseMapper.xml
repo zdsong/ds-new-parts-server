@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssBatchCsvValidationInfoBaseMapper">
+   <resultMap type="BssBatchCsvValidationInfoEntity" id="BssBatchCsvValidationInfoEntityResult">
+        <result property="id" column="id"/>
+        <result property="csvFileType" column="csv_file_type"/>
+        <result property="tableName" column="table_name"/>
+        <result property="entityName" column="entity_name"/>
+        <result property="fieldRequired" column="field_required"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="fieldDesc" column="field_desc"/>
+        <result property="fieldLength" column="field_length"/>
+        <result property="fieldType" column="field_type"/>
+        <result property="fieldFormat" column="field_format"/>
+        <result property="fieldCategory" column="field_category"/>
+        <result property="dataDictName" column="data_dict_name"/>
+        <result property="csvImportFlg" column="csv_import_flg"/>
+        <result property="csvExportFlg" column="csv_export_flg"/>
+        <result property="csvFileColIdx" column="csv_file_col_idx"/>
+        <result property="csvFileColName" column="csv_file_col_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssBatchCsvValidationInfo">
+        select
+          id,
+          csv_file_type,
+          table_name,
+          entity_name,
+          field_required,
+          field_name,
+          field_desc,
+          field_length,
+          field_type,
+          field_format,
+          field_category,
+          data_dict_name,
+          csv_import_flg,
+          csv_export_flg,
+          csv_file_col_idx,
+          csv_file_col_name,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_batch_csv_validation_info
+    </sql>
+    <select id="selectList" parameterType="BssBatchCsvValidationInfoEntity" resultMap="BssBatchCsvValidationInfoEntityResult">
+        <include refid="selectBssBatchCsvValidationInfo"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="csvFileType != null  and csvFileType != ''">
+                and csv_file_type = #{csvFileType}
+            </if>
+            <if test="tableName != null  and tableName != ''">
+                and table_name = #{tableName}
+            </if>
+            <if test="entityName != null  and entityName != ''">
+                and entity_name = #{entityName}
+            </if>
+            <if test="fieldRequired != null  and fieldRequired != ''">
+                and field_required = #{fieldRequired}
+            </if>
+            <if test="fieldName != null  and fieldName != ''">
+                and field_name = #{fieldName}
+            </if>
+            <if test="fieldDesc != null  and fieldDesc != ''">
+                and field_desc = #{fieldDesc}
+            </if>
+            <if test="fieldLength != null  and fieldLength != ''">
+                and field_length = #{fieldLength}
+            </if>
+            <if test="fieldType != null  and fieldType != ''">
+                and field_type = #{fieldType}
+            </if>
+            <if test="fieldFormat != null  and fieldFormat != ''">
+                and field_format = #{fieldFormat}
+            </if>
+            <if test="fieldCategory != null  and fieldCategory != ''">
+                and field_category = #{fieldCategory}
+            </if>
+            <if test="dataDictName != null  and dataDictName != ''">
+                and data_dict_name = #{dataDictName}
+            </if>
+            <if test="csvImportFlg != null  and csvImportFlg != ''">
+                and csv_import_flg = #{csvImportFlg}
+            </if>
+            <if test="csvExportFlg != null  and csvExportFlg != ''">
+                and csv_export_flg = #{csvExportFlg}
+            </if>
+            <if test="csvFileColIdx != null ">
+                and csv_file_col_idx = #{csvFileColIdx}
+            </if>
+            <if test="csvFileColName != null  and csvFileColName != ''">
+                and csv_file_col_name = #{csvFileColName}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssBatchCsvValidationInfoEntityResult">
+        <include refid="selectBssBatchCsvValidationInfo"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssBatchCsvValidationInfoEntity">
+        insert into bss_batch_csv_validation_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="csvFileType != null">
+                csv_file_type,
+            </if>
+            <if test="tableName != null">
+                table_name,
+            </if>
+            <if test="entityName != null">
+                entity_name,
+            </if>
+            <if test="fieldRequired != null">
+                field_required,
+            </if>
+            <if test="fieldName != null">
+                field_name,
+            </if>
+            <if test="fieldDesc != null">
+                field_desc,
+            </if>
+            <if test="fieldLength != null">
+                field_length,
+            </if>
+            <if test="fieldType != null">
+                field_type,
+            </if>
+            <if test="fieldFormat != null">
+                field_format,
+            </if>
+            <if test="fieldCategory != null">
+                field_category,
+            </if>
+            <if test="dataDictName != null">
+                data_dict_name,
+            </if>
+            <if test="csvImportFlg != null">
+                csv_import_flg,
+            </if>
+            <if test="csvExportFlg != null">
+                csv_export_flg,
+            </if>
+            <if test="csvFileColIdx != null">
+                csv_file_col_idx,
+            </if>
+            <if test="csvFileColName != null">
+                csv_file_col_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="csvFileType != null">
+                #{csvFileType},
+            </if>
+            <if test="tableName != null">
+                #{tableName},
+            </if>
+            <if test="entityName != null">
+                #{entityName},
+            </if>
+            <if test="fieldRequired != null">
+                #{fieldRequired},
+            </if>
+            <if test="fieldName != null">
+                #{fieldName},
+            </if>
+            <if test="fieldDesc != null">
+                #{fieldDesc},
+            </if>
+            <if test="fieldLength != null">
+                #{fieldLength},
+            </if>
+            <if test="fieldType != null">
+                #{fieldType},
+            </if>
+            <if test="fieldFormat != null">
+                #{fieldFormat},
+            </if>
+            <if test="fieldCategory != null">
+                #{fieldCategory},
+            </if>
+            <if test="dataDictName != null">
+                #{dataDictName},
+            </if>
+            <if test="csvImportFlg != null">
+                #{csvImportFlg},
+            </if>
+            <if test="csvExportFlg != null">
+                #{csvExportFlg},
+            </if>
+            <if test="csvFileColIdx != null">
+                #{csvFileColIdx},
+            </if>
+            <if test="csvFileColName != null">
+                #{csvFileColName},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssBatchCsvValidationInfoEntity">
+        update bss_batch_csv_validation_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="csvFileType != null">
+                csv_file_type = #{csvFileType},
+            </if>
+            <if test="tableName != null">
+                table_name = #{tableName},
+            </if>
+            <if test="entityName != null">
+                entity_name = #{entityName},
+            </if>
+            <if test="fieldRequired != null">
+                field_required = #{fieldRequired},
+            </if>
+            <if test="fieldName != null">
+                field_name = #{fieldName},
+            </if>
+            <if test="fieldDesc != null">
+                field_desc = #{fieldDesc},
+            </if>
+            <if test="fieldLength != null">
+                field_length = #{fieldLength},
+            </if>
+            <if test="fieldType != null">
+                field_type = #{fieldType},
+            </if>
+            <if test="fieldFormat != null">
+                field_format = #{fieldFormat},
+            </if>
+            <if test="fieldCategory != null">
+                field_category = #{fieldCategory},
+            </if>
+            <if test="dataDictName != null">
+                data_dict_name = #{dataDictName},
+            </if>
+            <if test="csvImportFlg != null">
+                csv_import_flg = #{csvImportFlg},
+            </if>
+            <if test="csvExportFlg != null">
+                csv_export_flg = #{csvExportFlg},
+            </if>
+                csv_file_col_idx = #{csvFileColIdx},
+            <if test="csvFileColName != null">
+                csv_file_col_name = #{csvFileColName},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_batch_csv_validation_info
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

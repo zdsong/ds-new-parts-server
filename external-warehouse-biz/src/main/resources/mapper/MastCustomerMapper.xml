@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.MastCustomerMapper">
+
+    <resultMap type="MastCustomerVo" id="MastCustomerResult">
+        <result property="id"           column="id"/>
+        <result property="customerId"   column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="phoneNumber"  column="phone_number"/>
+        <result property="postalCode"   column="postal_code"/>
+        <result property="address"      column="address"/>
+        <result property="mailAddress"  column="mail_address"/>
+        <result property="townName"     column="town_name"/>
+        <result property="buildingEtc"  column="building_etc"/>
+        <result property="kenName"      column="ken_name"/>
+        <result property="cityName"     column="city_name"/>
+        <result property="memberId" column="member_id"/>
+    </resultMap>
+
+    <select id="selectList" parameterType="MastCustomerSearchBo" resultMap="MastCustomerResult">
+        SELECT
+            mc.id,
+            mc.customer_id,
+            mc.customer_name,
+            mc.phone_number,
+            mc.postal_code,
+            mc.mail_address,
+            mc.member_id,
+            mc.address
+        FROM mast_customer mc
+        <where>
+
+            <if test="farmerId != null  and farmerId != ''">
+                and mc.farmer_id = #{farmerId}
+            </if>
+            AND discontinued_flg = '0'
+            <if test="customerId != null  and customerId != ''">
+                and mc.customer_id like concat('%', #{customerId} , '%')
+            </if>
+            <if test="customerName != null  and customerName != ''">
+                and  REPLACE(convert_from(decrypt_iv(decode(NULLIF(mc.customer_name, ''), 'base64'), <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_key"/>, <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_iv"/>, 'aes-cbc/pad:pkcs'), 'UTF-8'), ' ', '') like CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="phoneNumber != null  and phoneNumber != ''">
+                and convert_from(
+                decrypt_iv(
+                decode(NULLIF(mc.phone_number, ''), 'base64'),
+                <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_key"/>,
+                <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_iv"/>,
+                'aes-cbc/pad:pkcs'
+                ), 'UTF-8'
+                ) like CONCAT('%', #{phoneNumber}, '%')
+            </if>
+            <if test="postalCode != null  and postalCode != ''">
+                and  convert_from(decrypt_iv(decode(NULLIF(mc.postal_code, ''), 'base64'), <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_key"/>, <include refid="jp.newpart.common.mapper.AesKeyAndIvMapper.aes_iv"/>, 'aes-cbc/pad:pkcs'), 'UTF-8') like CONCAT('%', #{postalCode}, '%')
+            </if>
+            <if test="kenName != null and kenName != ''">
+                and mc.ken_name = #{kenName}
+            </if>
+            <if test="cityName != null  and cityName != ''">
+                and mc.city_name  like CONCAT('%', #{cityName}, '%')
+            </if>
+            <if test="memberId != null  and memberId != ''">
+                and mc.member_id like CONCAT('%', #{memberId}, '%')
+            </if>
+
+        </where>
+        ORDER BY mc.customer_id
+    </select>
+
+    <select id="selectCustomerById" parameterType="String" resultMap="MastCustomerResult">
+        SELECT
+            mc.id,
+            mc.customer_id,
+            mc.customer_name,
+            mc.phone_number,
+            mc.postal_code,
+            mc.address,
+            mc.mail_address,
+            mc.postal_code,
+            mc.member_id,
+            mc.town_name,
+            mc.building_etc,
+            mc.ken_name,
+            mc.city_name
+        FROM mast_customer mc
+        WHERE mc.id = #{id}
+    </select>
+
+    <select id="selectCustomerByCustomerId" parameterType="String" resultMap="MastCustomerResult">
+        SELECT
+            mc.id,
+            mc.customer_id,
+            mc.customer_name,
+            mc,phone_number,
+            mc,postal_code,
+            mc.address,
+            mc. mail_address,
+            mc.member_id,
+            mc.ken_name,
+            mc.city_name,
+            mc.town_name,
+            mc,building_etc
+        FROM mast_customer mc
+        WHERE mc.customer_id = #{customerId}
+        AND mc.farmer_id = #{farmerId}
+        LIMIT 1
+    </select>
+</mapper>

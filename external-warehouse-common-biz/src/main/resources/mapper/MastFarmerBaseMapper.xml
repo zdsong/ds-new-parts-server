@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.MastFarmerBaseMapper">
+   <resultMap type="MastFarmerEntity" id="MastFarmerEntityResult">
+        <result property="id" column="id"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="farmerName" column="farmer_name"/>
+        <result property="farmerNameKn" column="farmer_name_kn"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="mailAddress" column="mail_address"/>
+        <result property="postalCode" column="postal_code"/>
+        <result property="kenName" column="ken_name"/>
+        <result property="cityName" column="city_name"/>
+        <result property="townName" column="town_name"/>
+        <result property="buildingEtc" column="building_etc"/>
+        <result property="address" column="address"/>
+        <result property="representativeName" column="representative_name"/>
+        <result property="representativeNameKn" column="representative_name_kn"/>
+        <result property="issuedBy" column="issued_by"/>
+        <result property="issuedDate" column="issued_date"/>
+        <result property="loginCnt" column="login_cnt"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="usageStatus" column="usage_status"/>
+        <result property="discontinuedFlg" column="discontinued_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMastFarmer">
+        select
+          id,
+          farmer_id,
+          farmer_name,
+          farmer_name_kn,
+          phone_number,
+          mail_address,
+          postal_code,
+          ken_name,
+          city_name,
+          town_name,
+          building_etc,
+          address,
+          representative_name,
+          representative_name_kn,
+          issued_by,
+          issued_date,
+          login_cnt,
+          user_password,
+          usage_status,
+          discontinued_flg,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_farmer
+    </sql>
+    <select id="selectList" parameterType="MastFarmerEntity" resultMap="MastFarmerEntityResult">
+        <include refid="selectMastFarmer"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="farmerName != null  and farmerName != ''">
+                and farmer_name = #{farmerName}
+            </if>
+            <if test="farmerNameKn != null  and farmerNameKn != ''">
+                and farmer_name_kn = #{farmerNameKn}
+            </if>
+            <if test="phoneNumber != null  and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="mailAddress != null  and mailAddress != ''">
+                and mail_address = #{mailAddress}
+            </if>
+            <if test="postalCode != null  and postalCode != ''">
+                and postal_code = #{postalCode}
+            </if>
+            <if test="kenName != null  and kenName != ''">
+                and ken_name = #{kenName}
+            </if>
+            <if test="cityName != null  and cityName != ''">
+                and city_name = #{cityName}
+            </if>
+            <if test="townName != null  and townName != ''">
+                and town_name = #{townName}
+            </if>
+            <if test="buildingEtc != null  and buildingEtc != ''">
+                and building_etc = #{buildingEtc}
+            </if>
+            <if test="address != null  and address != ''">
+                and address = #{address}
+            </if>
+            <if test="representativeName != null  and representativeName != ''">
+                and representative_name = #{representativeName}
+            </if>
+            <if test="representativeNameKn != null  and representativeNameKn != ''">
+                and representative_name_kn = #{representativeNameKn}
+            </if>
+            <if test="issuedBy != null  and issuedBy != ''">
+                and issued_by = #{issuedBy}
+            </if>
+            <if test="issuedDate != null  and issuedDate != ''">
+                and issued_date = #{issuedDate}
+            </if>
+            <if test="loginCnt != null ">
+                and login_cnt = #{loginCnt}
+            </if>
+            <if test="userPassword != null  and userPassword != ''">
+                and user_password = #{userPassword}
+            </if>
+            <if test="usageStatus != null  and usageStatus != ''">
+                and usage_status = #{usageStatus}
+            </if>
+            <if test="discontinuedFlg != null  and discontinuedFlg != ''">
+                and discontinued_flg = #{discontinuedFlg}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastFarmerEntityResult">
+        <include refid="selectMastFarmer"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="MastFarmerEntity">
+        insert into mast_farmer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="farmerName != null">
+                farmer_name,
+            </if>
+            <if test="farmerNameKn != null">
+                farmer_name_kn,
+            </if>
+            <if test="phoneNumber != null">
+                phone_number,
+            </if>
+            <if test="mailAddress != null">
+                mail_address,
+            </if>
+            <if test="postalCode != null">
+                postal_code,
+            </if>
+            <if test="kenName != null">
+                ken_name,
+            </if>
+            <if test="cityName != null">
+                city_name,
+            </if>
+            <if test="townName != null">
+                town_name,
+            </if>
+            <if test="buildingEtc != null">
+                building_etc,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="representativeName != null">
+                representative_name,
+            </if>
+            <if test="representativeNameKn != null">
+                representative_name_kn,
+            </if>
+            <if test="issuedBy != null">
+                issued_by,
+            </if>
+            <if test="issuedDate != null">
+                issued_date,
+            </if>
+            <if test="loginCnt != null">
+                login_cnt,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="usageStatus != null">
+                usage_status,
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="farmerName != null">
+                #{farmerName},
+            </if>
+            <if test="farmerNameKn != null">
+                #{farmerNameKn},
+            </if>
+            <if test="phoneNumber != null">
+                #{phoneNumber},
+            </if>
+            <if test="mailAddress != null">
+                #{mailAddress},
+            </if>
+            <if test="postalCode != null">
+                #{postalCode},
+            </if>
+            <if test="kenName != null">
+                #{kenName},
+            </if>
+            <if test="cityName != null">
+                #{cityName},
+            </if>
+            <if test="townName != null">
+                #{townName},
+            </if>
+            <if test="buildingEtc != null">
+                #{buildingEtc},
+            </if>
+            <if test="address != null">
+                #{address},
+            </if>
+            <if test="representativeName != null">
+                #{representativeName},
+            </if>
+            <if test="representativeNameKn != null">
+                #{representativeNameKn},
+            </if>
+            <if test="issuedBy != null">
+                #{issuedBy},
+            </if>
+            <if test="issuedDate != null">
+                #{issuedDate},
+            </if>
+            <if test="loginCnt != null">
+                #{loginCnt},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword},
+            </if>
+            <if test="usageStatus != null">
+                #{usageStatus},
+            </if>
+            <if test="discontinuedFlg != null">
+                #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="MastFarmerEntity">
+        update mast_farmer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="farmerName != null">
+                farmer_name = #{farmerName},
+            </if>
+            <if test="farmerNameKn != null">
+                farmer_name_kn = #{farmerNameKn},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="mailAddress != null">
+                mail_address = #{mailAddress},
+            </if>
+            <if test="postalCode != null">
+                postal_code = #{postalCode},
+            </if>
+            <if test="kenName != null">
+                ken_name = #{kenName},
+            </if>
+            <if test="cityName != null">
+                city_name = #{cityName},
+            </if>
+            <if test="townName != null">
+                town_name = #{townName},
+            </if>
+            <if test="buildingEtc != null">
+                building_etc = #{buildingEtc},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="representativeName != null">
+                representative_name = #{representativeName},
+            </if>
+            <if test="representativeNameKn != null">
+                representative_name_kn = #{representativeNameKn},
+            </if>
+            <if test="issuedBy != null">
+                issued_by = #{issuedBy},
+            </if>
+            <if test="issuedDate != null">
+                issued_date = #{issuedDate},
+            </if>
+            <if test="loginCnt != null">
+                login_cnt = #{loginCnt},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword},
+            </if>
+            <if test="usageStatus != null">
+                usage_status = #{usageStatus},
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg = #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        mast_farmer
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

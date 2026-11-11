@@ -1,0 +1,70 @@
+# Project Config
+external-warehouse:
+  # name
+  name: external-warehouse
+  # version
+  version: 1.0.0
+  # copyrightyear year
+  copyrightYear: 2026
+  # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
+  profile: ./temp
+  # ipアドレス取得スイッチ
+  addressEnabled: false
+  # 検証コードタイプmath数値計算char文字検証
+  captchaType: math
+  # cache: redis / db
+  cache: db
+  # mail Service: awsSes / javamail
+  mailSendType: awsSes
+
+# 開発環境の構成
+server:
+  # サーバのHTTPポート、デフォルトは8080
+  port: 9180
+
+# ログ
+logging:
+  file:
+    path: ./logs/external-warehouse
+  level:
+    jp.newpart: error
+    org.springframework: warn
+
+# Spring
+spring:
+  datasource:
+    url: jdbc:postgresql://agrisup-prod-rds.c1weq402sa7s.ap-northeast-1.rds.amazonaws.com:5432/farm_prod?currentSchema=farm
+    username: farm
+    password: XarNhdA,+JM3
+
+# AWS
+aws:
+  # SESメール設定 IAM
+  ses:
+    # AWSリージョン
+    region: ap-northeast-1
+    # AWSアクセスキーID
+    access-key-id:
+    # AWSシークレットアクセスキー
+    secret-access-key:
+    # 送信者メールアドレス
+    from-email: sin-sanchoku@double-std.com
+    # メールエンコーディング
+    charset: UTF-8
+    # LocalStackエンドポイントURL
+    endpoint-url:
+
+  # AWS S3ファイルストレージ設定
+  s3:
+    # AWSリージョン (SESと一致させる)
+    region: ap-northeast-1
+    # AWSアクセスキーID
+    access-key-id:
+    # AWSシークレットアクセスキー
+    secret-access-key:
+    # バケット名
+    bucket-name: prod-yamagata-agrisup
+    # ファイル保存パスプレフィックス
+    path-prefix: uploads/
+    # ファイルアクセスURLプレフィックス (ファイルアクセスリンクの生成に使用)
+    url-prefix:

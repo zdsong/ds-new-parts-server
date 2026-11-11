@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssBatchExecuteHistoryBaseMapper">
+   <resultMap type="BssBatchExecuteHistoryEntity" id="BssBatchExecuteHistoryEntityResult">
+        <result property="id" column="id"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="execStatus" column="exec_status"/>
+        <result property="downloadPath" column="download_path"/>
+        <result property="uploadPath" column="upload_path"/>
+        <result property="execTime" column="exec_time"/>
+        <result property="emailSendFlg" column="email_send_flg"/>
+        <result property="totalLines" column="total_lines"/>
+        <result property="successLines" column="success_lines"/>
+        <result property="failLines" column="fail_lines"/>
+        <result property="executeKey" column="execute_key"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssBatchExecuteHistory">
+        select
+          id,
+          farmer_id,
+          file_name,
+          exec_status,
+          download_path,
+          upload_path,
+          exec_time,
+          email_send_flg,
+          total_lines,
+          success_lines,
+          fail_lines,
+          execute_key,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_batch_execute_history
+    </sql>
+    <select id="selectList" parameterType="BssBatchExecuteHistoryEntity" resultMap="BssBatchExecuteHistoryEntityResult">
+        <include refid="selectBssBatchExecuteHistory"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="fileName != null  and fileName != ''">
+                and file_name = #{fileName}
+            </if>
+            <if test="execStatus != null  and execStatus != ''">
+                and exec_status = #{execStatus}
+            </if>
+            <if test="downloadPath != null  and downloadPath != ''">
+                and download_path = #{downloadPath}
+            </if>
+            <if test="uploadPath != null  and uploadPath != ''">
+                and upload_path = #{uploadPath}
+            </if>
+            <if test="execTime != null  and execTime != ''">
+                and exec_time = #{execTime}
+            </if>
+            <if test="emailSendFlg != null  and emailSendFlg != ''">
+                and email_send_flg = #{emailSendFlg}
+            </if>
+            <if test="totalLines != null ">
+                and total_lines = #{totalLines}
+            </if>
+            <if test="successLines != null ">
+                and success_lines = #{successLines}
+            </if>
+            <if test="failLines != null ">
+                and fail_lines = #{failLines}
+            </if>
+            <if test="executeKey != null  and executeKey != ''">
+                and execute_key = #{executeKey}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssBatchExecuteHistoryEntityResult">
+        <include refid="selectBssBatchExecuteHistory"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssBatchExecuteHistoryEntity">
+        insert into bss_batch_execute_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="fileName != null">
+                file_name,
+            </if>
+            <if test="execStatus != null">
+                exec_status,
+            </if>
+            <if test="downloadPath != null">
+                download_path,
+            </if>
+            <if test="uploadPath != null">
+                upload_path,
+            </if>
+            <if test="execTime != null">
+                exec_time,
+            </if>
+            <if test="emailSendFlg != null">
+                email_send_flg,
+            </if>
+            <if test="totalLines != null">
+                total_lines,
+            </if>
+            <if test="successLines != null">
+                success_lines,
+            </if>
+            <if test="failLines != null">
+                fail_lines,
+            </if>
+            <if test="executeKey != null">
+                execute_key,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="fileName != null">
+                #{fileName},
+            </if>
+            <if test="execStatus != null">
+                #{execStatus},
+            </if>
+            <if test="downloadPath != null">
+                #{downloadPath},
+            </if>
+            <if test="uploadPath != null">
+                #{uploadPath},
+            </if>
+            <if test="execTime != null">
+                #{execTime},
+            </if>
+            <if test="emailSendFlg != null">
+                #{emailSendFlg},
+            </if>
+            <if test="totalLines != null">
+                #{totalLines},
+            </if>
+            <if test="successLines != null">
+                #{successLines},
+            </if>
+            <if test="failLines != null">
+                #{failLines},
+            </if>
+            <if test="executeKey != null">
+                #{executeKey},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssBatchExecuteHistoryEntity">
+        update bss_batch_execute_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="fileName != null">
+                file_name = #{fileName},
+            </if>
+            <if test="execStatus != null">
+                exec_status = #{execStatus},
+            </if>
+            <if test="downloadPath != null">
+                download_path = #{downloadPath},
+            </if>
+            <if test="uploadPath != null">
+                upload_path = #{uploadPath},
+            </if>
+            <if test="execTime != null">
+                exec_time = #{execTime},
+            </if>
+            <if test="emailSendFlg != null">
+                email_send_flg = #{emailSendFlg},
+            </if>
+                total_lines = #{totalLines},
+                success_lines = #{successLines},
+                fail_lines = #{failLines},
+            <if test="executeKey != null">
+                execute_key = #{executeKey},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_batch_execute_history
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

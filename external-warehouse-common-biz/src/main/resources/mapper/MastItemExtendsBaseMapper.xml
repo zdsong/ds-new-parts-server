@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.MastItemExtendsBaseMapper">
+   <resultMap type="MastItemExtendsEntity" id="MastItemExtendsEntityResult">
+        <result property="itemId" column="item_id"/>
+        <result property="variationName" column="variation_name"/>
+        <result property="invMgmtFlg" column="inv_mgmt_flg"/>
+        <result property="remStock" column="rem_stock"/>
+        <result property="stockAfterUpdate" column="stock_after_update"/>
+        <result property="minBenchStock" column="min_bench_stock"/>
+        <result property="categoryNo" column="category_no"/>
+        <result property="campNo" column="camp_no"/>
+        <result property="tax" column="tax"/>
+        <result property="manufacturerName" column="manufacturer_name"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="volPoints" column="vol_points"/>
+        <result property="indShipFee" column="ind_ship_fee"/>
+        <result property="exclShipMethodNo" column="excl_ship_method_no"/>
+        <result property="exclPayMethodNo" column="excl_pay_method_no"/>
+        <result property="indGrantedPoints" column="ind_granted_points"/>
+        <result property="simDispGroupNo" column="sim_disp_group_no"/>
+        <result property="orderAgeMin" column="order_age_min"/>
+        <result property="orderAgeMax" column="order_age_max"/>
+        <result property="orderQtyMin" column="order_qty_min"/>
+        <result property="orderQtyMax" column="order_qty_max"/>
+        <result property="salesMinPeriod" column="sales_min_period"/>
+        <result property="salesMaxPeriod" column="sales_max_period"/>
+        <result property="location" column="location"/>
+        <result property="prodBadgeNo" column="prod_badge_no"/>
+        <result property="qtyInputForm" column="qty_input_form"/>
+        <result property="numInputOpt" column="num_input_opt"/>
+        <result property="varPattern1Disp" column="var_pattern_1_disp"/>
+        <result property="itemInfo1" column="item_info_1"/>
+        <result property="itemInfo2" column="item_info_2"/>
+        <result property="itemInfo3" column="item_info_3"/>
+        <result property="title" column="title"/>
+        <result property="metaDescription" column="meta_description"/>
+        <result property="ogTitle" column="og_title"/>
+        <result property="ogType" column="og_type"/>
+        <result property="ogImageUrl" column="og_image_url"/>
+        <result property="newProdListFlg" column="new_prod_list_flg"/>
+        <result property="variationPattern" column="variation_pattern"/>
+        <result property="variationPattern2Items" column="variation_pattern_2_items"/>
+        <result property="lockerPickupSize" column="locker_pickup_size"/>
+        <result property="resvAcceptPeriodNo" column="resv_accept_period_no"/>
+        <result property="couponExclFlg" column="coupon_excl_flg"/>
+        <result property="taxRateCategory" column="tax_rate_category"/>
+        <result property="salesTimeSpec" column="sales_time_spec"/>
+        <result property="lowerLimitSalesHours" column="lower_limit_sales_hours"/>
+        <result property="upperLimitSalesHours" column="upper_limit_sales_hours"/>
+        <result property="shipperCode" column="shipper_code"/>
+        <result property="priority" column="priority"/>
+        <result property="returnClassificationNo" column="return_classification_no"/>
+        <result property="orderProhibitSpecFlg" column="order_prohibit_spec_flg"/>
+        <result property="subProdSetting" column="sub_prod_setting"/>
+        <result property="subPriceFirst" column="sub_price_first"/>
+        <result property="subPriceSecond" column="sub_price_second"/>
+        <result property="subCnt" column="sub_cnt"/>
+        <result property="subOnlyFlg" column="sub_only_flg"/>
+        <result property="subProdDesc" column="sub_prod_desc"/>
+        <result property="favListDispFlg" column="fav_list_disp_flg"/>
+        <result property="restockNotifyFlg" column="restock_notify_flg"/>
+        <result property="rsv1" column="rsv_1"/>
+        <result property="rsv2" column="rsv_2"/>
+        <result property="rsv3" column="rsv_3"/>
+        <result property="rsv4" column="rsv_4"/>
+        <result property="rsv5" column="rsv_5"/>
+        <result property="rsv6" column="rsv_6"/>
+        <result property="rsv7" column="rsv_7"/>
+        <result property="rsv8" column="rsv_8"/>
+        <result property="rsv9" column="rsv_9"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMastItemExtends">
+        select
+          item_id,
+          variation_name,
+          inv_mgmt_flg,
+          rem_stock,
+          stock_after_update,
+          min_bench_stock,
+          category_no,
+          camp_no,
+          tax,
+          manufacturer_name,
+          brand_name,
+          vol_points,
+          ind_ship_fee,
+          excl_ship_method_no,
+          excl_pay_method_no,
+          ind_granted_points,
+          sim_disp_group_no,
+          order_age_min,
+          order_age_max,
+          order_qty_min,
+          order_qty_max,
+          sales_min_period,
+          sales_max_period,
+          location,
+          prod_badge_no,
+          qty_input_form,
+          num_input_opt,
+          var_pattern_1_disp,
+          item_info_1,
+          item_info_2,
+          item_info_3,
+          title,
+          meta_description,
+          og_title,
+          og_type,
+          og_image_url,
+          new_prod_list_flg,
+          variation_pattern,
+          variation_pattern_2_items,
+          locker_pickup_size,
+          resv_accept_period_no,
+          coupon_excl_flg,
+          tax_rate_category,
+          sales_time_spec,
+          lower_limit_sales_hours,
+          upper_limit_sales_hours,
+          shipper_code,
+          priority,
+          return_classification_no,
+          order_prohibit_spec_flg,
+          sub_prod_setting,
+          sub_price_first,
+          sub_price_second,
+          sub_cnt,
+          sub_only_flg,
+          sub_prod_desc,
+          fav_list_disp_flg,
+          restock_notify_flg,
+          rsv_1,
+          rsv_2,
+          rsv_3,
+          rsv_4,
+          rsv_5,
+          rsv_6,
+          rsv_7,
+          rsv_8,
+          rsv_9,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_item_extends
+    </sql>
+    <select id="selectList" parameterType="MastItemExtendsEntity" resultMap="MastItemExtendsEntityResult">
+        <include refid="selectMastItemExtends"/>
+        <where>
+            <if test="itemId != null  and itemId != ''">
+                and item_id = #{itemId}
+            </if>
+            <if test="variationName != null  and variationName != ''">
+                and variation_name = #{variationName}
+            </if>
+            <if test="invMgmtFlg != null  and invMgmtFlg != ''">
+                and inv_mgmt_flg = #{invMgmtFlg}
+            </if>
+            <if test="remStock != null  and remStock != ''">
+                and rem_stock = #{remStock}
+            </if>
+            <if test="stockAfterUpdate != null  and stockAfterUpdate != ''">
+                and stock_after_update = #{stockAfterUpdate}
+            </if>
+            <if test="minBenchStock != null  and minBenchStock != ''">
+                and min_bench_stock = #{minBenchStock}
+            </if>
+            <if test="categoryNo != null  and categoryNo != ''">
+                and category_no = #{categoryNo}
+            </if>
+            <if test="campNo != null  and campNo != ''">
+                and camp_no = #{campNo}
+            </if>
+            <if test="tax != null  and tax != ''">
+                and tax = #{tax}
+            </if>
+            <if test="manufacturerName != null  and manufacturerName != ''">
+                and manufacturer_name = #{manufacturerName}
+            </if>
+            <if test="brandName != null  and brandName != ''">
+                and brand_name = #{brandName}
+            </if>
+            <if test="volPoints != null  and volPoints != ''">
+                and vol_points = #{volPoints}
+            </if>
+            <if test="indShipFee != null  and indShipFee != ''">
+                and ind_ship_fee = #{indShipFee}
+            </if>
+            <if test="exclShipMethodNo != null  and exclShipMethodNo != ''">
+                and excl_ship_method_no = #{exclShipMethodNo}
+            </if>
+            <if test="exclPayMethodNo != null  and exclPayMethodNo != ''">
+                and excl_pay_method_no = #{exclPayMethodNo}
+            </if>
+            <if test="indGrantedPoints != null  and indGrantedPoints != ''">
+                and ind_granted_points = #{indGrantedPoints}
+            </if>
+            <if test="simDispGroupNo != null  and simDispGroupNo != ''">
+                and sim_disp_group_no = #{simDispGroupNo}
+            </if>
+            <if test="orderAgeMin != null  and orderAgeMin != ''">
+                and order_age_min = #{orderAgeMin}
+            </if>
+            <if test="orderAgeMax != null  and orderAgeMax != ''">
+                and order_age_max = #{orderAgeMax}
+            </if>
+            <if test="orderQtyMin != null  and orderQtyMin != ''">
+                and order_qty_min = #{orderQtyMin}
+            </if>
+            <if test="orderQtyMax != null  and orderQtyMax != ''">
+                and order_qty_max = #{orderQtyMax}
+            </if>
+            <if test="salesMinPeriod != null  and salesMinPeriod != ''">
+                and sales_min_period = #{salesMinPeriod}
+            </if>
+            <if test="salesMaxPeriod != null  and salesMaxPeriod != ''">
+                and sales_max_period = #{salesMaxPeriod}
+            </if>
+            <if test="location != null  and location != ''">
+                and location = #{location}
+            </if>
+            <if test="prodBadgeNo != null  and prodBadgeNo != ''">
+                and prod_badge_no = #{prodBadgeNo}
+            </if>
+            <if test="qtyInputForm != null  and qtyInputForm != ''">
+                and qty_input_form = #{qtyInputForm}
+            </if>
+            <if test="numInputOpt != null  and numInputOpt != ''">
+                and num_input_opt = #{numInputOpt}
+            </if>
+            <if test="varPattern1Disp != null  and varPattern1Disp != ''">
+                and var_pattern_1_disp = #{varPattern1Disp}
+            </if>
+            <if test="itemInfo1 != null  and itemInfo1 != ''">
+                and item_info_1 = #{itemInfo1}
+            </if>
+            <if test="itemInfo2 != null  and itemInfo2 != ''">
+                and item_info_2 = #{itemInfo2}
+            </if>
+            <if test="itemInfo3 != null  and itemInfo3 != ''">
+                and item_info_3 = #{itemInfo3}
+            </if>
+            <if test="title != null  and title != ''">
+                and title = #{title}
+            </if>
+            <if test="metaDescription != null  and metaDescription != ''">
+                and meta_description = #{metaDescription}
+            </if>
+            <if test="ogTitle != null  and ogTitle != ''">
+                and og_title = #{ogTitle}
+            </if>
+            <if test="ogType != null  and ogType != ''">
+                and og_type = #{ogType}
+            </if>
+            <if test="ogImageUrl != null  and ogImageUrl != ''">
+                and og_image_url = #{ogImageUrl}
+            </if>
+            <if test="newProdListFlg != null  and newProdListFlg != ''">
+                and new_prod_list_flg = #{newProdListFlg}
+            </if>
+            <if test="variationPattern != null  and variationPattern != ''">
+                and variation_pattern = #{variationPattern}
+            </if>
+            <if test="variationPattern2Items != null  and variationPattern2Items != ''">
+                and variation_pattern_2_items = #{variationPattern2Items}
+            </if>
+            <if test="lockerPickupSize != null  and lockerPickupSize != ''">
+                and locker_pickup_size = #{lockerPickupSize}
+            </if>
+            <if test="resvAcceptPeriodNo != null  and resvAcceptPeriodNo != ''">
+                and resv_accept_period_no = #{resvAcceptPeriodNo}
+            </if>
+            <if test="couponExclFlg != null  and couponExclFlg != ''">
+                and coupon_excl_flg = #{couponExclFlg}
+            </if>
+            <if test="taxRateCategory != null  and taxRateCategory != ''">
+                and tax_rate_category = #{taxRateCategory}
+            </if>
+            <if test="salesTimeSpec != null  and salesTimeSpec != ''">
+                and sales_time_spec = #{salesTimeSpec}
+            </if>
+            <if test="lowerLimitSalesHours != null  and lowerLimitSalesHours != ''">
+                and lower_limit_sales_hours = #{lowerLimitSalesHours}
+            </if>
+            <if test="upperLimitSalesHours != null  and upperLimitSalesHours != ''">
+                and upper_limit_sales_hours = #{upperLimitSalesHours}
+            </if>
+            <if test="shipperCode != null  and shipperCode != ''">
+                and shipper_code = #{shipperCode}
+            </if>
+            <if test="priority != null  and priority != ''">
+                and priority = #{priority}
+            </if>
+            <if test="returnClassificationNo != null  and returnClassificationNo != ''">
+                and return_classification_no = #{returnClassificationNo}
+            </if>
+            <if test="orderProhibitSpecFlg != null  and orderProhibitSpecFlg != ''">
+                and order_prohibit_spec_flg = #{orderProhibitSpecFlg}
+            </if>
+            <if test="subProdSetting != null  and subProdSetting != ''">
+                and sub_prod_setting = #{subProdSetting}
+            </if>
+            <if test="subPriceFirst != null ">
+                and sub_price_first = #{subPriceFirst}
+            </if>
+            <if test="subPriceSecond != null ">
+                and sub_price_second = #{subPriceSecond}
+            </if>
+            <if test="subCnt != null ">
+                and sub_cnt = #{subCnt}
+            </if>
+            <if test="subOnlyFlg != null  and subOnlyFlg != ''">
+                and sub_only_flg = #{subOnlyFlg}
+            </if>
+            <if test="subProdDesc != null  and subProdDesc != ''">
+                and sub_prod_desc = #{subProdDesc}
+            </if>
+            <if test="favListDispFlg != null  and favListDispFlg != ''">
+                and fav_list_disp_flg = #{favListDispFlg}
+            </if>
+            <if test="restockNotifyFlg != null  and restockNotifyFlg != ''">
+                and restock_notify_flg = #{restockNotifyFlg}
+            </if>
+            <if test="rsv1 != null  and rsv1 != ''">
+                and rsv_1 = #{rsv1}
+            </if>
+            <if test="rsv2 != null  and rsv2 != ''">
+                and rsv_2 = #{rsv2}
+            </if>
+            <if test="rsv3 != null  and rsv3 != ''">
+                and rsv_3 = #{rsv3}
+            </if>
+            <if test="rsv4 != null  and rsv4 != ''">
+                and rsv_4 = #{rsv4}
+            </if>
+            <if test="rsv5 != null  and rsv5 != ''">
+                and rsv_5 = #{rsv5}
+            </if>
+            <if test="rsv6 != null  and rsv6 != ''">
+                and rsv_6 = #{rsv6}
+            </if>
+            <if test="rsv7 != null  and rsv7 != ''">
+                and rsv_7 = #{rsv7}
+            </if>
+            <if test="rsv8 != null  and rsv8 != ''">
+                and rsv_8 = #{rsv8}
+            </if>
+            <if test="rsv9 != null  and rsv9 != ''">
+                and rsv_9 = #{rsv9}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastItemExtendsEntityResult">
+        <include refid="selectMastItemExtends"/>
+        where item_id = #{itemId}
+
+    </select>
+
+    <insert id="insert" parameterType="MastItemExtendsEntity">
+        insert into mast_item_extends
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="variationName != null">
+                variation_name,
+            </if>
+            <if test="invMgmtFlg != null">
+                inv_mgmt_flg,
+            </if>
+            <if test="remStock != null">
+                rem_stock,
+            </if>
+            <if test="stockAfterUpdate != null">
+                stock_after_update,
+            </if>
+            <if test="minBenchStock != null">
+                min_bench_stock,
+            </if>
+            <if test="categoryNo != null">
+                category_no,
+            </if>
+            <if test="campNo != null">
+                camp_no,
+            </if>
+            <if test="tax != null">
+                tax,
+            </if>
+            <if test="manufacturerName != null">
+                manufacturer_name,
+            </if>
+            <if test="brandName != null">
+                brand_name,
+            </if>
+            <if test="volPoints != null">
+                vol_points,
+            </if>
+            <if test="indShipFee != null">
+                ind_ship_fee,
+            </if>
+            <if test="exclShipMethodNo != null">
+                excl_ship_method_no,
+            </if>
+            <if test="exclPayMethodNo != null">
+                excl_pay_method_no,
+            </if>
+            <if test="indGrantedPoints != null">
+                ind_granted_points,
+            </if>
+            <if test="simDispGroupNo != null">
+                sim_disp_group_no,
+            </if>
+            <if test="orderAgeMin != null">
+                order_age_min,
+            </if>
+            <if test="orderAgeMax != null">
+                order_age_max,
+            </if>
+            <if test="orderQtyMin != null">
+                order_qty_min,
+            </if>
+            <if test="orderQtyMax != null">
+                order_qty_max,
+            </if>
+            <if test="salesMinPeriod != null">
+                sales_min_period,
+            </if>
+            <if test="salesMaxPeriod != null">
+                sales_max_period,
+            </if>
+            <if test="location != null">
+                location,
+            </if>
+            <if test="prodBadgeNo != null">
+                prod_badge_no,
+            </if>
+            <if test="qtyInputForm != null">
+                qty_input_form,
+            </if>
+            <if test="numInputOpt != null">
+                num_input_opt,
+            </if>
+            <if test="varPattern1Disp != null">
+                var_pattern_1_disp,
+            </if>
+            <if test="itemInfo1 != null">
+                item_info_1,
+            </if>
+            <if test="itemInfo2 != null">
+                item_info_2,
+            </if>
+            <if test="itemInfo3 != null">
+                item_info_3,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="metaDescription != null">
+                meta_description,
+            </if>
+            <if test="ogTitle != null">
+                og_title,
+            </if>
+            <if test="ogType != null">
+                og_type,
+            </if>
+            <if test="ogImageUrl != null">
+                og_image_url,
+            </if>
+            <if test="newProdListFlg != null">
+                new_prod_list_flg,
+            </if>
+            <if test="variationPattern != null">
+                variation_pattern,
+            </if>
+            <if test="variationPattern2Items != null">
+                variation_pattern_2_items,
+            </if>
+            <if test="lockerPickupSize != null">
+                locker_pickup_size,
+            </if>
+            <if test="resvAcceptPeriodNo != null">
+                resv_accept_period_no,
+            </if>
+            <if test="couponExclFlg != null">
+                coupon_excl_flg,
+            </if>
+            <if test="taxRateCategory != null">
+                tax_rate_category,
+            </if>
+            <if test="salesTimeSpec != null">
+                sales_time_spec,
+            </if>
+            <if test="lowerLimitSalesHours != null">
+                lower_limit_sales_hours,
+            </if>
+            <if test="upperLimitSalesHours != null">
+                upper_limit_sales_hours,
+            </if>
+            <if test="shipperCode != null">
+                shipper_code,
+            </if>
+            <if test="priority != null">
+                priority,
+            </if>
+            <if test="returnClassificationNo != null">
+                return_classification_no,
+            </if>
+            <if test="orderProhibitSpecFlg != null">
+                order_prohibit_spec_flg,
+            </if>
+            <if test="subProdSetting != null">
+                sub_prod_setting,
+            </if>
+            <if test="subPriceFirst != null">
+                sub_price_first,
+            </if>
+            <if test="subPriceSecond != null">
+                sub_price_second,
+            </if>
+            <if test="subCnt != null">
+                sub_cnt,
+            </if>
+            <if test="subOnlyFlg != null">
+                sub_only_flg,
+            </if>
+            <if test="subProdDesc != null">
+                sub_prod_desc,
+            </if>
+            <if test="favListDispFlg != null">
+                fav_list_disp_flg,
+            </if>
+            <if test="restockNotifyFlg != null">
+                restock_notify_flg,
+            </if>
+            <if test="rsv1 != null">
+                rsv_1,
+            </if>
+            <if test="rsv2 != null">
+                rsv_2,
+            </if>
+            <if test="rsv3 != null">
+                rsv_3,
+            </if>
+            <if test="rsv4 != null">
+                rsv_4,
+            </if>
+            <if test="rsv5 != null">
+                rsv_5,
+            </if>
+            <if test="rsv6 != null">
+                rsv_6,
+            </if>
+            <if test="rsv7 != null">
+                rsv_7,
+            </if>
+            <if test="rsv8 != null">
+                rsv_8,
+            </if>
+            <if test="rsv9 != null">
+                rsv_9,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                #{itemId},
+            </if>
+            <if test="variationName != null">
+                #{variationName},
+            </if>
+            <if test="invMgmtFlg != null">
+                #{invMgmtFlg},
+            </if>
+            <if test="remStock != null">
+                #{remStock},
+            </if>
+            <if test="stockAfterUpdate != null">
+                #{stockAfterUpdate},
+            </if>
+            <if test="minBenchStock != null">
+                #{minBenchStock},
+            </if>
+            <if test="categoryNo != null">
+                #{categoryNo},
+            </if>
+            <if test="campNo != null">
+                #{campNo},
+            </if>
+            <if test="tax != null">
+                #{tax},
+            </if>
+            <if test="manufacturerName != null">
+                #{manufacturerName},
+            </if>
+            <if test="brandName != null">
+                #{brandName},
+            </if>
+            <if test="volPoints != null">
+                #{volPoints},
+            </if>
+            <if test="indShipFee != null">
+                #{indShipFee},
+            </if>
+            <if test="exclShipMethodNo != null">
+                #{exclShipMethodNo},
+            </if>
+            <if test="exclPayMethodNo != null">
+                #{exclPayMethodNo},
+            </if>
+            <if test="indGrantedPoints != null">
+                #{indGrantedPoints},
+            </if>
+            <if test="simDispGroupNo != null">
+                #{simDispGroupNo},
+            </if>
+            <if test="orderAgeMin != null">
+                #{orderAgeMin},
+            </if>
+            <if test="orderAgeMax != null">
+                #{orderAgeMax},
+            </if>
+            <if test="orderQtyMin != null">
+                #{orderQtyMin},
+            </if>
+            <if test="orderQtyMax != null">
+                #{orderQtyMax},
+            </if>
+            <if test="salesMinPeriod != null">
+                #{salesMinPeriod},
+            </if>
+            <if test="salesMaxPeriod != null">
+                #{salesMaxPeriod},
+            </if>
+            <if test="location != null">
+                #{location},
+            </if>
+            <if test="prodBadgeNo != null">
+                #{prodBadgeNo},
+            </if>
+            <if test="qtyInputForm != null">
+                #{qtyInputForm},
+            </if>
+            <if test="numInputOpt != null">
+                #{numInputOpt},
+            </if>
+            <if test="varPattern1Disp != null">
+                #{varPattern1Disp},
+            </if>
+            <if test="itemInfo1 != null">
+                #{itemInfo1},
+            </if>
+            <if test="itemInfo2 != null">
+                #{itemInfo2},
+            </if>
+            <if test="itemInfo3 != null">
+                #{itemInfo3},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="metaDescription != null">
+                #{metaDescription},
+            </if>
+            <if test="ogTitle != null">
+                #{ogTitle},
+            </if>
+            <if test="ogType != null">
+                #{ogType},
+            </if>
+            <if test="ogImageUrl != null">
+                #{ogImageUrl},
+            </if>
+            <if test="newProdListFlg != null">
+                #{newProdListFlg},
+            </if>
+            <if test="variationPattern != null">
+                #{variationPattern},
+            </if>
+            <if test="variationPattern2Items != null">
+                #{variationPattern2Items},
+            </if>
+            <if test="lockerPickupSize != null">
+                #{lockerPickupSize},
+            </if>
+            <if test="resvAcceptPeriodNo != null">
+                #{resvAcceptPeriodNo},
+            </if>
+            <if test="couponExclFlg != null">
+                #{couponExclFlg},
+            </if>
+            <if test="taxRateCategory != null">
+                #{taxRateCategory},
+            </if>
+            <if test="salesTimeSpec != null">
+                #{salesTimeSpec},
+            </if>
+            <if test="lowerLimitSalesHours != null">
+                #{lowerLimitSalesHours},
+            </if>
+            <if test="upperLimitSalesHours != null">
+                #{upperLimitSalesHours},
+            </if>
+            <if test="shipperCode != null">
+                #{shipperCode},
+            </if>
+            <if test="priority != null">
+                #{priority},
+            </if>
+            <if test="returnClassificationNo != null">
+                #{returnClassificationNo},
+            </if>
+            <if test="orderProhibitSpecFlg != null">
+                #{orderProhibitSpecFlg},
+            </if>
+            <if test="subProdSetting != null">
+                #{subProdSetting},
+            </if>
+            <if test="subPriceFirst != null">
+                #{subPriceFirst},
+            </if>
+            <if test="subPriceSecond != null">
+                #{subPriceSecond},
+            </if>
+            <if test="subCnt != null">
+                #{subCnt},
+            </if>
+            <if test="subOnlyFlg != null">
+                #{subOnlyFlg},
+            </if>
+            <if test="subProdDesc != null">
+                #{subProdDesc},
+            </if>
+            <if test="favListDispFlg != null">
+                #{favListDispFlg},
+            </if>
+            <if test="restockNotifyFlg != null">
+                #{restockNotifyFlg},
+            </if>
+            <if test="rsv1 != null">
+                #{rsv1},
+            </if>
+            <if test="rsv2 != null">
+                #{rsv2},
+            </if>
+            <if test="rsv3 != null">
+                #{rsv3},
+            </if>
+            <if test="rsv4 != null">
+                #{rsv4},
+            </if>
+            <if test="rsv5 != null">
+                #{rsv5},
+            </if>
+            <if test="rsv6 != null">
+                #{rsv6},
+            </if>
+            <if test="rsv7 != null">
+                #{rsv7},
+            </if>
+            <if test="rsv8 != null">
+                #{rsv8},
+            </if>
+            <if test="rsv9 != null">
+                #{rsv9},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="MastItemExtendsEntity">
+        update mast_item_extends
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemId != null">
+                item_id = #{itemId},
+            </if>
+            <if test="variationName != null">
+                variation_name = #{variationName},
+            </if>
+            <if test="invMgmtFlg != null">
+                inv_mgmt_flg = #{invMgmtFlg},
+            </if>
+            <if test="remStock != null">
+                rem_stock = #{remStock},
+            </if>
+            <if test="stockAfterUpdate != null">
+                stock_after_update = #{stockAfterUpdate},
+            </if>
+            <if test="minBenchStock != null">
+                min_bench_stock = #{minBenchStock},
+            </if>
+            <if test="categoryNo != null">
+                category_no = #{categoryNo},
+            </if>
+            <if test="campNo != null">
+                camp_no = #{campNo},
+            </if>
+            <if test="tax != null">
+                tax = #{tax},
+            </if>
+            <if test="manufacturerName != null">
+                manufacturer_name = #{manufacturerName},
+            </if>
+            <if test="brandName != null">
+                brand_name = #{brandName},
+            </if>
+            <if test="volPoints != null">
+                vol_points = #{volPoints},
+            </if>
+            <if test="indShipFee != null">
+                ind_ship_fee = #{indShipFee},
+            </if>
+            <if test="exclShipMethodNo != null">
+                excl_ship_method_no = #{exclShipMethodNo},
+            </if>
+            <if test="exclPayMethodNo != null">
+                excl_pay_method_no = #{exclPayMethodNo},
+            </if>
+            <if test="indGrantedPoints != null">
+                ind_granted_points = #{indGrantedPoints},
+            </if>
+            <if test="simDispGroupNo != null">
+                sim_disp_group_no = #{simDispGroupNo},
+            </if>
+            <if test="orderAgeMin != null">
+                order_age_min = #{orderAgeMin},
+            </if>
+            <if test="orderAgeMax != null">
+                order_age_max = #{orderAgeMax},
+            </if>
+            <if test="orderQtyMin != null">
+                order_qty_min = #{orderQtyMin},
+            </if>
+            <if test="orderQtyMax != null">
+                order_qty_max = #{orderQtyMax},
+            </if>
+            <if test="salesMinPeriod != null">
+                sales_min_period = #{salesMinPeriod},
+            </if>
+            <if test="salesMaxPeriod != null">
+                sales_max_period = #{salesMaxPeriod},
+            </if>
+            <if test="location != null">
+                location = #{location},
+            </if>
+            <if test="prodBadgeNo != null">
+                prod_badge_no = #{prodBadgeNo},
+            </if>
+            <if test="qtyInputForm != null">
+                qty_input_form = #{qtyInputForm},
+            </if>
+            <if test="numInputOpt != null">
+                num_input_opt = #{numInputOpt},
+            </if>
+            <if test="varPattern1Disp != null">
+                var_pattern_1_disp = #{varPattern1Disp},
+            </if>
+            <if test="itemInfo1 != null">
+                item_info_1 = #{itemInfo1},
+            </if>
+            <if test="itemInfo2 != null">
+                item_info_2 = #{itemInfo2},
+            </if>
+            <if test="itemInfo3 != null">
+                item_info_3 = #{itemInfo3},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="metaDescription != null">
+                meta_description = #{metaDescription},
+            </if>
+            <if test="ogTitle != null">
+                og_title = #{ogTitle},
+            </if>
+            <if test="ogType != null">
+                og_type = #{ogType},
+            </if>
+            <if test="ogImageUrl != null">
+                og_image_url = #{ogImageUrl},
+            </if>
+            <if test="newProdListFlg != null">
+                new_prod_list_flg = #{newProdListFlg},
+            </if>
+            <if test="variationPattern != null">
+                variation_pattern = #{variationPattern},
+            </if>
+            <if test="variationPattern2Items != null">
+                variation_pattern_2_items = #{variationPattern2Items},
+            </if>
+            <if test="lockerPickupSize != null">
+                locker_pickup_size = #{lockerPickupSize},
+            </if>
+            <if test="resvAcceptPeriodNo != null">
+                resv_accept_period_no = #{resvAcceptPeriodNo},
+            </if>
+            <if test="couponExclFlg != null">
+                coupon_excl_flg = #{couponExclFlg},
+            </if>
+            <if test="taxRateCategory != null">
+                tax_rate_category = #{taxRateCategory},
+            </if>
+            <if test="salesTimeSpec != null">
+                sales_time_spec = #{salesTimeSpec},
+            </if>
+            <if test="lowerLimitSalesHours != null">
+                lower_limit_sales_hours = #{lowerLimitSalesHours},
+            </if>
+            <if test="upperLimitSalesHours != null">
+                upper_limit_sales_hours = #{upperLimitSalesHours},
+            </if>
+            <if test="shipperCode != null">
+                shipper_code = #{shipperCode},
+            </if>
+            <if test="priority != null">
+                priority = #{priority},
+            </if>
+            <if test="returnClassificationNo != null">
+                return_classification_no = #{returnClassificationNo},
+            </if>
+            <if test="orderProhibitSpecFlg != null">
+                order_prohibit_spec_flg = #{orderProhibitSpecFlg},
+            </if>
+            <if test="subProdSetting != null">
+                sub_prod_setting = #{subProdSetting},
+            </if>
+                sub_price_first = #{subPriceFirst},
+                sub_price_second = #{subPriceSecond},
+                sub_cnt = #{subCnt},
+            <if test="subOnlyFlg != null">
+                sub_only_flg = #{subOnlyFlg},
+            </if>
+            <if test="subProdDesc != null">
+                sub_prod_desc = #{subProdDesc},
+            </if>
+            <if test="favListDispFlg != null">
+                fav_list_disp_flg = #{favListDispFlg},
+            </if>
+            <if test="restockNotifyFlg != null">
+                restock_notify_flg = #{restockNotifyFlg},
+            </if>
+            <if test="rsv1 != null">
+                rsv_1 = #{rsv1},
+            </if>
+            <if test="rsv2 != null">
+                rsv_2 = #{rsv2},
+            </if>
+            <if test="rsv3 != null">
+                rsv_3 = #{rsv3},
+            </if>
+            <if test="rsv4 != null">
+                rsv_4 = #{rsv4},
+            </if>
+            <if test="rsv5 != null">
+                rsv_5 = #{rsv5},
+            </if>
+            <if test="rsv6 != null">
+                rsv_6 = #{rsv6},
+            </if>
+            <if test="rsv7 != null">
+                rsv_7 = #{rsv7},
+            </if>
+            <if test="rsv8 != null">
+                rsv_8 = #{rsv8},
+            </if>
+            <if test="rsv9 != null">
+                rsv_9 = #{rsv9},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        item_id = #{itemId}
+
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        mast_item_extends
+        where
+        item_id = #{itemId}
+
+    </delete>
+
+ </mapper>

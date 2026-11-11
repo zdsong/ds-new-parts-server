@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.MastItemBaseMapper">
+   <resultMap type="MastItemEntity" id="MastItemEntityResult">
+        <result property="id" column="id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemName" column="item_name"/>
+        <result property="janCode" column="jan_code"/>
+        <result property="sumarejiItemId" column="sumareji_item_id"/>
+        <result property="sysItemCode" column="sys_item_code"/>
+        <result property="category1" column="category1"/>
+        <result property="category2" column="category2"/>
+        <result property="salesPrice" column="sales_price"/>
+        <result property="normalPrice" column="normal_price"/>
+        <result property="memberPrice" column="member_price"/>
+        <result property="shippingFlg" column="shipping_flg"/>
+        <result property="courierSizeFlg" column="courier_size_flg"/>
+        <result property="ackagingFlg" column="ackaging_flg"/>
+        <result property="handlingType1Flg" column="handling_type1_flg"/>
+        <result property="handlingType2Flg" column="handling_type2_flg"/>
+        <result property="itemPagePublicFlg" column="item_page_public_flg"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="salesFlg" column="sales_flg"/>
+        <result property="confirmFlg" column="confirm_flg"/>
+        <result property="invalidValidFlg" column="invalid_valid_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMastItem">
+        select
+          id,
+          item_id,
+          item_code,
+          item_name,
+          jan_code,
+          sumareji_item_id,
+          sys_item_code,
+          category1,
+          category2,
+          sales_price,
+          normal_price,
+          member_price,
+          shipping_flg,
+          courier_size_flg,
+          ackaging_flg,
+          handling_type1_flg,
+          handling_type2_flg,
+          item_page_public_flg,
+          farmer_id,
+          sales_flg,
+          confirm_flg,
+          invalid_valid_flg,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_item
+    </sql>
+    <select id="selectList" parameterType="MastItemEntity" resultMap="MastItemEntityResult">
+        <include refid="selectMastItem"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="itemId != null  and itemId != ''">
+                and item_id = #{itemId}
+            </if>
+            <if test="itemCode != null  and itemCode != ''">
+                and item_code = #{itemCode}
+            </if>
+            <if test="itemName != null  and itemName != ''">
+                and item_name = #{itemName}
+            </if>
+            <if test="janCode != null  and janCode != ''">
+                and jan_code = #{janCode}
+            </if>
+            <if test="sumarejiItemId != null  and sumarejiItemId != ''">
+                and sumareji_item_id = #{sumarejiItemId}
+            </if>
+            <if test="sysItemCode != null  and sysItemCode != ''">
+                and sys_item_code = #{sysItemCode}
+            </if>
+            <if test="category1 != null  and category1 != ''">
+                and category1 = #{category1}
+            </if>
+            <if test="category2 != null  and category2 != ''">
+                and category2 = #{category2}
+            </if>
+            <if test="salesPrice != null ">
+                and sales_price = #{salesPrice}
+            </if>
+            <if test="normalPrice != null ">
+                and normal_price = #{normalPrice}
+            </if>
+            <if test="memberPrice != null ">
+                and member_price = #{memberPrice}
+            </if>
+            <if test="shippingFlg != null  and shippingFlg != ''">
+                and shipping_flg = #{shippingFlg}
+            </if>
+            <if test="courierSizeFlg != null  and courierSizeFlg != ''">
+                and courier_size_flg = #{courierSizeFlg}
+            </if>
+            <if test="ackagingFlg != null  and ackagingFlg != ''">
+                and ackaging_flg = #{ackagingFlg}
+            </if>
+            <if test="handlingType1Flg != null  and handlingType1Flg != ''">
+                and handling_type1_flg = #{handlingType1Flg}
+            </if>
+            <if test="handlingType2Flg != null  and handlingType2Flg != ''">
+                and handling_type2_flg = #{handlingType2Flg}
+            </if>
+            <if test="itemPagePublicFlg != null  and itemPagePublicFlg != ''">
+                and item_page_public_flg = #{itemPagePublicFlg}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="salesFlg != null  and salesFlg != ''">
+                and sales_flg = #{salesFlg}
+            </if>
+            <if test="confirmFlg != null  and confirmFlg != ''">
+                and confirm_flg = #{confirmFlg}
+            </if>
+            <if test="invalidValidFlg != null  and invalidValidFlg != ''">
+                and invalid_valid_flg = #{invalidValidFlg}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastItemEntityResult">
+        <include refid="selectMastItem"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="MastItemEntity">
+        insert into mast_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="itemCode != null">
+                item_code,
+            </if>
+            <if test="itemName != null">
+                item_name,
+            </if>
+            <if test="janCode != null">
+                jan_code,
+            </if>
+            <if test="sumarejiItemId != null">
+                sumareji_item_id,
+            </if>
+            <if test="sysItemCode != null">
+                sys_item_code,
+            </if>
+            <if test="category1 != null">
+                category1,
+            </if>
+            <if test="category2 != null">
+                category2,
+            </if>
+            <if test="salesPrice != null">
+                sales_price,
+            </if>
+            <if test="normalPrice != null">
+                normal_price,
+            </if>
+            <if test="memberPrice != null">
+                member_price,
+            </if>
+            <if test="shippingFlg != null">
+                shipping_flg,
+            </if>
+            <if test="courierSizeFlg != null">
+                courier_size_flg,
+            </if>
+            <if test="ackagingFlg != null">
+                ackaging_flg,
+            </if>
+            <if test="handlingType1Flg != null">
+                handling_type1_flg,
+            </if>
+            <if test="handlingType2Flg != null">
+                handling_type2_flg,
+            </if>
+            <if test="itemPagePublicFlg != null">
+                item_page_public_flg,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="salesFlg != null">
+                sales_flg,
+            </if>
+            <if test="confirmFlg != null">
+                confirm_flg,
+            </if>
+            <if test="invalidValidFlg != null">
+                invalid_valid_flg,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="itemId != null">
+                #{itemId},
+            </if>
+            <if test="itemCode != null">
+                #{itemCode},
+            </if>
+            <if test="itemName != null">
+                #{itemName},
+            </if>
+            <if test="janCode != null">
+                #{janCode},
+            </if>
+            <if test="sumarejiItemId != null">
+                #{sumarejiItemId},
+            </if>
+            <if test="sysItemCode != null">
+                #{sysItemCode},
+            </if>
+            <if test="category1 != null">
+                #{category1},
+            </if>
+            <if test="category2 != null">
+                #{category2},
+            </if>
+            <if test="salesPrice != null">
+                #{salesPrice},
+            </if>
+            <if test="normalPrice != null">
+                #{normalPrice},
+            </if>
+            <if test="memberPrice != null">
+                #{memberPrice},
+            </if>
+            <if test="shippingFlg != null">
+                #{shippingFlg},
+            </if>
+            <if test="courierSizeFlg != null">
+                #{courierSizeFlg},
+            </if>
+            <if test="ackagingFlg != null">
+                #{ackagingFlg},
+            </if>
+            <if test="handlingType1Flg != null">
+                #{handlingType1Flg},
+            </if>
+            <if test="handlingType2Flg != null">
+                #{handlingType2Flg},
+            </if>
+            <if test="itemPagePublicFlg != null">
+                #{itemPagePublicFlg},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="salesFlg != null">
+                #{salesFlg},
+            </if>
+            <if test="confirmFlg != null">
+                #{confirmFlg},
+            </if>
+            <if test="invalidValidFlg != null">
+                #{invalidValidFlg},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="MastItemEntity">
+        update mast_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="itemId != null">
+                item_id = #{itemId},
+            </if>
+            <if test="itemCode != null">
+                item_code = #{itemCode},
+            </if>
+            <if test="itemName != null">
+                item_name = #{itemName},
+            </if>
+            <if test="janCode != null">
+                jan_code = #{janCode},
+            </if>
+            <if test="sumarejiItemId != null">
+                sumareji_item_id = #{sumarejiItemId},
+            </if>
+            <if test="sysItemCode != null">
+                sys_item_code = #{sysItemCode},
+            </if>
+            <if test="category1 != null">
+                category1 = #{category1},
+            </if>
+            <if test="category2 != null">
+                category2 = #{category2},
+            </if>
+            <if test="salesPrice != null">
+                sales_price = #{salesPrice},
+            </if>
+            <if test="normalPrice != null">
+                normal_price = #{normalPrice},
+            </if>
+            <if test="memberPrice != null">
+                member_price = #{memberPrice},
+            </if>
+            <if test="shippingFlg != null">
+                shipping_flg = #{shippingFlg},
+            </if>
+            <if test="courierSizeFlg != null">
+                courier_size_flg = #{courierSizeFlg},
+            </if>
+            <if test="ackagingFlg != null">
+                ackaging_flg = #{ackagingFlg},
+            </if>
+            <if test="handlingType1Flg != null">
+                handling_type1_flg = #{handlingType1Flg},
+            </if>
+            <if test="handlingType2Flg != null">
+                handling_type2_flg = #{handlingType2Flg},
+            </if>
+            <if test="itemPagePublicFlg != null">
+                item_page_public_flg = #{itemPagePublicFlg},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="salesFlg != null">
+                sales_flg = #{salesFlg},
+            </if>
+            <if test="confirmFlg != null">
+                confirm_flg = #{confirmFlg},
+            </if>
+            <if test="invalidValidFlg != null">
+                invalid_valid_flg = #{invalidValidFlg},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+            version = version + 1,
+        </trim>
+        where
+        id = #{id}
+        <if test="version != null">
+            and version = #{version}
+        </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        mast_item
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

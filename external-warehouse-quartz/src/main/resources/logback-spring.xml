@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- ログ・ステージング・パス -->
+    <springProperty scope="context" name="log.path" source="logging.file.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="log.level.jp.newpart" source="logging.level.jp.newpart" defaultValue="info"/>
+    <springProperty scope="context" name="log.level.org.springframework" source="logging.level.org.springframework" defaultValue="warn"/>
+
+    <!-- ログ出力フォーマット -->
+	<property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] [%X{userId:-anonymous}] %-5level %logger{20} - [%method,%line] - %msg%n" />
+
+	<!-- コンソール出力 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${log.pattern}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- システムログ出力 -->
+	<appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${log.path}/task-sys-info.log</file>
+        <!-- 時間に基づいたログファイルの作成 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- ログファイル名フォーマット -->
+			<fileNamePattern>${log.path}/task-sys-info.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- ログ最大の履歴60日 -->
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${log.pattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!-- レベル -->
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+	</appender>
+
+    <!-- システムログ出力 -->
+    <appender name="file_warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/task-sys-warn.log</file>
+        <!-- 時間に基づいたログファイルの作成 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- ログファイル名フォーマット -->
+            <fileNamePattern>${log.path}/task-sys-warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- ログ最大の履歴60日 -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!-- レベル -->
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+	
+	<appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${log.path}/task-sys-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/task-sys-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+	
+	<!-- ユーザーアクセスログ出力  -->
+    <appender name="sys-user" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/task-sys-user.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/task-sys-user.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+	
+	<!-- システムモジュールログレベル制御  -->
+	<logger name="jp.newpart" level="${log.level.jp.newpart}" />
+	<!-- Springログレベル制御  -->
+	<logger name="org.springframework" level="${log.level.org.springframework}" />
+
+	<root level="info">
+		<appender-ref ref="console" />
+	</root>
+	
+	<!--システム操作ログ-->
+    <root level="info">
+        <appender-ref ref="file_info" />
+        <appender-ref ref="file_warn" />
+        <appender-ref ref="file_error" />
+    </root>
+	
+	<!--システムユーザ操作ログ-->
+    <logger name="sys-user" level="info">
+        <appender-ref ref="sys-user"/>
+    </logger>
+</configuration> 

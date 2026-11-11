@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.mapper.RangedSeqMapper">
+
+    <resultMap type="RangedSeq" id="RangedSeqResult">
+        <id property="id" column="id"/>
+        <result property="key1" column="title"/>
+        <result property="value1" column="value1"/>
+        <result property="key2" column="key2"/>
+        <result property="value2" column="value2"/>
+        <result property="key3" column="key3"/>
+        <result property="value3" column="value3"/>
+        <result property="seq" column="seq"/>
+        <result property="costTime" column="cost_time"/>
+    </resultMap>
+
+	<sql id="selectSeq">
+        select id,key1,value1,key2,value2,key3,value3,seq
+        from ranged_seq
+
+    </sql>
+
+    <select id="selectRangedSeq" parameterType="RangedSeq"  resultMap="RangedSeqResult">
+        <include refid="selectSeq"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="key1 != null  and key1 != ''">
+                and key1 = #{key1}
+            </if>
+            <if test="value1 != null  and value1 != ''">
+                and value1 = #{value1}
+            </if>
+            <if test="key2 != null  and key2 != ''">
+                and key2 = #{key2}
+            </if>
+            <if test="value2 != null  and value2 != ''">
+                and value2 = #{value2}
+            </if>
+            <if test="key3 != null  and key3 != ''">
+                and key3 = #{key3}
+            </if>
+            <if test="value3 != null  and value3 != ''">
+                and value3 = #{value3}
+            </if>
+
+        </where>
+    </select>
+    
+	<insert id="insert" parameterType="RangedSeq">
+		insert into ranged_seq(id, key1, value1, key2, value2, key3, value3,seq,update_time)
+        values (#{id}, #{key1}, #{value1}, #{key2}, #{value2}, #{key3}, #{value3}, #{seq}, now())
+	</insert>
+
+    <update id="update" parameterType="RangedSeq">
+        update ranged_seq
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="seq != null">
+                seq = #{seq},
+            </if>
+
+        </trim>
+        where
+        id = #{id}
+    </update>
+
+</mapper> 

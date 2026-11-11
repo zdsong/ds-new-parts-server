@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.BssAskMapper">
+
+   <resultMap type="BssAskVo" id="BssAskResult">
+        <result property="id"      column="id"/>
+        <result property="askNo"   column="ask_no"/>
+        <result property="askDate" column="ask_date"/>
+        <collection  property="askHistoryList"   javaType="java.util.List"  resultMap="BssAskHistoryResult" />
+   </resultMap>
+
+    <resultMap id="BssAskHistoryResult" type="BssAskHistoryVo">
+        <id     property="id"                   column="ask_history_id"       />
+        <result property="status"               column="status"               />
+        <result property="statusLabel"          column="status_label"         />
+        <result property="answerUser"           column="answer_user"          />
+        <result property="category1"            column="category1"            />
+        <result property="category2"            column="category2"            />
+        <result property="answerTime"           column="answer_time"          />
+        <result property="askAnswerRemark"      column="ask_answer_remark"    />
+    </resultMap>
+
+    <select id="selectAskListHistoryByOrderId" parameterType="String" resultMap="BssAskResult">
+        SELECT
+            ba.id,
+            ba.ask_no ,
+            ba.ask_date ,
+            bah.id as ask_history_id,
+            bah.status ,
+            sdd.dict_label as status_label,
+            su.nick_name AS answer_user,
+            mac1.category_name AS category1,
+            mac2.category_name AS category2,
+            TO_CHAR(TO_TIMESTAMP(bah.answer_time, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY/MM/DD') AS answer_time,
+            bah.ask_answer_remark
+        FROM
+            bss_ask AS ba
+        INNER JOIN bss_ask_history bah
+        ON  bah.ask_id = ba.id
+        LEFT JOIN mast_ask_category mac1
+        ON  mac1.category_id  = bah.category1
+        AND mac1.discontinued_flg = '0'
+        LEFT JOIN mast_ask_category mac2
+        ON  mac2.category_id = bah.category2
+        AND  mac2.discontinued_flg = '0'
+        LEFT JOIN sys_user su
+        ON  su.user_name   = bah.answer_user
+        LEFT join sys_dict_data sdd
+        ON  bah.status = sdd.dict_value
+        AND sdd.dict_type = 'bss_ask_status'
+        WHERE
+            ba.order_id = #{orderId}
+        and ba.farmer_id = #{farmerId}
+        ORDER BY ba.ask_date DESC, ba.create_time DESC, bah.seq_no desc
+    </select>
+
+ </mapper>

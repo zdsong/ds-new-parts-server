@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.MastItemMapper">
+
+   <resultMap type="MastItemVo" id="MastItemResult">
+        <result property="id" column="id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemName" column="item_name"/>
+        <result property="janCode" column="jan_code"/>
+        <result property="sumarejiItemId" column="sumareji_item_id"/>
+        <result property="sysItemCode" column="sys_item_code"/>
+        <result property="category1" column="category1"/>
+        <result property="category2" column="category2"/>
+        <result property="salesPrice" column="sales_price"/>
+        <result property="normalPrice" column="normal_price"/>
+        <result property="memberPrice" column="member_price"/>
+        <result property="shippingFlg" column="shipping_flg"/>
+        <result property="courierSizeFlg" column="courier_size_flg"/>
+        <result property="ackagingFlg" column="ackaging_flg"/>
+        <result property="handlingType1Flg" column="handling_type1_flg"/>
+        <result property="handlingType2Flg" column="handling_type2_flg"/>
+        <result property="itemPagePublicFlg" column="item_page_public_flg"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="salesFlg" column="sales_flg"/>
+        <result property="confirmFlg" column="confirm_flg"/>
+        <result property="version" column="version"/>
+    </resultMap>
+    <sql id="selectMastItem">
+        select
+          id,
+          item_id,
+          item_code,
+          item_name,
+          jan_code,
+          sumareji_item_id,
+          sys_item_code,
+          category1,
+          category2,
+          sales_price,
+          normal_price,
+          member_price,
+          shipping_flg,
+          courier_size_flg,
+          ackaging_flg,
+          handling_type1_flg,
+          handling_type2_flg,
+          item_page_public_flg,
+          farmer_id,
+          sales_flg,
+          confirm_flg,
+          invalid_valid_flg,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_item
+    </sql>
+    <select id="selectList" parameterType="MastItemSearchBo" resultMap="MastItemResult">
+        <include refid="selectMastItem"/>
+        <where>
+            farmer_id = #{farmerId}
+
+            <if test="itemId != null  and itemId != ''">
+                and item_id = #{itemId}
+            </if>
+            <if test="itemCode != null  and itemCode != ''">
+                and item_code like concat('%', #{itemCode} , '%')
+            </if>
+            <if test="itemName != null  and itemName != ''">
+                and item_name like concat('%', #{itemName} , '%')
+            </if>
+            <if test="janCode != null  and janCode != ''">
+                and jan_code like concat('%', #{janCode} , '%')
+            </if>
+            <if test="sumarejiItemId != null  and sumarejiItemId != ''">
+                and sumareji_item_id like concat('%', #{sumarejiItemId} , '%')
+            </if>
+            <if test="sysItemCode != null  and sysItemCode != ''">
+                and sys_item_code = #{sysItemCode}
+            </if>
+            <if test="category1 != null  and category1 != ''">
+                and category1 = #{category1}
+            </if>
+            <if test="category2 != null  and category2 != ''">
+                and category2 = #{category2}
+            </if>
+            <if test="salesFlg != null  and salesFlg != ''">
+                and sales_flg = #{salesFlg}
+            </if>
+            <if test="confirmFlg != null  and confirmFlg != ''">
+                and confirm_flg = #{confirmFlg}
+            </if>
+        </where>
+
+        ORDER BY item_id
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastItemResult">
+        <include refid="selectMastItem"/>
+        where id = #{id}
+        AND farmer_id = #{farmerId}
+    </select>
+
+    <select id="selectByItemId" parameterType="String"  resultMap="MastItemResult">
+        <include refid="selectMastItem"/>
+        where item_id = #{itemId}
+        AND farmer_id = #{farmerId}
+    </select>
+
+    <select id="selectItemImageList" parameterType="String" resultType="MastItemImageVo">
+        select
+            id,
+            item_id as itemId,
+            image_url as imageUrl,
+            image_other_url as imageOtherUrl,
+            image_list_url as imageListUrl
+        FROM
+            mast_item_image
+        WHERE
+            item_id = #{itemId}
+
+    </select>
+
+    <delete id="deleteItemImageByItemId" parameterType="String">
+        DELETE
+        FROM
+            mast_item_image
+        WHERE
+            item_id = #{itemId}
+
+    </delete>
+
+ </mapper>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssAskBaseMapper">
+   <resultMap type="BssAskEntity" id="BssAskEntityResult">
+        <result property="id" column="id"/>
+        <result property="askNo" column="ask_no"/>
+        <result property="askDate" column="ask_date"/>
+        <result property="askWay" column="ask_way"/>
+        <result property="askType" column="ask_type"/>
+        <result property="category1" column="category1"/>
+        <result property="category2" column="category2"/>
+        <result property="status" column="status"/>
+        <result property="askAnswerRemark" column="ask_answer_remark"/>
+        <result property="answer" column="answer"/>
+        <result property="askUser" column="ask_user"/>
+        <result property="askUserType" column="ask_user_type"/>
+        <result property="finalAnswerUser" column="final_answer_user"/>
+        <result property="finalUpdateTime" column="final_update_time"/>
+        <result property="sysCustomerId" column="sys_customer_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="userCd" column="user_cd"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssAsk">
+        select
+          id,
+          ask_no,
+          ask_date,
+          ask_way,
+          ask_type,
+          category1,
+          category2,
+          status,
+          ask_answer_remark,
+          answer,
+          ask_user,
+          ask_user_type,
+          final_answer_user,
+          final_update_time,
+          sys_customer_id,
+          customer_id,
+          phone_number,
+          farmer_id,
+          order_id,
+          user_cd,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_ask
+    </sql>
+    <select id="selectList" parameterType="BssAskEntity" resultMap="BssAskEntityResult">
+        <include refid="selectBssAsk"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="askNo != null  and askNo != ''">
+                and ask_no = #{askNo}
+            </if>
+            <if test="askDate != null  and askDate != ''">
+                and ask_date = #{askDate}
+            </if>
+            <if test="askWay != null  and askWay != ''">
+                and ask_way = #{askWay}
+            </if>
+            <if test="askType != null  and askType != ''">
+                and ask_type = #{askType}
+            </if>
+            <if test="category1 != null  and category1 != ''">
+                and category1 = #{category1}
+            </if>
+            <if test="category2 != null  and category2 != ''">
+                and category2 = #{category2}
+            </if>
+            <if test="status != null  and status != ''">
+                and status = #{status}
+            </if>
+            <if test="askAnswerRemark != null ">
+                and ask_answer_remark = #{askAnswerRemark}
+            </if>
+            <if test="answer != null ">
+                and answer = #{answer}
+            </if>
+            <if test="askUser != null  and askUser != ''">
+                and ask_user = #{askUser}
+            </if>
+            <if test="askUserType != null  and askUserType != ''">
+                and ask_user_type = #{askUserType}
+            </if>
+            <if test="finalAnswerUser != null  and finalAnswerUser != ''">
+                and final_answer_user = #{finalAnswerUser}
+            </if>
+            <if test="finalUpdateTime != null  and finalUpdateTime != ''">
+                and final_update_time = #{finalUpdateTime}
+            </if>
+            <if test="sysCustomerId != null  and sysCustomerId != ''">
+                and sys_customer_id = #{sysCustomerId}
+            </if>
+            <if test="customerId != null  and customerId != ''">
+                and customer_id = #{customerId}
+            </if>
+            <if test="phoneNumber != null  and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="orderId != null  and orderId != ''">
+                and order_id = #{orderId}
+            </if>
+            <if test="userCd != null  and userCd != ''">
+                and user_cd = #{userCd}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssAskEntityResult">
+        <include refid="selectBssAsk"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssAskEntity">
+        insert into bss_ask
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="askNo != null">
+                ask_no,
+            </if>
+            <if test="askDate != null">
+                ask_date,
+            </if>
+            <if test="askWay != null">
+                ask_way,
+            </if>
+            <if test="askType != null">
+                ask_type,
+            </if>
+            <if test="category1 != null">
+                category1,
+            </if>
+            <if test="category2 != null">
+                category2,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="askAnswerRemark != null">
+                ask_answer_remark,
+            </if>
+            <if test="answer != null">
+                answer,
+            </if>
+            <if test="askUser != null">
+                ask_user,
+            </if>
+            <if test="askUserType != null">
+                ask_user_type,
+            </if>
+            <if test="finalAnswerUser != null">
+                final_answer_user,
+            </if>
+            <if test="finalUpdateTime != null">
+                final_update_time,
+            </if>
+            <if test="sysCustomerId != null">
+                sys_customer_id,
+            </if>
+            <if test="customerId != null">
+                customer_id,
+            </if>
+            <if test="phoneNumber != null">
+                phone_number,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="userCd != null">
+                user_cd,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="askNo != null">
+                #{askNo},
+            </if>
+            <if test="askDate != null">
+                #{askDate},
+            </if>
+            <if test="askWay != null">
+                #{askWay},
+            </if>
+            <if test="askType != null">
+                #{askType},
+            </if>
+            <if test="category1 != null">
+                #{category1},
+            </if>
+            <if test="category2 != null">
+                #{category2},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="askAnswerRemark != null">
+                #{askAnswerRemark},
+            </if>
+            <if test="answer != null">
+                #{answer},
+            </if>
+            <if test="askUser != null">
+                #{askUser},
+            </if>
+            <if test="askUserType != null">
+                #{askUserType},
+            </if>
+            <if test="finalAnswerUser != null">
+                #{finalAnswerUser},
+            </if>
+            <if test="finalUpdateTime != null">
+                #{finalUpdateTime},
+            </if>
+            <if test="sysCustomerId != null">
+                #{sysCustomerId},
+            </if>
+            <if test="customerId != null">
+                #{customerId},
+            </if>
+            <if test="phoneNumber != null">
+                #{phoneNumber},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="userCd != null">
+                #{userCd},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssAskEntity">
+        update bss_ask
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="askNo != null">
+                ask_no = #{askNo},
+            </if>
+            <if test="askDate != null">
+                ask_date = #{askDate},
+            </if>
+            <if test="askWay != null">
+                ask_way = #{askWay},
+            </if>
+            <if test="askType != null">
+                ask_type = #{askType},
+            </if>
+            <if test="category1 != null">
+                category1 = #{category1},
+            </if>
+            <if test="category2 != null">
+                category2 = #{category2},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+                ask_answer_remark = #{askAnswerRemark},
+                answer = #{answer},
+            <if test="askUser != null">
+                ask_user = #{askUser},
+            </if>
+            <if test="askUserType != null">
+                ask_user_type = #{askUserType},
+            </if>
+            <if test="finalAnswerUser != null">
+                final_answer_user = #{finalAnswerUser},
+            </if>
+            <if test="finalUpdateTime != null">
+                final_update_time = #{finalUpdateTime},
+            </if>
+            <if test="sysCustomerId != null">
+                sys_customer_id = #{sysCustomerId},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="userCd != null">
+                user_cd = #{userCd},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_ask
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

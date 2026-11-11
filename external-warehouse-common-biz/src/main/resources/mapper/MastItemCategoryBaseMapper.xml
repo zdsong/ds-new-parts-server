@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.MastItemCategoryBaseMapper">
+   <resultMap type="MastItemCategoryEntity" id="MastItemCategoryEntityResult">
+        <result property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="parentCategoryId" column="parent_category_id"/>
+        <result property="categoryType" column="category_type"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="harvestPeriod" column="harvest_period"/>
+        <result property="confirmFlg" column="confirm_flg"/>
+        <result property="memo" column="memo"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="discontinuedFlg" column="discontinued_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMastItemCategory">
+        select
+          id,
+          category_id,
+          parent_category_id,
+          category_type,
+          category_name,
+          harvest_period,
+          confirm_flg,
+          memo,
+          farmer_id,
+          discontinued_flg,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_item_category
+    </sql>
+    <select id="selectList" parameterType="MastItemCategoryEntity" resultMap="MastItemCategoryEntityResult">
+        <include refid="selectMastItemCategory"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="categoryId != null  and categoryId != ''">
+                and category_id = #{categoryId}
+            </if>
+            <if test="parentCategoryId != null  and parentCategoryId != ''">
+                and parent_category_id = #{parentCategoryId}
+            </if>
+            <if test="categoryType != null  and categoryType != ''">
+                and category_type = #{categoryType}
+            </if>
+            <if test="categoryName != null  and categoryName != ''">
+                and category_name = #{categoryName}
+            </if>
+            <if test="harvestPeriod != null ">
+                and harvest_period = #{harvestPeriod}
+            </if>
+            <if test="confirmFlg != null  and confirmFlg != ''">
+                and confirm_flg = #{confirmFlg}
+            </if>
+            <if test="memo != null  and memo != ''">
+                and memo = #{memo}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="discontinuedFlg != null  and discontinuedFlg != ''">
+                and discontinued_flg = #{discontinuedFlg}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastItemCategoryEntityResult">
+        <include refid="selectMastItemCategory"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="MastItemCategoryEntity">
+        insert into mast_item_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="parentCategoryId != null">
+                parent_category_id,
+            </if>
+            <if test="categoryType != null">
+                category_type,
+            </if>
+            <if test="categoryName != null">
+                category_name,
+            </if>
+            <if test="harvestPeriod != null">
+                harvest_period,
+            </if>
+            <if test="confirmFlg != null">
+                confirm_flg,
+            </if>
+            <if test="memo != null">
+                memo,
+            </if>
+            <if test="farmerId != null">
+                farmer_id
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId},
+            </if>
+            <if test="parentCategoryId != null">
+                #{parentCategoryId},
+            </if>
+            <if test="categoryType != null">
+                #{categoryType},
+            </if>
+            <if test="categoryName != null">
+                #{categoryName},
+            </if>
+            <if test="harvestPeriod != null">
+                #{harvestPeriod},
+            </if>
+            <if test="confirmFlg != null">
+                #{confirmFlg},
+            </if>
+            <if test="memo != null">
+                #{memo},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="discontinuedFlg != null">
+                #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="MastItemCategoryEntity">
+        update mast_item_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="parentCategoryId != null">
+                parent_category_id = #{parentCategoryId},
+            </if>
+            <if test="categoryType != null">
+                category_type = #{categoryType},
+            </if>
+            <if test="categoryName != null">
+                category_name = #{categoryName},
+            </if>
+            <if test="harvestPeriod != null">
+                harvest_period = #{harvestPeriod},
+            </if>
+            <if test="confirmFlg != null">
+                confirm_flg = #{confirmFlg},
+            </if>
+            <if test="memo != null">
+                memo = #{memo},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg = #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+
+        </trim>
+        where
+        id = #{id}
+
+        and version = #{version}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        mast_item_category
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

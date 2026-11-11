@@ -1,0 +1,125 @@
+# Project Config
+external-warehouse:
+  # name
+  name: CRM-Quartz
+  # version
+  version: 1.0.0
+  # copyrightyear year
+  copyrightYear: 2026
+  # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
+  profile: ./temp
+  # ipアドレス取得スイッチ
+  addressEnabled: false
+  # 検証コードタイプmath数値計算char文字検証
+  captchaType: math
+  # cache: redis / db
+  cache: db
+  # mail Service: awsSes / javamail
+  mailSendType: awsSes
+
+# 開発環境の構成
+server:
+  # サーバのHTTPポート
+  port: 9680
+
+# Spring
+spring:
+  datasource:
+    url: jdbc:postgresql://agrisup-prod-rds.c1weq402sa7s.ap-northeast-1.rds.amazonaws.com:5432/farm_prod?currentSchema=farm
+    username: farm
+    password: XarNhdA,+JM3
+  data:
+    # redis
+    redis:
+      # HOST
+      host:
+      # ポート、デフォルトは6379
+      port:
+      # データベースインデックス
+      database: 1
+      # パスワード
+      password:
+      # 接続タイムアウト時間
+      timeout: 10s
+      lettuce:
+        pool:
+          # 接続プール内の最小アイドル接続
+          min-idle: 0
+          # 接続プール内の最大アイドル接続
+          max-idle: 8
+          # 接続プールのデータベース接続の最大数
+          max-active: 8
+          # 接続プールの最大ブロック待ち時間（制限なしの負の値を使用）
+          max-wait: -1ms
+
+# ログ
+logging:
+  file:
+    path: ./logs/external-warehouse-quartz
+  level:
+    jp.newpart: info
+    org.springframework: warn
+
+# SFTP関連設定
+sftp:
+  # SFTPサーバーホストアドレス
+  host: noukasystem.com
+  # SFTPサーバーポート
+  port: 22
+  # ユーザー名
+  username: sftp-partner1
+  # パスワード
+  password:
+  # 秘密鍵パス
+  privateKeyPath: /home/dairen/.ssh/sftp-partner1@noukasystem.com
+  # ファイルパス
+  sftp-zip-path: download/
+  # ローカルファイルパステンプレート
+  local-path-template: ./temp/
+  # 接続タイムアウト（ミリ秒）
+  connect-timeout: 10000
+  # セッションタイムアウト（ミリ秒）
+  session-timeout: 30000
+
+# バッチメール設定
+batchEmail:
+  # 受信者メールアドレス
+  toEmail: ytc-ymgtagr-its-ml@double-std.com
+  # 抄送者メールアドレス
+  ccEmail: null
+  # 抄送者メールアドレス
+  bccEmail: yamagata-farm@nextosd.com
+  # メールタイトル
+  emailTitle: "【本番】"
+
+# AWS
+aws:
+  # SESメール設定 IAM
+  ses:
+    # AWSリージョン
+    region: ap-northeast-1
+    # AWSアクセスキーID
+    access-key-id:
+    # AWSシークレットアクセスキー
+    secret-access-key:
+    # 送信者メールアドレス
+    from-email: do-not-reply@yamagata-agrisup.double-std.com
+    # メールエンコーディング
+    charset: UTF-8
+    # LocalStackエンドポイントURL
+    endpoint-url:
+
+  # AWS S3ファイルストレージ設定
+  s3:
+    # AWSリージョン (SESと一致させる)
+    region: ap-northeast-1
+    # AWSアクセスキーID
+    access-key-id:
+    # AWSシークレットアクセスキー
+    secret-access-key:
+    # バケット名
+    bucket-name: prod-yamagata-agrisup
+    # ファイル保存パスプレフィックス
+    path-prefix: uploads/
+    # ファイルアクセスURLプレフィックス (ファイルアクセスリンクの生成に使用)
+    url-prefix:

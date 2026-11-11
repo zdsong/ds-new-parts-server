@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssUserCertificationBaseMapper">
+   <resultMap type="BssUserCertificationEntity" id="BssUserCertificationEntityResult">
+        <result property="id" column="id"/>
+        <result property="certificationFlg" column="certification_flg"/>
+        <result property="mailAddress" column="mail_address"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="type" column="type"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="certificationCode" column="certification_code"/>
+        <result property="discontinuedFlg" column="discontinued_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssUserCertification">
+        select
+          id,
+          certification_flg,
+          mail_address,
+          phone_number,
+          farmer_id,
+          type,
+          start_time,
+          end_time,
+          certification_code,
+          discontinued_flg,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_user_certification
+    </sql>
+    <select id="selectList" parameterType="BssUserCertificationEntity" resultMap="BssUserCertificationEntityResult">
+        <include refid="selectBssUserCertification"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="certificationFlg != null  and certificationFlg != ''">
+                and certification_flg = #{certificationFlg}
+            </if>
+            <if test="mailAddress != null  and mailAddress != ''">
+                and mail_address = #{mailAddress}
+            </if>
+            <if test="phoneNumber != null  and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="type != null  and type != ''">
+                and type = #{type}
+            </if>
+            <if test="startTime != null  and startTime != ''">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                and end_time = #{endTime}
+            </if>
+            <if test="certificationCode != null  and certificationCode != ''">
+                and certification_code = #{certificationCode}
+            </if>
+            <if test="discontinuedFlg != null  and discontinuedFlg != ''">
+                and discontinued_flg = #{discontinuedFlg}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssUserCertificationEntityResult">
+        <include refid="selectBssUserCertification"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssUserCertificationEntity">
+        insert into bss_user_certification
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="certificationFlg != null">
+                certification_flg,
+            </if>
+            <if test="mailAddress != null">
+                mail_address,
+            </if>
+            <if test="phoneNumber != null">
+                phone_number,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="certificationCode != null">
+                certification_code,
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="certificationFlg != null">
+                #{certificationFlg},
+            </if>
+            <if test="mailAddress != null">
+                #{mailAddress},
+            </if>
+            <if test="phoneNumber != null">
+                #{phoneNumber},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="certificationCode != null">
+                #{certificationCode},
+            </if>
+            <if test="discontinuedFlg != null">
+                #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssUserCertificationEntity">
+        update bss_user_certification
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="certificationFlg != null">
+                certification_flg = #{certificationFlg},
+            </if>
+            <if test="mailAddress != null">
+                mail_address = #{mailAddress},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="certificationCode != null">
+                certification_code = #{certificationCode},
+            </if>
+            <if test="discontinuedFlg != null">
+                discontinued_flg = #{discontinuedFlg},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+
+        </trim>
+        where
+        id = #{id}
+
+        and version = #{version}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_user_certification
+        where
+        id = #{id}
+
+    </delete>
+
+    <!--廃止-->
+    <update id="deleteLogicByFarmId" parameterType="BssUserCertificationEntity">
+        update
+            bss_user_certification
+        set
+        discontinued_flg = '1',
+        version = version + 1,
+
+        <if test="updateBy != null">
+            update_by = #{updateBy}
+        </if>
+        <if test="updateTime != null">
+            ,update_time = #{updateTime}
+        </if>
+        <if test="updatePgId != null">
+            ,update_pg_id = #{updatePgId}
+        </if>
+
+        <where>
+            farmer_id = #{farmerId}
+        and discontinued_flg = '0'
+        </where>
+    </update>
+
+    <!--廃止-->
+    <update id="deleteLogicById" parameterType="BssUserCertificationEntity">
+        update
+        bss_user_certification
+        set
+        discontinued_flg = '1',
+        version = version + 1,
+
+        <if test="updateBy != null">
+            update_by = #{updateBy}
+        </if>
+        <if test="updateTime != null">
+            ,update_time = #{updateTime}
+        </if>
+        <if test="updatePgId != null">
+            ,update_pg_id = #{updatePgId}
+        </if>
+
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+ </mapper>

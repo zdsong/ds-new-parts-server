@@ -1,0 +1,77 @@
+# Project Config
+external-warehouse:
+  # name
+  name: external-warehouse
+  # version
+  version: 1.0.0
+  # copyrightyear year
+  copyrightYear: 2026
+  # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
+  profile: ./temp
+  # ipアドレス取得スイッチ
+  addressEnabled: false
+  # 検証コードタイプmath数値計算char文字検証
+  captchaType: math
+  # mail Service: awsSes / javamail
+  mailSendType: javamail
+
+# 開発環境の構成
+server:
+  # サーバのHTTPポート、デフォルトは8080
+  port: 9181
+
+# ログ
+logging:
+  file:
+    path: ./logs/external-warehouse-quartz/external-warehouse
+  level:
+    jp.newpart: error
+    org.springframework: warn
+
+# Spring
+spring:
+  datasource:
+    url: jdbc:postgresql://8.147.128.107:5432/stg1?currentSchema=farm
+    username: postgres
+    password: postgres123$
+
+  mail:
+    host: smtp.aliyun.com
+    port: 25
+    from-email: osddev@aliyun.com
+    bcc-email:
+    username: osddev@aliyun.com
+    password: abc123$
+
+# AWS SESメール設定
+aws:
+  ses:
+    # AWSリージョン (例: us-east-1, ap-southeast-1)
+    region: us-east-1
+    # AWSアクセスキーID (LocalStackは任意の値を使用)
+    access-key-id: test
+    # AWSシークレットアクセスキー (LocalStackは任意の値を使用)
+    secret-access-key: test
+    # 送信者メールアドレス (LocalStackでは任意のメールアドレスが使用可能)
+    from-email: sender@nextosd.com
+    # メールエンコーディング
+    charset: UTF-8
+    # LocalStackエンドポイントURL
+    endpoint-url: http://172.14.3.142:4566
+
+  # AWS S3ファイルストレージ設定
+  s3:
+    # AWSリージョン (SESと一致させる)
+    region: us-east-1
+    # AWSアクセスキーID (LocalStackは任意の値を使用)
+    access-key-id: test
+    # AWSシークレットアクセスキー (LocalStackは任意の値を使用)
+    secret-access-key: test
+    # バケット名 (LocalStackでは任意の名前が使用可能)
+    bucket-name: my-unencrypted-bucket
+    # ファイル保存パスプレフィックス
+    path-prefix: uploads/
+    # ファイルアクセスURLプレフィックス (ファイルアクセスリンクの生成に使用)
+    url-prefix: http://172.14.3.142:4566/my-unencrypted-bucket/
+    # LocalStackエンドポイントURL
+    endpoint-url: http://172.14.3.142:4566

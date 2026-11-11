@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssOrderDeliveryItemBaseMapper">
+   <resultMap type="BssOrderDeliveryItemEntity" id="BssOrderDeliveryItemEntityResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="deliveryId" column="delivery_id"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="sysItemCode" column="sys_item_code"/>
+        <result property="itemCd" column="item_cd"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemPrice" column="item_price"/>
+        <result property="itemPriceTax" column="item_price_tax"/>
+        <result property="itemSalesTax" column="item_sales_tax"/>
+        <result property="qty" column="qty"/>
+        <result property="subtotal" column="subtotal"/>
+        <result property="subtotalTax" column="subtotal_tax"/>
+        <result property="variationName" column="variation_name"/>
+        <result property="memo" column="memo"/>
+        <result property="recvLocNm" column="recv_loc_nm"/>
+        <result property="recvPostCd" column="recv_post_cd"/>
+        <result property="recvAddr" column="recv_addr"/>
+        <result property="recvTelNo" column="recv_tel_no"/>
+        <result property="shippingFlg" column="shipping_flg"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="itemAttr" column="item_attr"/>
+        <result property="shipDate" column="ship_date"/>
+        <result property="wrapFee" column="wrap_fee"/>
+        <result property="wrapDetails" column="wrap_details"/>
+        <result property="amtAdjTitle" column="amt_adj_title"/>
+        <result property="amtAdjustment" column="amt_adjustment"/>
+        <result property="taxRateCategory" column="tax_rate_category"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="discSubStdTax" column="disc_sub_std_tax"/>
+        <result property="discSubRedTax" column="disc_sub_red_tax"/>
+        <result property="discSubTaxExempt" column="disc_sub_tax_exempt"/>
+        <result property="totalStdTax" column="total_std_tax"/>
+        <result property="totalIncStdTax" column="total_inc_std_tax"/>
+        <result property="totalRedTax" column="total_red_tax"/>
+        <result property="totalIncRedTax" column="total_inc_red_tax"/>
+        <result property="totalTaxExempt" column="total_tax_exempt"/>
+        <result property="rsv1" column="rsv_1"/>
+        <result property="rsv2" column="rsv_2"/>
+        <result property="rsv3" column="rsv_3"/>
+        <result property="rsv4" column="rsv_4"/>
+        <result property="rsv5" column="rsv_5"/>
+        <result property="rsv6" column="rsv_6"/>
+        <result property="rsv7" column="rsv_7"/>
+        <result property="rsv8" column="rsv_8"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssOrderDeliveryItem">
+        select
+          id,
+          order_id,
+          delivery_id,
+          farmer_id,
+          sys_item_code,
+          item_cd,
+          item_name,
+          item_price,
+          item_price_tax,
+          item_sales_tax,
+          qty,
+          subtotal,
+          subtotal_tax,
+          variation_name,
+          memo,
+          recv_loc_nm,
+          recv_post_cd,
+          recv_addr,
+          recv_tel_no,
+          shipping_flg,
+          delivery_type,
+          item_attr,
+          ship_date,
+          wrap_fee,
+          wrap_details,
+          amt_adj_title,
+          amt_adjustment,
+          tax_rate_category,
+          tax_rate,
+          disc_sub_std_tax,
+          disc_sub_red_tax,
+          disc_sub_tax_exempt,
+          total_std_tax,
+          total_inc_std_tax,
+          total_red_tax,
+          total_inc_red_tax,
+          total_tax_exempt,
+          rsv_1,
+          rsv_2,
+          rsv_3,
+          rsv_4,
+          rsv_5,
+          rsv_6,
+          rsv_7,
+          rsv_8,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_order_delivery_item
+    </sql>
+    <select id="selectList" parameterType="BssOrderDeliveryItemEntity" resultMap="BssOrderDeliveryItemEntityResult">
+        <include refid="selectBssOrderDeliveryItem"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="orderId != null  and orderId != ''">
+                and order_id = #{orderId}
+            </if>
+            <if test="deliveryId != null  and deliveryId != ''">
+                and delivery_id = #{deliveryId}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="sysItemCode != null  and sysItemCode != ''">
+                and sys_item_code = #{sysItemCode}
+            </if>
+            <if test="itemCd != null  and itemCd != ''">
+                and item_cd = #{itemCd}
+            </if>
+            <if test="itemName != null  and itemName != ''">
+                and item_name = #{itemName}
+            </if>
+            <if test="itemPrice != null ">
+                and item_price = #{itemPrice}
+            </if>
+            <if test="itemPriceTax != null ">
+                and item_price_tax = #{itemPriceTax}
+            </if>
+            <if test="itemSalesTax != null ">
+                and item_sales_tax = #{itemSalesTax}
+            </if>
+            <if test="qty != null ">
+                and qty = #{qty}
+            </if>
+            <if test="subtotal != null ">
+                and subtotal = #{subtotal}
+            </if>
+            <if test="subtotalTax != null ">
+                and subtotal_tax = #{subtotalTax}
+            </if>
+            <if test="variationName != null  and variationName != ''">
+                and variation_name = #{variationName}
+            </if>
+            <if test="memo != null  and memo != ''">
+                and memo = #{memo}
+            </if>
+            <if test="recvLocNm != null  and recvLocNm != ''">
+                and recv_loc_nm = #{recvLocNm}
+            </if>
+            <if test="recvPostCd != null  and recvPostCd != ''">
+                and recv_post_cd = #{recvPostCd}
+            </if>
+            <if test="recvAddr != null  and recvAddr != ''">
+                and recv_addr = #{recvAddr}
+            </if>
+            <if test="recvTelNo != null  and recvTelNo != ''">
+                and recv_tel_no = #{recvTelNo}
+            </if>
+            <if test="shippingFlg != null  and shippingFlg != ''">
+                and shipping_flg = #{shippingFlg}
+            </if>
+            <if test="deliveryType != null  and deliveryType != ''">
+                and delivery_type = #{deliveryType}
+            </if>
+            <if test="itemAttr != null  and itemAttr != ''">
+                and item_attr = #{itemAttr}
+            </if>
+            <if test="shipDate != null  and shipDate != ''">
+                and ship_date = #{shipDate}
+            </if>
+            <if test="wrapFee != null ">
+                and wrap_fee = #{wrapFee}
+            </if>
+            <if test="wrapDetails != null  and wrapDetails != ''">
+                and wrap_details = #{wrapDetails}
+            </if>
+            <if test="amtAdjTitle != null  and amtAdjTitle != ''">
+                and amt_adj_title = #{amtAdjTitle}
+            </if>
+            <if test="amtAdjustment != null ">
+                and amt_adjustment = #{amtAdjustment}
+            </if>
+            <if test="taxRateCategory != null  and taxRateCategory != ''">
+                and tax_rate_category = #{taxRateCategory}
+            </if>
+            <if test="taxRate != null ">
+                and tax_rate = #{taxRate}
+            </if>
+            <if test="discSubStdTax != null ">
+                and disc_sub_std_tax = #{discSubStdTax}
+            </if>
+            <if test="discSubRedTax != null ">
+                and disc_sub_red_tax = #{discSubRedTax}
+            </if>
+            <if test="discSubTaxExempt != null ">
+                and disc_sub_tax_exempt = #{discSubTaxExempt}
+            </if>
+            <if test="totalStdTax != null ">
+                and total_std_tax = #{totalStdTax}
+            </if>
+            <if test="totalIncStdTax != null ">
+                and total_inc_std_tax = #{totalIncStdTax}
+            </if>
+            <if test="totalRedTax != null ">
+                and total_red_tax = #{totalRedTax}
+            </if>
+            <if test="totalIncRedTax != null ">
+                and total_inc_red_tax = #{totalIncRedTax}
+            </if>
+            <if test="totalTaxExempt != null ">
+                and total_tax_exempt = #{totalTaxExempt}
+            </if>
+            <if test="rsv1 != null  and rsv1 != ''">
+                and rsv_1 = #{rsv1}
+            </if>
+            <if test="rsv2 != null  and rsv2 != ''">
+                and rsv_2 = #{rsv2}
+            </if>
+            <if test="rsv3 != null  and rsv3 != ''">
+                and rsv_3 = #{rsv3}
+            </if>
+            <if test="rsv4 != null  and rsv4 != ''">
+                and rsv_4 = #{rsv4}
+            </if>
+            <if test="rsv5 != null  and rsv5 != ''">
+                and rsv_5 = #{rsv5}
+            </if>
+            <if test="rsv6 != null  and rsv6 != ''">
+                and rsv_6 = #{rsv6}
+            </if>
+            <if test="rsv7 != null  and rsv7 != ''">
+                and rsv_7 = #{rsv7}
+            </if>
+            <if test="rsv8 != null  and rsv8 != ''">
+                and rsv_8 = #{rsv8}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssOrderDeliveryItemEntityResult">
+        <include refid="selectBssOrderDeliveryItem"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssOrderDeliveryItemEntity">
+        insert into bss_order_delivery_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="deliveryId != null">
+                delivery_id,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="sysItemCode != null">
+                sys_item_code,
+            </if>
+            <if test="itemCd != null">
+                item_cd,
+            </if>
+            <if test="itemName != null">
+                item_name,
+            </if>
+            <if test="itemPrice != null">
+                item_price,
+            </if>
+            <if test="itemPriceTax != null">
+                item_price_tax,
+            </if>
+            <if test="itemSalesTax != null">
+                item_sales_tax,
+            </if>
+            <if test="qty != null">
+                qty,
+            </if>
+            <if test="subtotal != null">
+                subtotal,
+            </if>
+            <if test="subtotalTax != null">
+                subtotal_tax,
+            </if>
+            <if test="variationName != null">
+                variation_name,
+            </if>
+            <if test="memo != null">
+                memo,
+            </if>
+            <if test="recvLocNm != null">
+                recv_loc_nm,
+            </if>
+            <if test="recvPostCd != null">
+                recv_post_cd,
+            </if>
+            <if test="recvAddr != null">
+                recv_addr,
+            </if>
+            <if test="recvTelNo != null">
+                recv_tel_no,
+            </if>
+            <if test="shippingFlg != null">
+                shipping_flg,
+            </if>
+            <if test="deliveryType != null">
+                delivery_type,
+            </if>
+            <if test="itemAttr != null">
+                item_attr,
+            </if>
+            <if test="shipDate != null">
+                ship_date,
+            </if>
+            <if test="wrapFee != null">
+                wrap_fee,
+            </if>
+            <if test="wrapDetails != null">
+                wrap_details,
+            </if>
+            <if test="amtAdjTitle != null">
+                amt_adj_title,
+            </if>
+            <if test="amtAdjustment != null">
+                amt_adjustment,
+            </if>
+            <if test="taxRateCategory != null">
+                tax_rate_category,
+            </if>
+            <if test="taxRate != null">
+                tax_rate,
+            </if>
+            <if test="discSubStdTax != null">
+                disc_sub_std_tax,
+            </if>
+            <if test="discSubRedTax != null">
+                disc_sub_red_tax,
+            </if>
+            <if test="discSubTaxExempt != null">
+                disc_sub_tax_exempt,
+            </if>
+            <if test="totalStdTax != null">
+                total_std_tax,
+            </if>
+            <if test="totalIncStdTax != null">
+                total_inc_std_tax,
+            </if>
+            <if test="totalRedTax != null">
+                total_red_tax,
+            </if>
+            <if test="totalIncRedTax != null">
+                total_inc_red_tax,
+            </if>
+            <if test="totalTaxExempt != null">
+                total_tax_exempt,
+            </if>
+            <if test="rsv1 != null">
+                rsv_1,
+            </if>
+            <if test="rsv2 != null">
+                rsv_2,
+            </if>
+            <if test="rsv3 != null">
+                rsv_3,
+            </if>
+            <if test="rsv4 != null">
+                rsv_4,
+            </if>
+            <if test="rsv5 != null">
+                rsv_5,
+            </if>
+            <if test="rsv6 != null">
+                rsv_6,
+            </if>
+            <if test="rsv7 != null">
+                rsv_7,
+            </if>
+            <if test="rsv8 != null">
+                rsv_8,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="deliveryId != null">
+                #{deliveryId},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="sysItemCode != null">
+                #{sysItemCode},
+            </if>
+            <if test="itemCd != null">
+                #{itemCd},
+            </if>
+            <if test="itemName != null">
+                #{itemName},
+            </if>
+            <if test="itemPrice != null">
+                #{itemPrice},
+            </if>
+            <if test="itemPriceTax != null">
+                #{itemPriceTax},
+            </if>
+            <if test="itemSalesTax != null">
+                #{itemSalesTax},
+            </if>
+            <if test="qty != null">
+                #{qty},
+            </if>
+            <if test="subtotal != null">
+                #{subtotal},
+            </if>
+            <if test="subtotalTax != null">
+                #{subtotalTax},
+            </if>
+            <if test="variationName != null">
+                #{variationName},
+            </if>
+            <if test="memo != null">
+                #{memo},
+            </if>
+            <if test="recvLocNm != null">
+                #{recvLocNm},
+            </if>
+            <if test="recvPostCd != null">
+                #{recvPostCd},
+            </if>
+            <if test="recvAddr != null">
+                #{recvAddr},
+            </if>
+            <if test="recvTelNo != null">
+                #{recvTelNo},
+            </if>
+            <if test="shippingFlg != null">
+                #{shippingFlg},
+            </if>
+            <if test="deliveryType != null">
+                #{deliveryType},
+            </if>
+            <if test="itemAttr != null">
+                #{itemAttr},
+            </if>
+            <if test="shipDate != null">
+                #{shipDate},
+            </if>
+            <if test="wrapFee != null">
+                #{wrapFee},
+            </if>
+            <if test="wrapDetails != null">
+                #{wrapDetails},
+            </if>
+            <if test="amtAdjTitle != null">
+                #{amtAdjTitle},
+            </if>
+            <if test="amtAdjustment != null">
+                #{amtAdjustment},
+            </if>
+            <if test="taxRateCategory != null">
+                #{taxRateCategory},
+            </if>
+            <if test="taxRate != null">
+                #{taxRate},
+            </if>
+            <if test="discSubStdTax != null">
+                #{discSubStdTax},
+            </if>
+            <if test="discSubRedTax != null">
+                #{discSubRedTax},
+            </if>
+            <if test="discSubTaxExempt != null">
+                #{discSubTaxExempt},
+            </if>
+            <if test="totalStdTax != null">
+                #{totalStdTax},
+            </if>
+            <if test="totalIncStdTax != null">
+                #{totalIncStdTax},
+            </if>
+            <if test="totalRedTax != null">
+                #{totalRedTax},
+            </if>
+            <if test="totalIncRedTax != null">
+                #{totalIncRedTax},
+            </if>
+            <if test="totalTaxExempt != null">
+                #{totalTaxExempt},
+            </if>
+            <if test="rsv1 != null">
+                #{rsv1},
+            </if>
+            <if test="rsv2 != null">
+                #{rsv2},
+            </if>
+            <if test="rsv3 != null">
+                #{rsv3},
+            </if>
+            <if test="rsv4 != null">
+                #{rsv4},
+            </if>
+            <if test="rsv5 != null">
+                #{rsv5},
+            </if>
+            <if test="rsv6 != null">
+                #{rsv6},
+            </if>
+            <if test="rsv7 != null">
+                #{rsv7},
+            </if>
+            <if test="rsv8 != null">
+                #{rsv8},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssOrderDeliveryItemEntity">
+        update bss_order_delivery_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="deliveryId != null">
+                delivery_id = #{deliveryId},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="sysItemCode != null">
+                sys_item_code = #{sysItemCode},
+            </if>
+            <if test="itemCd != null">
+                item_cd = #{itemCd},
+            </if>
+            <if test="itemName != null">
+                item_name = #{itemName},
+            </if>
+                item_price = #{itemPrice},
+                item_price_tax = #{itemPriceTax},
+                item_sales_tax = #{itemSalesTax},
+                qty = #{qty},
+                subtotal = #{subtotal},
+                subtotal_tax = #{subtotalTax},
+            <if test="variationName != null">
+                variation_name = #{variationName},
+            </if>
+            <if test="memo != null">
+                memo = #{memo},
+            </if>
+            <if test="recvLocNm != null">
+                recv_loc_nm = #{recvLocNm},
+            </if>
+            <if test="recvPostCd != null">
+                recv_post_cd = #{recvPostCd},
+            </if>
+            <if test="recvAddr != null">
+                recv_addr = #{recvAddr},
+            </if>
+            <if test="recvTelNo != null">
+                recv_tel_no = #{recvTelNo},
+            </if>
+            <if test="shippingFlg != null">
+                shipping_flg = #{shippingFlg},
+            </if>
+            <if test="deliveryType != null">
+                delivery_type = #{deliveryType},
+            </if>
+            <if test="itemAttr != null">
+                item_attr = #{itemAttr},
+            </if>
+            <if test="shipDate != null">
+                ship_date = #{shipDate},
+            </if>
+                wrap_fee = #{wrapFee},
+            <if test="wrapDetails != null">
+                wrap_details = #{wrapDetails},
+            </if>
+            <if test="amtAdjTitle != null">
+                amt_adj_title = #{amtAdjTitle},
+            </if>
+                amt_adjustment = #{amtAdjustment},
+            <if test="taxRateCategory != null">
+                tax_rate_category = #{taxRateCategory},
+            </if>
+                tax_rate = #{taxRate},
+                disc_sub_std_tax = #{discSubStdTax},
+                disc_sub_red_tax = #{discSubRedTax},
+                disc_sub_tax_exempt = #{discSubTaxExempt},
+                total_std_tax = #{totalStdTax},
+                total_inc_std_tax = #{totalIncStdTax},
+                total_red_tax = #{totalRedTax},
+                total_inc_red_tax = #{totalIncRedTax},
+                total_tax_exempt = #{totalTaxExempt},
+            <if test="rsv1 != null">
+                rsv_1 = #{rsv1},
+            </if>
+            <if test="rsv2 != null">
+                rsv_2 = #{rsv2},
+            </if>
+            <if test="rsv3 != null">
+                rsv_3 = #{rsv3},
+            </if>
+            <if test="rsv4 != null">
+                rsv_4 = #{rsv4},
+            </if>
+            <if test="rsv5 != null">
+                rsv_5 = #{rsv5},
+            </if>
+            <if test="rsv6 != null">
+                rsv_6 = #{rsv6},
+            </if>
+            <if test="rsv7 != null">
+                rsv_7 = #{rsv7},
+            </if>
+            <if test="rsv8 != null">
+                rsv_8 = #{rsv8},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_order_delivery_item
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

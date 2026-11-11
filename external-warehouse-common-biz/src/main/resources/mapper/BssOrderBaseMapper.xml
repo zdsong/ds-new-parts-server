@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.BssOrderBaseMapper">
+   <resultMap type="BssOrderEntity" id="BssOrderEntityResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="sysOrderId" column="sys_order_id"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="status" column="status"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="deliveryPlanDate" column="delivery_plan_date"/>
+        <result property="paymentType" column="payment_type"/>
+        <result property="paymentDate" column="payment_date"/>
+        <result property="shipPlanDate" column="ship_plan_date"/>
+        <result property="shipDate" column="ship_date"/>
+        <result property="deliveryDate" column="delivery_date"/>
+        <result property="sysCustomerId" column="sys_customer_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="firstName" column="first_name"/>
+        <result property="lastName" column="last_name"/>
+        <result property="furiganaSei" column="furigana_sei"/>
+        <result property="furiganaMei" column="furigana_mei"/>
+        <result property="kenName" column="ken_name"/>
+        <result property="cityName" column="city_name"/>
+        <result property="townName" column="town_name"/>
+        <result property="buildingEtc" column="building_etc"/>
+        <result property="companyName" column="company_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="mailAddress" column="mail_address"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="postalCode" column="postal_code"/>
+        <result property="mobile" column="mobile"/>
+        <result property="fax" column="fax"/>
+        <result property="gender" column="gender"/>
+        <result property="birth" column="birth"/>
+        <result property="memo" column="memo"/>
+        <result property="freeItem1" column="free_item_1"/>
+        <result property="freeItem2" column="free_item_2"/>
+        <result property="freeItem3" column="free_item_3"/>
+        <result property="address" column="address"/>
+        <result property="customerMemo" column="customer_memo"/>
+        <result property="itemTotalTax" column="item_total_tax"/>
+        <result property="itemTotal" column="item_total"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectBssOrder">
+        select
+          id,
+          order_id,
+          sys_order_id,
+          farmer_id,
+          status,
+          order_time,
+          delivery_plan_date,
+          payment_type,
+          payment_date,
+          ship_plan_date,
+          ship_date,
+          delivery_date,
+          sys_customer_id,
+          member_id,
+          customer_id,
+          customer_name,
+          first_name,
+          last_name,
+          furigana_sei,
+          furigana_mei,
+          ken_name,
+          city_name,
+          town_name,
+          building_etc,
+          company_name,
+          department_name,
+          mail_address,
+          phone_number,
+          postal_code,
+          mobile,
+          fax,
+          gender,
+          birth,
+          memo,
+          free_item_1,
+          free_item_2,
+          free_item_3,
+          address,
+          customer_memo,
+          item_total_tax,
+          item_total,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from bss_order
+    </sql>
+    <select id="selectList" parameterType="BssOrderEntity" resultMap="BssOrderEntityResult">
+        <include refid="selectBssOrder"/>
+        <where>
+            <if test="id != null  and id != ''">
+                and id = #{id}
+            </if>
+            <if test="orderId != null  and orderId != ''">
+                and order_id = #{orderId}
+            </if>
+            <if test="sysOrderId != null  and sysOrderId != ''">
+                and sys_order_id = #{sysOrderId}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="status != null  and status != ''">
+                and status = #{status}
+            </if>
+            <if test="orderTime != null  and orderTime != ''">
+                and order_time = #{orderTime}
+            </if>
+            <if test="deliveryPlanDate != null  and deliveryPlanDate != ''">
+                and delivery_plan_date = #{deliveryPlanDate}
+            </if>
+            <if test="paymentType != null  and paymentType != ''">
+                and payment_type = #{paymentType}
+            </if>
+            <if test="paymentDate != null  and paymentDate != ''">
+                and payment_date = #{paymentDate}
+            </if>
+            <if test="shipPlanDate != null  and shipPlanDate != ''">
+                and ship_plan_date = #{shipPlanDate}
+            </if>
+            <if test="shipDate != null  and shipDate != ''">
+                and ship_date = #{shipDate}
+            </if>
+            <if test="deliveryDate != null  and deliveryDate != ''">
+                and delivery_date = #{deliveryDate}
+            </if>
+            <if test="sysCustomerId != null  and sysCustomerId != ''">
+                and sys_customer_id = #{sysCustomerId}
+            </if>
+            <if test="memberId != null  and memberId != ''">
+                and member_id = #{memberId}
+            </if>
+            <if test="customerId != null  and customerId != ''">
+                and customer_id = #{customerId}
+            </if>
+            <if test="customerName != null  and customerName != ''">
+                and customer_name = #{customerName}
+            </if>
+            <if test="firstName != null  and firstName != ''">
+                and first_name = #{firstName}
+            </if>
+            <if test="lastName != null  and lastName != ''">
+                and last_name = #{lastName}
+            </if>
+            <if test="furiganaSei != null  and furiganaSei != ''">
+                and furigana_sei = #{furiganaSei}
+            </if>
+            <if test="furiganaMei != null  and furiganaMei != ''">
+                and furigana_mei = #{furiganaMei}
+            </if>
+            <if test="kenName != null  and kenName != ''">
+                and ken_name = #{kenName}
+            </if>
+            <if test="cityName != null  and cityName != ''">
+                and city_name = #{cityName}
+            </if>
+            <if test="townName != null  and townName != ''">
+                and town_name = #{townName}
+            </if>
+            <if test="buildingEtc != null  and buildingEtc != ''">
+                and building_etc = #{buildingEtc}
+            </if>
+            <if test="companyName != null  and companyName != ''">
+                and company_name = #{companyName}
+            </if>
+            <if test="departmentName != null  and departmentName != ''">
+                and department_name = #{departmentName}
+            </if>
+            <if test="mailAddress != null  and mailAddress != ''">
+                and mail_address = #{mailAddress}
+            </if>
+            <if test="phoneNumber != null  and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="postalCode != null  and postalCode != ''">
+                and postal_code = #{postalCode}
+            </if>
+            <if test="mobile != null  and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="fax != null  and fax != ''">
+                and fax = #{fax}
+            </if>
+            <if test="gender != null  and gender != ''">
+                and gender = #{gender}
+            </if>
+            <if test="birth != null  and birth != ''">
+                and birth = #{birth}
+            </if>
+            <if test="memo != null  and memo != ''">
+                and memo = #{memo}
+            </if>
+            <if test="freeItem1 != null  and freeItem1 != ''">
+                and free_item_1 = #{freeItem1}
+            </if>
+            <if test="freeItem2 != null  and freeItem2 != ''">
+                and free_item_2 = #{freeItem2}
+            </if>
+            <if test="freeItem3 != null  and freeItem3 != ''">
+                and free_item_3 = #{freeItem3}
+            </if>
+            <if test="address != null  and address != ''">
+                and address = #{address}
+            </if>
+            <if test="customerMemo != null  and customerMemo != ''">
+                and customer_memo = #{customerMemo}
+            </if>
+            <if test="itemTotalTax != null ">
+                and item_total_tax = #{itemTotalTax}
+            </if>
+            <if test="itemTotal != null ">
+                and item_total = #{itemTotal}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="BssOrderEntityResult">
+        <include refid="selectBssOrder"/>
+        where id = #{id}
+
+    </select>
+
+    <insert id="insert" parameterType="BssOrderEntity">
+        insert into bss_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="sysOrderId != null">
+                sys_order_id,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="orderTime != null">
+                order_time,
+            </if>
+            <if test="deliveryPlanDate != null">
+                delivery_plan_date,
+            </if>
+            <if test="paymentType != null">
+                payment_type,
+            </if>
+            <if test="paymentDate != null">
+                payment_date,
+            </if>
+            <if test="shipPlanDate != null">
+                ship_plan_date,
+            </if>
+            <if test="shipDate != null">
+                ship_date,
+            </if>
+            <if test="deliveryDate != null">
+                delivery_date,
+            </if>
+            <if test="sysCustomerId != null">
+                sys_customer_id,
+            </if>
+            <if test="memberId != null">
+                member_id,
+            </if>
+            <if test="customerId != null">
+                customer_id,
+            </if>
+            <if test="customerName != null">
+                customer_name,
+            </if>
+            <if test="firstName != null">
+                first_name,
+            </if>
+            <if test="lastName != null">
+                last_name,
+            </if>
+            <if test="furiganaSei != null">
+                furigana_sei,
+            </if>
+            <if test="furiganaMei != null">
+                furigana_mei,
+            </if>
+            <if test="kenName != null">
+                ken_name,
+            </if>
+            <if test="cityName != null">
+                city_name,
+            </if>
+            <if test="townName != null">
+                town_name,
+            </if>
+            <if test="buildingEtc != null">
+                building_etc,
+            </if>
+            <if test="companyName != null">
+                company_name,
+            </if>
+            <if test="departmentName != null">
+                department_name,
+            </if>
+            <if test="mailAddress != null">
+                mail_address,
+            </if>
+            <if test="phoneNumber != null">
+                phone_number,
+            </if>
+            <if test="postalCode != null">
+                postal_code,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="fax != null">
+                fax,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="birth != null">
+                birth,
+            </if>
+            <if test="memo != null">
+                memo,
+            </if>
+            <if test="freeItem1 != null">
+                free_item_1,
+            </if>
+            <if test="freeItem2 != null">
+                free_item_2,
+            </if>
+            <if test="freeItem3 != null">
+                free_item_3,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="customerMemo != null">
+                customer_memo,
+            </if>
+            <if test="itemTotalTax != null">
+                item_total_tax,
+            </if>
+            <if test="itemTotal != null">
+                item_total,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="sysOrderId != null">
+                #{sysOrderId},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="orderTime != null">
+                #{orderTime},
+            </if>
+            <if test="deliveryPlanDate != null">
+                #{deliveryPlanDate},
+            </if>
+            <if test="paymentType != null">
+                #{paymentType},
+            </if>
+            <if test="paymentDate != null">
+                #{paymentDate},
+            </if>
+            <if test="shipPlanDate != null">
+                #{shipPlanDate},
+            </if>
+            <if test="shipDate != null">
+                #{shipDate},
+            </if>
+            <if test="deliveryDate != null">
+                #{deliveryDate},
+            </if>
+            <if test="sysCustomerId != null">
+                #{sysCustomerId},
+            </if>
+            <if test="memberId != null">
+                #{memberId},
+            </if>
+            <if test="customerId != null">
+                #{customerId},
+            </if>
+            <if test="customerName != null">
+                #{customerName},
+            </if>
+            <if test="firstName != null">
+                #{firstName},
+            </if>
+            <if test="lastName != null">
+                #{lastName},
+            </if>
+            <if test="furiganaSei != null">
+                #{furiganaSei},
+            </if>
+            <if test="furiganaMei != null">
+                #{furiganaMei},
+            </if>
+            <if test="kenName != null">
+                #{kenName},
+            </if>
+            <if test="cityName != null">
+                #{cityName},
+            </if>
+            <if test="townName != null">
+                #{townName},
+            </if>
+            <if test="buildingEtc != null">
+                #{buildingEtc},
+            </if>
+            <if test="companyName != null">
+                #{companyName},
+            </if>
+            <if test="departmentName != null">
+                #{departmentName},
+            </if>
+            <if test="mailAddress != null">
+                #{mailAddress},
+            </if>
+            <if test="phoneNumber != null">
+                #{phoneNumber},
+            </if>
+            <if test="postalCode != null">
+                #{postalCode},
+            </if>
+            <if test="mobile != null">
+                #{mobile},
+            </if>
+            <if test="fax != null">
+                #{fax},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="birth != null">
+                #{birth},
+            </if>
+            <if test="memo != null">
+                #{memo},
+            </if>
+            <if test="freeItem1 != null">
+                #{freeItem1},
+            </if>
+            <if test="freeItem2 != null">
+                #{freeItem2},
+            </if>
+            <if test="freeItem3 != null">
+                #{freeItem3},
+            </if>
+            <if test="address != null">
+                #{address},
+            </if>
+            <if test="customerMemo != null">
+                #{customerMemo},
+            </if>
+            <if test="itemTotalTax != null">
+                #{itemTotalTax},
+            </if>
+            <if test="itemTotal != null">
+                #{itemTotal},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="BssOrderEntity">
+        update bss_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="sysOrderId != null">
+                sys_order_id = #{sysOrderId},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="orderTime != null">
+                order_time = #{orderTime},
+            </if>
+            <if test="deliveryPlanDate != null">
+                delivery_plan_date = #{deliveryPlanDate},
+            </if>
+            <if test="paymentType != null">
+                payment_type = #{paymentType},
+            </if>
+            <if test="paymentDate != null">
+                payment_date = #{paymentDate},
+            </if>
+            <if test="shipPlanDate != null">
+                ship_plan_date = #{shipPlanDate},
+            </if>
+            <if test="shipDate != null">
+                ship_date = #{shipDate},
+            </if>
+            <if test="deliveryDate != null">
+                delivery_date = #{deliveryDate},
+            </if>
+            <if test="sysCustomerId != null">
+                sys_customer_id = #{sysCustomerId},
+            </if>
+            <if test="memberId != null">
+                member_id = #{memberId},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId},
+            </if>
+            <if test="customerName != null">
+                customer_name = #{customerName},
+            </if>
+            <if test="firstName != null">
+                first_name = #{firstName},
+            </if>
+            <if test="lastName != null">
+                last_name = #{lastName},
+            </if>
+            <if test="furiganaSei != null">
+                furigana_sei = #{furiganaSei},
+            </if>
+            <if test="furiganaMei != null">
+                furigana_mei = #{furiganaMei},
+            </if>
+            <if test="kenName != null">
+                ken_name = #{kenName},
+            </if>
+            <if test="cityName != null">
+                city_name = #{cityName},
+            </if>
+            <if test="townName != null">
+                town_name = #{townName},
+            </if>
+            <if test="buildingEtc != null">
+                building_etc = #{buildingEtc},
+            </if>
+            <if test="companyName != null">
+                company_name = #{companyName},
+            </if>
+            <if test="departmentName != null">
+                department_name = #{departmentName},
+            </if>
+            <if test="mailAddress != null">
+                mail_address = #{mailAddress},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="postalCode != null">
+                postal_code = #{postalCode},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile},
+            </if>
+            <if test="fax != null">
+                fax = #{fax},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="birth != null">
+                birth = #{birth},
+            </if>
+            <if test="memo != null">
+                memo = #{memo},
+            </if>
+            <if test="freeItem1 != null">
+                free_item_1 = #{freeItem1},
+            </if>
+            <if test="freeItem2 != null">
+                free_item_2 = #{freeItem2},
+            </if>
+            <if test="freeItem3 != null">
+                free_item_3 = #{freeItem3},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="customerMemo != null">
+                customer_memo = #{customerMemo},
+            </if>
+                item_total_tax = #{itemTotalTax},
+                item_total = #{itemTotal},
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        id = #{id}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        bss_order
+        where
+        id = #{id}
+
+    </delete>
+
+ </mapper>

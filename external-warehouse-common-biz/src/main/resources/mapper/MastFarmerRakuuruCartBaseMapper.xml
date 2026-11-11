@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.MastFarmerRakuuruCartBaseMapper">
+   <resultMap type="MastFarmerRakuuruCartEntity" id="MastFarmerRakuuruCartEntityResult">
+        <result property="frid" column="frid"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="rakuuruCartId" column="rakuuru_cart_id"/>
+        <result property="rakuuruCartPwd" column="rakuuru_cart_pwd"/>
+        <result property="rakuuruCartType" column="rakuuru_cart_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMastFarmerRakuuruCart">
+        select
+          frid,
+          farmer_id,
+          rakuuru_cart_id,
+          rakuuru_cart_pwd,
+          rakuuru_cart_type,
+          create_time,
+          create_by,
+          create_pg_id,
+          update_time,
+          update_by,
+          update_pg_id,
+          version
+        from mast_farmer_rakuuru_cart
+    </sql>
+    <select id="selectList" parameterType="MastFarmerRakuuruCartEntity" resultMap="MastFarmerRakuuruCartEntityResult">
+        <include refid="selectMastFarmerRakuuruCart"/>
+        <where>
+            <if test="frid != null  and frid != ''">
+                and frid = #{frid}
+            </if>
+            <if test="farmerId != null  and farmerId != ''">
+                and farmer_id = #{farmerId}
+            </if>
+            <if test="rakuuruCartId != null  and rakuuruCartId != ''">
+                and rakuuru_cart_id = #{rakuuruCartId}
+            </if>
+            <if test="rakuuruCartPwd != null  and rakuuruCartPwd != ''">
+                and rakuuru_cart_pwd = #{rakuuruCartPwd}
+            </if>
+            <if test="rakuuruCartType != null  and rakuuruCartType != ''">
+                and rakuuru_cart_type = #{rakuuruCartType}
+            </if>
+            <if test="createPgId != null  and createPgId != ''">
+                and create_pg_id = #{createPgId}
+            </if>
+            <if test="updatePgId != null  and updatePgId != ''">
+                and update_pg_id = #{updatePgId}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
+
+        </where>
+        order by create_time
+    </select>
+
+    <select id="selectById" parameterType="String"  resultMap="MastFarmerRakuuruCartEntityResult">
+        <include refid="selectMastFarmerRakuuruCart"/>
+        where frid = #{frid}
+
+    </select>
+
+    <insert id="insert" parameterType="MastFarmerRakuuruCartEntity">
+        insert into mast_farmer_rakuuru_cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="frid != null">
+                frid,
+            </if>
+            <if test="farmerId != null">
+                farmer_id,
+            </if>
+            <if test="rakuuruCartId != null">
+                rakuuru_cart_id,
+            </if>
+            <if test="rakuuruCartPwd != null">
+                rakuuru_cart_pwd,
+            </if>
+            <if test="rakuuruCartType != null">
+                rakuuru_cart_type,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createPgId != null">
+                create_pg_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="frid != null">
+                #{frid},
+            </if>
+            <if test="farmerId != null">
+                #{farmerId},
+            </if>
+            <if test="rakuuruCartId != null">
+                #{rakuuruCartId},
+            </if>
+            <if test="rakuuruCartPwd != null">
+                #{rakuuruCartPwd},
+            </if>
+            <if test="rakuuruCartType != null">
+                #{rakuuruCartType},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createPgId != null">
+                #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                #{updatePgId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="MastFarmerRakuuruCartEntity">
+        update mast_farmer_rakuuru_cart
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="frid != null">
+                frid = #{frid},
+            </if>
+            <if test="farmerId != null">
+                farmer_id = #{farmerId},
+            </if>
+            <if test="rakuuruCartId != null">
+                rakuuru_cart_id = #{rakuuruCartId},
+            </if>
+            <if test="rakuuruCartPwd != null">
+                rakuuru_cart_pwd = #{rakuuruCartPwd},
+            </if>
+            <if test="rakuuruCartType != null">
+                rakuuru_cart_type = #{rakuuruCartType},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createPgId != null">
+                create_pg_id = #{createPgId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updatePgId != null">
+                update_pg_id = #{updatePgId},
+            </if>
+                version = #{version}+1
+
+        </trim>
+        where
+        frid = #{frid}
+
+            <if test="version != null">
+                and version = #{version}
+            </if>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from
+        mast_farmer_rakuuru_cart
+        where
+        frid = #{frid}
+
+    </delete>
+
+ </mapper>

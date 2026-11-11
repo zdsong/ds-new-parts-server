@@ -1,0 +1,18 @@
+# SFTP配置
+sftp:
+  # SFTP服务器主机地址
+  host: ${SFTP_HOST:localhost}
+  # SFTP服务器端口
+  port: ${SFTP_PORT:22}
+  # 用户名
+  username: ${SFTP_USERNAME:ftpshukou}
+  # 密码
+  password: ${SFTP_PASSWORD:ScmAy3#w}
+  # 远程文件路径模板
+  remote-path-template: /upload/downloaded_{date}_test.txt
+  # 本地文件路径模板
+  local-path-template: temp/downloaded_{date}_test.txt
+  # 连接超时时间（毫秒）
+  connect-timeout: 10000
+  # 会话超时时间（毫秒）
+  session-timeout: 30000

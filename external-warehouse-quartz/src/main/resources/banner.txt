@@ -1,0 +1,2 @@
+Application Version: ${farm.version}
+Spring Boot Version: ${spring-boot.version}

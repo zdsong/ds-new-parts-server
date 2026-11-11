@@ -1,0 +1,229 @@
+# Project Config
+external-warehouse:
+  # name
+  name: external-warehouse
+  # version
+  version: 1.0.0
+  # copyrightyear year
+  copyrightYear: 2026
+  # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
+  profile: ./uploads
+  # cache: redis / db
+  cache: db
+  # ipアドレス取得スイッチ
+  addressEnabled: false
+  # 検証コードタイプmath数値計算char文字検証
+  captchaType: math
+  # 暗号化に使用する秘密鍵（16バイト）
+  decryptFieldKey: 59KDbersTvuTdyh8uklt158e9utyh9s7
+  # 初期化ベクトル（IV、16バイト）
+  decryptFieldIv: q3KanypB7RB5Rqom32tdzyaecgeq938u
+  # ホワイトURLリスト
+  whiteUrlList:
+    - /api/auth/loginByCode
+    - /api/auth/sendAuthCode
+    - /api/auth/resendAuthCode
+  # mail Service: awsSes / javamail
+  mailSendType: javamail
+  # メール送信の有効/無効（falseの場合、認証コードは固定値yyMMddとなりメール送信は行わない）
+  mailEnabled: false
+
+# 開発環境の構成
+server:
+  # サーバのHTTPポート、デフォルトは8082
+  port: 8082
+  servlet:
+    # 適用されるアクセスパス
+    context-path: /
+  tomcat:
+    # tomcat URI
+    uri-encoding: UTF-8
+    # 接続数がいっぱいになった後のキュー数、デフォルトは100
+    accept-count: 1000
+    threads:
+      # tomcatの最大スレッド数、デフォルトは200
+      max: 800
+      # Tomcat初期化を開始するスレッド数、デフォルト値10
+      min-spare: 100
+
+# ログ
+logging:
+  file:
+    path: ./logs/external-warehouse
+  level:
+    jp.newpart: debug
+    org.springframework: warn
+
+# ユーザー
+user:
+  password:
+    # パスワードの最大エラー数
+    maxRetryCount: 5
+    # パスワードロック時間（デフォルト10分）
+    lockTime: 10
+
+# Spring
+spring:
+  jackson:
+    time-zone: "Asia/Tokyo"
+    deserialization:
+      fail-on-unknown-properties: false
+  # リソース情報
+  messages:
+    # 国際化リソースファイルパス
+    basename: i18n/messages
+  profiles:
+    active: ${profileActive}
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://8.147.128.107:5432/ew_dev?currentSchema=ew
+    username: postgres
+    password: postgres123$
+
+  # ファイルのアップロード
+  servlet:
+    multipart:
+      # 単一ファイルサイズ
+      max-file-size: 10MB
+      # アップロード合計ファイルサイズの設定
+      max-request-size: 20MB
+  # サービスモジュール
+  devtools:
+    restart:
+      # ホットデプロイスイッチ
+      enabled: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  data:
+    # redis
+    redis:
+      # HOST
+      host:
+      # ポート、デフォルトは6379
+      port: 6379
+      # データベースインデックス
+      database: 2
+      # パスワード
+      password:
+      # 接続タイムアウト時間
+      timeout: 10s
+      lettuce:
+        pool:
+          # 接続プール内の最小アイドル接続
+          min-idle: 0
+          # 接続プール内の最大アイドル接続
+          max-idle: 8
+          # 接続プールのデータベース接続の最大数
+          max-active: 8
+          # 接続プールの最大ブロック待ち時間（制限なしの負の値を使用）
+          max-wait: -1ms
+  mail:
+    host: smtp.aliyun.com
+    port: 25
+    from-email: osddev@aliyun.com
+    username: osddev@aliyun.com
+    password: abc123$
+    protocol: smtp
+    default-encoding: UTF-8
+    debug: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+# token
+token:
+  # トークンカスタムID
+  header: Authorization
+  # トークンキー
+  secret: abcde13455654rstabtcaatec
+  # トークン有効期間（デフォルト30分）
+  expireTime: 30
+  # トークン自動更新有効期限
+  automaticRenewalTokenMin: 30
+  # 一時的トークン有効期間（デフォルト10分）
+  tempExpireTime: 10
+  # ログインユーザー cache key
+  tokenCacheKey: external_warehouse_login_tokens
+
+# PageHelper ページングプラグイン
+pagehelper:
+  helperDialect: postgresql
+  supportMethodsArguments: true
+  params: count=countSql
+
+# XSS攻撃を防ぐ
+xss:
+  # フィルタスイッチ
+  enabled: true
+  # リンクを除外（コンマで区切られた複数）
+  excludes: /system/notice
+  # 一致リンク
+  urlPatterns: /system/*,/monitor/*,/tool/*
+
+# MyBatis
+mybatis:
+  # 指定されたパッケージ別名の検索
+  typeAliasesPackage: jp.newpart.**.domain
+  # mapperのスキャンを設定して、すべてのmapper.xmlマップファイルを見つける
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # グローバルなプロファイルのロード
+  configLocation: classpath:mybatis/mybatis-config.xml
+
+# AWS SESメール設定
+aws:
+  ses:
+    # AWSリージョン (例: us-east-1, ap-southeast-1)
+    region: us-east-1
+    # AWSアクセスキーID (LocalStackは任意の値を使用)
+    access-key-id: test
+    # AWSシークレットアクセスキー (LocalStackは任意の値を使用)
+    secret-access-key: test
+    # 送信者メールアドレス (LocalStackでは任意のメールアドレスが使用可能)
+    from-email: sender@nextosd.com
+    # メールエンコーディング
+    charset: UTF-8
+    # LocalStackエンドポイントURL
+    endpoint-url: http://172.14.3.142:4566
+  
+  # AWS S3ファイルストレージ設定
+  s3:
+    # AWSリージョン (SESと一致させる)
+    region: us-east-1
+    # AWSアクセスキーID (LocalStackは任意の値を使用)
+    access-key-id: test
+    # AWSシークレットアクセスキー (LocalStackは任意の値を使用)
+    secret-access-key: test
+    # バケット名 (LocalStackでは任意の名前が使用可能)
+    bucket-name: my-unencrypted-bucket
+    # ファイル保存パスプレフィックス
+    path-prefix: uploads/
+    # ファイルアクセスURLプレフィックス (ファイルアクセスリンクの生成に使用)
+    url-prefix: http://172.14.3.142:4566/my-unencrypted-bucket/
+    # LocalStackエンドポイントURL
+    endpoint-url: http://172.14.3.142:4566
+
+springdoc:
+  default-consumptions-media-type: application/json
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+    media-type: application/json
+    encoding: UTF-8
+  cache:
+    disabled: true
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  default-flat-param-object: true

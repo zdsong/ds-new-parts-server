@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.mapper.AesKeyAndIvMapper">
+	<sql id="aes_key">
+		decode('59fdbeefefefcff8efef158e8feff9f7', 'hex')
+	</sql>
+	<sql id="aes_iv">
+		decode('f3faeffb6fb5efef32fdefaebfdf937f', 'hex')
+	</sql>
+</mapper> 

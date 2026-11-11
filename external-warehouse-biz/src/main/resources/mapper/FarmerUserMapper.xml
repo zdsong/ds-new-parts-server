@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.FarmerUserMapper">
+
+    <resultMap type="jp.newpart.common.core.domain.entity.FarmerUserInfo" id="MastFarmerResult">
+        <result property="id" column="id"/>
+        <result property="farmerId" column="farmer_id"/>
+        <result property="farmerName" column="farmer_name"/>
+        <result property="farmerNameKn" column="farmer_name_kn"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="mailAddress" column="mail_address"/>
+        <result property="loginCnt" column="login_cnt"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="usageStatus" column="usage_status"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+	
+	<sql id="selectUserVo">
+        select
+            id,
+            farmer_id,
+            farmer_name,
+            farmer_name_kn,
+            phone_number,
+            mail_address,
+            login_cnt,
+            user_password,
+            usage_status,
+            version
+        from mast_farmer
+    </sql>
+	
+	<select id="selectUserByUserName" parameterType="String" resultMap="MastFarmerResult">
+	    <include refid="selectUserVo"/>
+		where farmer_id = #{userName}
+        LIMIT 1
+	</select>
+	
+	<select id="selectUserById" parameterType="String" resultMap="MastFarmerResult">
+		<include refid="selectUserVo"/>
+        where id = #{id}
+	</select>
+
+    <select id="selectUserByMailAddress" parameterType="String" resultMap="MastFarmerResult">
+        <include refid="selectUserVo"/>
+        where mail_address = #{mailAddress} and discontinued_flg = '0' and usage_status = '0'
+        LIMIT 1
+    </select>
+
+	<update id="resetUserPwd">
+ 		update mast_farmer set user_password = #{userPwd}, login_cnt = login_cnt + 1 where id = #{id}
+	</update>
+
+    <update id="updateLoginInfo" parameterType="jp.newpart.common.core.domain.entity.FarmerUserInfo">
+        update
+            mast_farmer
+        set login_cnt = login_cnt + 1
+        where id = #{id}
+    </update>
+	
+</mapper> 
