@@ -20,7 +20,14 @@ public class ExternalWarehouseApplication
         // デフォルトロケールを日本語に設定
         LocaleContextHolder.setDefaultLocale(Locale.JAPAN);
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Tokyo"));
+        // OSのシステムプロキシ設定がJVMに引き継がれ、DB接続がSOCKS経由となり失敗する事象を回避する
+        String socksProxyHost = System.getProperty("socksProxyHost");
+        if ("127.0.0.1".equals(socksProxyHost) || "localhost".equals(socksProxyHost))
+        {
+            System.clearProperty("socksProxyHost");
+            System.clearProperty("socksProxyPort");
+        }
         SpringApplication.run(ExternalWarehouseApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  新・産直 起動成功しました   ლ(´ڡ`ლ)ﾞ  \n");
+        System.out.println("(♥◠‿◠)ﾉﾞ  新部品管理システム｜外部倉庫管理 起動成功しました   ლ(´ڡ`ლ)ﾞ  \n");
     }
 }

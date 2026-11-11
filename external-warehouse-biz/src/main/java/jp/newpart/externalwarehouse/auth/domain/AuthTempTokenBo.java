@@ -1,4 +1,4 @@
-package jp.newpart.externalwarehouse.biz.auth.domain;
+package jp.newpart.externalwarehouse.auth.domain;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package jp.newpart.externalwarehouse.biz.auth.domain;
+package jp.newpart.externalwarehouse.auth.domain;
 
 import jp.newpart.common.validator.annotation.LmLength;
 import jp.newpart.common.validator.annotation.LmNotBlank;

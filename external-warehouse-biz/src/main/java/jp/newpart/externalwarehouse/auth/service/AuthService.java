@@ -1,4 +1,4 @@
-package jp.newpart.externalwarehouse.biz.auth.service;
+package jp.newpart.externalwarehouse.auth.service;
 
 import jakarta.annotation.Resource;
 import jp.newpart.common.biz.enums.BssUserCertificationType;
@@ -16,7 +16,7 @@ import jp.newpart.common.manager.AsyncManager;
 import jp.newpart.common.manager.factory.AsyncFactory;
 import jp.newpart.common.security.context.AuthenticationContextHolder;
 import jp.newpart.common.utils.*;
-import jp.newpart.externalwarehouse.biz.auth.domain.*;
+import jp.newpart.externalwarehouse.auth.domain.*;
 import jp.newpart.externalwarehouse.biz.domain.bo.BssUserAuthCodeMailBo;
 import jp.newpart.externalwarehouse.biz.mapper.FarmerUserMapper;
 import jp.newpart.externalwarehouse.biz.service.IBssUserCertificationService;

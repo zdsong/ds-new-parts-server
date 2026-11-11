@@ -4,6 +4,7 @@ import jp.newpart.common.annotation.Log;
 import jp.newpart.common.core.controller.BaseController;
 import jp.newpart.common.core.domain.AjaxResult;
 import jp.newpart.common.core.domain.entity.SysRole;
+import jp.newpart.common.core.domain.entity.SysUser;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.core.page.TableDataInfo;
 import jp.newpart.common.core.service.TokenService;
@@ -102,8 +103,12 @@ public class SysRoleController extends BaseController {
             // キャッシュされたユーザー権限を更新
             LoginUser loginUser = getLoginUser();
             if (StringUtils.isNotNull(loginUser.getUsername()) && !loginUser.getAdminFlag()) {
-                loginUser.setPermissions(permissionService.getMenuPermission(userService.selectUserByUserName(loginUser.getUsername())));
-                tokenService.setLoginUser(loginUser);
+                // メールアドレスでログインしたユーザーはシステムユーザーに存在しない場合がある
+                SysUser user = userService.selectUserByUserName(loginUser.getUsername());
+                if (StringUtils.isNotNull(user)) {
+                    loginUser.setPermissions(permissionService.getMenuPermission(user));
+                    tokenService.setLoginUser(loginUser);
+                }
             }
             roleService.setRoleInfoToCache(role.getRoleId());
             return success();

@@ -9,11 +9,12 @@ import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.enums.BusinessType;
 import jp.newpart.common.utils.SecurityUtils;
 import jp.newpart.common.validator.utils.ValidatorGroup;
-import jp.newpart.externalwarehouse.biz.auth.domain.AuthReSendVerifyCodeBo;
-import jp.newpart.externalwarehouse.biz.auth.domain.AuthResetPwdBo;
-import jp.newpart.externalwarehouse.biz.auth.domain.AuthSecondVerifyBo;
-import jp.newpart.externalwarehouse.biz.auth.domain.AuthSendVerifyCodeBo;
-import jp.newpart.externalwarehouse.biz.auth.service.AuthService;
+import jp.newpart.externalwarehouse.auth.domain.AuthReSendVerifyCodeBo;
+
+import jp.newpart.externalwarehouse.auth.domain.AuthResetPwdBo;
+import jp.newpart.externalwarehouse.auth.domain.AuthSecondVerifyBo;
+import jp.newpart.externalwarehouse.auth.domain.AuthSendVerifyCodeBo;
+import jp.newpart.externalwarehouse.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

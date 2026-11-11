@@ -1,4 +1,4 @@
-package jp.newpart.externalwarehouse.biz.auth.service;
+package jp.newpart.externalwarehouse.auth.service;
 
 import jp.newpart.common.biz.domain.entity.BssUserCertificationEntity;
 import jp.newpart.common.biz.enums.ExternalWarehousePgIdEnum;
