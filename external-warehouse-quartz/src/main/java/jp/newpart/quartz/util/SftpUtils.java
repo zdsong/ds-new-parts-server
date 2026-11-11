@@ -23,7 +23,7 @@ import com.jcraft.jsch.SftpException;
 /**
  * SFTPユーティリティクラス - SFTP接続管理、ファイルダウンロード、アップロード、存在確認機能を提供
  * 
- * @author yamato
+ * @author nextosd
  * @version 1.0
  */
 public class SftpUtils {

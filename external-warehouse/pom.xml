@@ -13,7 +13,7 @@
     <artifactId>external-warehouse</artifactId>
 
     <description>
-        農家（農業法人）支援 - 新・産直 Server
+        新部品管理システム｜外部倉庫管理 Server
     </description>
 
     <dependencies>

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * AWS和邮件配置类
  * 
- * @author yamato
+ * @author nextosd
  * @version 1.0
  */
 @Configuration
