@@ -5,7 +5,7 @@ import jp.newpart.common.biz.enums.BssUserCertificationType;
 import jp.newpart.common.biz.enums.ExternalWarehousePgIdEnum;
 import jp.newpart.common.config.AppConfig;
 import jp.newpart.common.constant.Constants;
-import jp.newpart.common.core.domain.entity.FarmerUserInfo;
+import jp.newpart.common.core.domain.entity.SysUser;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.core.service.TokenService;
 import jp.newpart.common.enums.UserStatus;
@@ -18,8 +18,8 @@ import jp.newpart.common.security.context.AuthenticationContextHolder;
 import jp.newpart.common.utils.*;
 import jp.newpart.externalwarehouse.auth.domain.*;
 import jp.newpart.externalwarehouse.biz.domain.bo.BssUserAuthCodeMailBo;
-import jp.newpart.externalwarehouse.biz.mapper.FarmerUserMapper;
 import jp.newpart.externalwarehouse.biz.service.IBssUserCertificationService;
+import jp.newpart.externalwarehouse.biz.sys.mapper.SysUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -51,47 +52,47 @@ public class AuthService {
     private AppConfig appConfig;
 
     @Autowired
-    private FarmerUserMapper farmerMapper;
+    private SysUserMapper sysUserMapper;
 
     @Autowired
     private IBssUserCertificationService bssUserCertificationService;
 
     /**
      * ログイン検証
-     * 一次認証は「ID（登録メールアドレス）」「パスワード」入力によって行う
+     * 一次認証は「ユーザーID」「パスワード」入力によって行う
      *
-     * @param mail 登録メールアドレス
+     * @param userName ユーザーID
      * @param password パスワード
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String login(String mail, String password)
+    public String login(String userName, String password)
     {
         // ユーザー
-        FarmerUserInfo userDetails = farmerMapper.selectUserByMailAddress(DecryptUtils.encryptAES(mail));
+        SysUser userDetails = sysUserMapper.selectUserByUserName(userName);
 
         if (StringUtils.isNull(userDetails))
         {
-            log.info("ログインユーザ:{}は存在しません.", mail);
+            log.info("ログインユーザ:{}は存在しません.", userName);
             throw new UserPasswordNotMatchException();
         }
 
-        if(userDetails == null || !SecurityUtils.matchesPassword(password, userDetails.getUserPassword())){
+        if(userDetails == null || !SecurityUtils.matchesPassword(password, userDetails.getPassword())){
             // E0004=ユーザー名またはパスワードが間違っています。
             throw new UserPasswordNotMatchException();
         }
 
         // 認証コードを送信する
         BssUserAuthCodeMailBo bssUserAuthCodeMailBo = new BssUserAuthCodeMailBo();
-        bssUserAuthCodeMailBo.setUserId(userDetails.getFarmerId());
-        bssUserAuthCodeMailBo.setUserName(userDetails.getFarmerName());
-        bssUserAuthCodeMailBo.setMailAddress(userDetails.getMailAddress());
+        bssUserAuthCodeMailBo.setUserId(userDetails.getUserName());
+        bssUserAuthCodeMailBo.setUserName(userDetails.getNickName());
+        bssUserAuthCodeMailBo.setMailAddress(userDetails.getEmail());
         bssUserAuthCodeMailBo.setType(BssUserCertificationType.FRAMER);
         bssUserAuthCodeMailBo.setPgId(ExternalWarehousePgIdEnum.N001.getCode());
 
         String sendId = bssUserCertificationService.sendAuthCodeByEmail(bssUserAuthCodeMailBo);
 
-        return this.createTempToken(sendId, userDetails.getFarmerId());
+        return this.createTempToken(sendId, userDetails.getUserName());
     }
 
     /**
@@ -134,7 +135,7 @@ public class AuthService {
 
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 
-        farmerMapper.updateLoginInfo(this.selectUserByUserName(loginUser.getUsername()));
+        sysUserMapper.updateUser(this.selectUserByUserName(loginUser.getUsername()));
 
         // token
         return tokenService.createToken(loginUser);
@@ -157,28 +158,28 @@ public class AuthService {
         }
 
         // ユーザー メールアドレス
-        FarmerUserInfo user = farmerMapper.selectUserByMailAddress(DecryptUtils.encryptAES(authSendVerifyCodeBo.getMailAddress()));
+        SysUser user = sysUserMapper.selectUserByUserName(authSendVerifyCodeBo.getMailAddress());
 
         if(user == null){
             // E0062 確認用のパスワードと新パスワードが一致しません。
             throw new ServiceException(MessageUtils.message("E0062", authSendVerifyCodeBo.getMailAddress()));
         }
-        else if (UserStatus.DISABLE.getCode().equals(user.getUsageStatus()))
+        else if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
         {
             throw new ServiceException(MessageUtils.message("E0049"));
         }
 
         // 認証コードを送信する
         BssUserAuthCodeMailBo bssUserAuthCodeMailBo = new BssUserAuthCodeMailBo();
-        bssUserAuthCodeMailBo.setUserId(user.getFarmerId());
-        bssUserAuthCodeMailBo.setUserName(user.getFarmerName());
-        bssUserAuthCodeMailBo.setMailAddress(user.getMailAddress());
+        bssUserAuthCodeMailBo.setUserId(user.getUserName());
+        bssUserAuthCodeMailBo.setUserName(user.getNickName());
+        bssUserAuthCodeMailBo.setMailAddress(user.getEmail());
         bssUserAuthCodeMailBo.setType(BssUserCertificationType.FRAMER);
         bssUserAuthCodeMailBo.setPgId(ExternalWarehousePgIdEnum.N002.getCode());
 
         String sendId = bssUserCertificationService.sendAuthCodeByEmail(bssUserAuthCodeMailBo);
 
-        return this.createTempToken(sendId, user.getFarmerId());
+        return this.createTempToken(sendId, user.getUserName());
     }
 
 
@@ -193,19 +194,19 @@ public class AuthService {
         AuthTempTokenBo authTempTokenBo = getTempToken(authReSendVerifyCodeBo.getTempToken());
 
         // ユーザー
-        FarmerUserInfo userDetails = this.selectUserByUserName(authTempTokenBo.getUserId());
+        SysUser userDetails = this.selectUserByUserName(authTempTokenBo.getUserId());
 
         // 認証コードを再送信する
         BssUserAuthCodeMailBo bssUserAuthCodeMailBo = new BssUserAuthCodeMailBo();
-        bssUserAuthCodeMailBo.setUserId(userDetails.getFarmerId());
-        bssUserAuthCodeMailBo.setUserName(userDetails.getFarmerName());
-        bssUserAuthCodeMailBo.setMailAddress(userDetails.getMailAddress());
+        bssUserAuthCodeMailBo.setUserId(userDetails.getUserName());
+        bssUserAuthCodeMailBo.setUserName(userDetails.getNickName());
+        bssUserAuthCodeMailBo.setMailAddress(userDetails.getEmail());
         bssUserAuthCodeMailBo.setType(BssUserCertificationType.FRAMER);
         bssUserAuthCodeMailBo.setPgId(ExternalWarehousePgIdEnum.N003.getCode());
 
         String sendId = bssUserCertificationService.sendAuthCodeByEmail(bssUserAuthCodeMailBo);
 
-        return this.createTempToken(sendId, userDetails.getFarmerId());
+        return this.createTempToken(sendId, userDetails.getUserName());
     }
 
     /**
@@ -222,7 +223,7 @@ public class AuthService {
             throw new ServiceException(MessageUtils.message("E0048"));
         }
 
-        farmerMapper.resetUserPwd(loginUser.getUserId(), SecurityUtils.encryptPassword(authResetPwdBo.getNewPassword()));
+        sysUserMapper.resetUserPwd(loginUser.getUsername(), SecurityUtils.encryptPassword(authResetPwdBo.getNewPassword()));
     }
 
     /**
@@ -231,20 +232,21 @@ public class AuthService {
      * @param username ユーザーネーム
      * @return ユーザーオブジェクト情報
      */
-    public FarmerUserInfo selectUserByUserName(String username){
+    public SysUser selectUserByUserName(String username){
         // ユーザー
-        FarmerUserInfo userDetails = farmerMapper.selectUserByUserName(username);
-
+        SysUser userDetails = sysUserMapper.selectUserByUserName(username);
         if (StringUtils.isNull(userDetails))
         {
             log.info("ログインユーザ:{}は存在しません.", username);
             throw new ServiceException(MessageUtils.message("E0050", username));
         }
-        else if (UserStatus.DISABLE.getCode().equals(userDetails.getUsageStatus()))
+        else if (UserStatus.DISABLE.getCode().equals(userDetails.getStatus()))
         {
             log.info("ログインユーザ:{}が停止されました", username);
             throw new ServiceException(MessageUtils.message("E0049"));
         }
+
+        userDetails.setLoginDate(new Date());
 
         return userDetails;
     }

@@ -3,7 +3,7 @@ package jp.newpart.web.controller;
 import jp.newpart.common.annotation.Log;
 import jp.newpart.common.biz.domain.vo.UserInfoVo;
 import jp.newpart.common.core.domain.AjaxResult;
-import jp.newpart.common.core.domain.entity.FarmerUserInfo;
+import jp.newpart.common.core.domain.entity.SysUser;
 import jp.newpart.common.core.domain.model.LoginBody;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.enums.BusinessType;
@@ -93,12 +93,12 @@ public class AuthController
     @GetMapping("userInfo")
     public AjaxResult getInfo() {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        FarmerUserInfo user = authService.selectUserByUserName(loginUser.getUsername());
+        SysUser user = authService.selectUserByUserName(loginUser.getUsername());
 
         UserInfoVo userInfoVo = new UserInfoVo();
-        userInfoVo.setUserName(user.getFarmerName());
-        userInfoVo.setUserId(user.getFarmerId());
-        userInfoVo.setFirstLogin(user.getLoginCnt() <= 1);
+        userInfoVo.setUserName(user.getUserName());
+        userInfoVo.setUserId(user.getUserId());
+        userInfoVo.setFirstLogin(user.getVersion() <= 1);
 
         AjaxResult ajax = AjaxResult.success(userInfoVo);
 

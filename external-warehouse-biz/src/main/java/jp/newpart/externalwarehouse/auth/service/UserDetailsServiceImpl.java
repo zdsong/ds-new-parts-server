@@ -2,14 +2,14 @@ package jp.newpart.externalwarehouse.auth.service;
 
 import jp.newpart.common.biz.domain.entity.BssUserCertificationEntity;
 import jp.newpart.common.biz.enums.ExternalWarehousePgIdEnum;
-import jp.newpart.common.core.domain.entity.FarmerUserInfo;
+import jp.newpart.common.core.domain.entity.SysUser;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.enums.UserStatus;
 import jp.newpart.common.exception.ServiceException;
 import jp.newpart.common.exception.user.AuthVerifyCodeNotMatchException;
 import jp.newpart.common.security.context.AuthenticationContextHolder;
-import jp.newpart.externalwarehouse.biz.mapper.FarmerUserMapper;
 import jp.newpart.externalwarehouse.biz.service.IBssUserCertificationService;
+import jp.newpart.externalwarehouse.biz.sys.mapper.SysUserMapper;
 import jp.newpart.common.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
     private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
-    private FarmerUserMapper farmerUserMapper;
+    private SysUserMapper sysUserMapper;
 
     @Autowired
     private IBssUserCertificationService bssUserCertificationService;
@@ -41,14 +41,15 @@ public class UserDetailsServiceImpl implements UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
-        FarmerUserInfo user = farmerUserMapper.selectUserByUserName(username);
+        // システムユーザー（sys_user）からログインユーザーを取得する
+        SysUser user = sysUserMapper.selectUserByUserName(username);
 
         if (StringUtils.isNull(user))
         {
             log.info("ログインユーザ:{}は存在しません.", username);
             throw new ServiceException(MessageUtils.message("E0050", username));
         }
-        else if (UserStatus.DISABLE.getCode().equals(user.getUsageStatus()))
+        else if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
         {
             log.info("ログインユーザ:{}が停止されました", username);
             throw new ServiceException(MessageUtils.message("E0049"));
@@ -93,8 +94,8 @@ public class UserDetailsServiceImpl implements UserDetailsService
         return bssUserCertificationEntity.getCertificationCode();
     }
 
-    public UserDetails createLoginUser(FarmerUserInfo user, String authCode)
+    public UserDetails createLoginUser(SysUser user, String authCode)
     {
-        return new LoginUser(false, user.getId(), user.getFarmerId(), user.getFarmerName(), SecurityUtils.encryptPassword(authCode), null);
+        return new LoginUser(user.isAdmin(), user.getUserId(), user.getUserName(), user.getNickName(), SecurityUtils.encryptPassword(authCode), null);
     }
 }
