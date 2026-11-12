@@ -96,6 +96,32 @@ public class TokenService
     }
 
     /**
+     * トークンからログインユーザー情報の取得
+     *
+     * @param token トークン
+     * @return ログインユーザー情報
+     */
+    public LoginUser getLoginUserByToken(String token)
+    {
+        if (StringUtils.isEmpty(token))
+        {
+            return null;
+        }
+        try
+        {
+            Claims claims = parseToken(token);
+            String uuid = (String) claims.get(tokenCacheKey);
+            String userKey = getTokenKey(uuid);
+            return appCache.getCacheObject(userKey, LoginUser.class);
+        }
+        catch (Exception e)
+        {
+            log.error("トークン検証例外Token={}, message='{}'", token, e.getMessage());
+        }
+        return null;
+    }
+
+    /**
      * ユーザー識別情報の設定
      */
     public void setLoginUser(LoginUser loginUser)

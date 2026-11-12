@@ -50,6 +50,19 @@ public class AuthController
     }
 
     /**
+     * 直接ログイン方法
+     * ユーザーIDとパスワードの検証を行い、トークンを発行する
+     *
+     * @param loginBody ログイン情報
+     * @return 結果
+     */
+    @PostMapping("/directLogin")
+    public AjaxResult directLogin(@RequestBody LoginBody loginBody)
+    {
+        return AjaxResult.success(authService.directLogin(loginBody.getUsername(), loginBody.getPassword()));
+    }
+
+    /**
      * 二次認証
      */
     @PostMapping("/loginByCode")

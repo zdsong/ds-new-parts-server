@@ -96,6 +96,52 @@ public class AuthService {
     }
 
     /**
+     * 直接ログイン検証
+     * ユーザーIDとパスワードを検証し、トークンを発行してトークンの正確性を検証する
+     *
+     * @param userName ユーザーID
+     * @param password パスワード
+     * @return ログイントークン
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public String directLogin(String userName, String password)
+    {
+        // ユーザー情報の取得と利用状態の検証
+        SysUser userDetails = this.selectUserByUserName(userName);
+
+        // パスワード検証
+        if (!SecurityUtils.matchesPassword(password, userDetails.getPassword()))
+        {
+            // E0004=ユーザー名またはパスワードが間違っています。
+            throw new UserPasswordNotMatchException();
+        }
+
+        // ログインユーザー情報の作成
+        LoginUser loginUser = new LoginUser(userDetails.isAdmin(), userDetails.getUserId(), userDetails.getUserName(), userDetails.getNickName(), userDetails.getPassword(), null);
+
+        // トークンの作成
+        String token = tokenService.createToken(loginUser);
+
+        // トークン署名の検証
+        if (!tokenService.validateToken(token))
+        {
+            throw new ServiceException("トークンの検証に失敗しました。");
+        }
+
+        // キャッシュ上のログインユーザー情報の検証
+        LoginUser cacheLoginUser = tokenService.getLoginUserByToken(token);
+        if (StringUtils.isNull(cacheLoginUser))
+        {
+            throw new ServiceException("トークンの検証に失敗しました。");
+        }
+
+        // ログイン成功記録
+        AsyncManager.me().execute(AsyncFactory.recordLogininfor(appConfig.getName(), userDetails.getUserName(), Constants.LOGIN_SUCCESS, MessageUtils.message("I0011")));
+
+        return token;
+    }
+
+    /**
      * 二次認証
      * @param authSecondBo
      * @return
