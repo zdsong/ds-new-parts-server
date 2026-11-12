@@ -28,3 +28,7 @@ bin/run.bat
 # ローカルアプリケーション設定 (実際のファイル名に合わせて調整) (本地应用配置)
 **/application-dev.yml
 **/application-local.yml
+
+# macOS
+.DS_Store
+**/.DS_Store

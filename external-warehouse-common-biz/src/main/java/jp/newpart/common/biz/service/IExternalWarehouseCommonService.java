@@ -1,8 +1,7 @@
 package jp.newpart.common.biz.service;
 
 import jp.newpart.common.biz.domain.bo.OptionsParamBo;
-import jp.newpart.common.biz.domain.entity.MastPostalCodeAddressEntity;
-import jp.newpart.common.biz.domain.vo.OptionsAddressVo;
+
 import jp.newpart.common.biz.domain.vo.OptionsKeyValueVo;
 
 import java.util.List;
