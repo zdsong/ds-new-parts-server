@@ -149,7 +149,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
             router.setPath(getRouterPath(menu));
             router.setComponent(getComponent(menu));
             router.setQuery(menu.getQuery());
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), isNo(menu.getIsCache()), menu.getPath()));
             List<SysMenu> cMenus = menu.getChildren();
             if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
@@ -162,7 +162,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
                 children.setName(getRouteName(menu.getRouteName(), menu.getPath()));
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), isNo(menu.getIsCache()), menu.getPath()));
                 children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
@@ -299,7 +299,9 @@ public class SysMenuServiceImpl implements ISysMenuService {
     public boolean checkMenuNameUnique(SysMenu menu) {
         String menuId = menu.getMenuId();
         SysMenu info = menuMapper.checkMenuNameUnique(menu.getMenuName(), menu.getParentId());
-        if (StringUtils.isNotNull(info) && !info.getMenuId().equals(menuId)) {
+        // 編集時は自分自身のレコードがヒットするため、メニューID が一致する場合は重複とみなさない。
+        // ID は文字列（19 桁の雪花IDを含む）で比較する。
+        if (StringUtils.isNotNull(info) && !StringUtils.equals(info.getMenuId(), menuId)) {
             return UserConstants.NOT_UNIQUE;
         }
         return UserConstants.UNIQUE;
@@ -345,7 +347,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
         }
         // 外部リンクでなく、トップレベルディレクトリ（タイプがディレクトリ）
         if ("0".equals(menu.getParentId()) && UserConstants.TYPE_DIR.equals(menu.getMenuType())
-                && UserConstants.NO_FRAME.equals(menu.getIsFrame())) {
+                && isNo(menu.getIsFrame())) {
             routerPath = "/" + menu.getPath();
         }
         // 外部リンクでなく、トップレベルディレクトリ（タイプがメニュー）
@@ -381,7 +383,18 @@ public class SysMenuServiceImpl implements ISysMenuService {
      */
     public boolean isMenuFrame(SysMenu menu) {
         return menu.getParentId().equals("0") && UserConstants.TYPE_MENU.equals(menu.getMenuType())
-                && menu.getIsFrame().equals(UserConstants.NO_FRAME);
+                && isNo(menu.getIsFrame());
+    }
+
+    /**
+     * is_frame / is_cache が「いいえ」かどうかを判定する。
+     * 既存データは '1'（旧: いいえ）、汎用コード sys_yes_no は 'N' のため、両方を「いいえ」として扱う。
+     *
+     * @param value is_frame / is_cache の値
+     * @return 「いいえ」の場合 true
+     */
+    private boolean isNo(String value) {
+        return UserConstants.NO_FRAME.equals(value) || "N".equals(value);
     }
 
     /**
@@ -391,7 +404,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
      * @return 結果
      */
     public boolean isInnerLink(SysMenu menu) {
-        return menu.getIsFrame().equals(UserConstants.NO_FRAME) && StringUtils.ishttp(menu.getPath());
+        return isNo(menu.getIsFrame()) && StringUtils.ishttp(menu.getPath());
     }
 
     /**

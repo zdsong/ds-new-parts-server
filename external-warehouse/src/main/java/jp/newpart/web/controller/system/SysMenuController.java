@@ -63,7 +63,7 @@ public class SysMenuController extends BaseController {
     public AjaxResult add(@Validated @RequestBody SysMenu menu) {
         if (!menuService.checkMenuNameUnique(menu)) {
             return error("新しいメニュー'" + menu.getMenuName() + "'の追加に失敗しました。メニュー名が既に存在します");
-        } else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
+        } else if (isFrameYes(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
             return error("新しいメニュー'" + menu.getMenuName() + "'の追加に失敗しました。アドレスはhttp(s)://で始まらなければなりません");
         }
         menu.setCreateBy(getUsername());
@@ -78,7 +78,7 @@ public class SysMenuController extends BaseController {
     public AjaxResult edit(@Validated @RequestBody SysMenu menu) {
         if (!menuService.checkMenuNameUnique(menu)) {
             return error("メニュー'" + menu.getMenuName() + "'の編集に失敗しました。メニュー名が既に存在します");
-        } else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
+        } else if (isFrameYes(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
             return error("メニュー'" + menu.getMenuName() + "'の編集に失敗しました。アドレスはhttp(s)://で始まらなければなりません");
         } else if (menu.getMenuId().equals(menu.getParentId())) {
             return error("メニュー'" + menu.getMenuName() + "'の編集に失敗しました。親メニューには自分自身を選択できません");
@@ -136,6 +136,17 @@ public class SysMenuController extends BaseController {
     public AjaxResult treeSelect(SysMenu menu) {
         List<SysMenu> menus = menuService.selectMenuList(menu, ADMIN_USER_ID);
         return success(menuService.buildMenuTreeSelect(menus));
+    }
+
+    /**
+     * is_frame が「はい」かどうかを判定する。
+     * 既存データは '0'（旧: はい）、汎用コード sys_yes_no は 'Y' のため、両方を「はい」として扱う。
+     *
+     * @param isFrame is_frame の値
+     * @return 「はい」の場合 true
+     */
+    private boolean isFrameYes(String isFrame) {
+        return UserConstants.YES_FRAME.equals(isFrame) || "Y".equals(isFrame);
     }
 
     /**

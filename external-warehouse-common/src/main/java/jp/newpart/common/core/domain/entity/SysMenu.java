@@ -3,7 +3,6 @@ package jp.newpart.common.core.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -114,7 +113,6 @@ public class SysMenu extends BaseEntity
         this.parentId = parentId;
     }
 
-    @NotNull(message = "表示順序を空白にすることはできません")
     public Integer getOrderNum()
     {
         return orderNum;
