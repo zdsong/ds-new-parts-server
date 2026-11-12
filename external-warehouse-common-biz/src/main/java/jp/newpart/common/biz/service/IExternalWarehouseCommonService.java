@@ -21,21 +21,4 @@ public interface IExternalWarehouseCommonService {
      * @return コンボボックスリスト
      */
     public List<OptionsKeyValueVo> getCommonOptions(OptionsParamBo optionsParam);
-
-    /**
-     * コンボボックスデータを取得する
-     *
-     * @param optionsParam コンボボックスパラメータ
-     * @return コンボボックスリスト
-     */
-    public List<OptionsAddressVo> selectAddressOptionsList(OptionsParamBo optionsParam);
-
-    /**
-     * 郵便番号を使用して住所を検索します。
-     *
-     * @param postalCode 郵便番号
-     * @return アドレス
-     */
-    public MastPostalCodeAddressEntity selectMastAddressByPostalCode(String postalCode);
-
 }

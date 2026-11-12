@@ -51,42 +51,6 @@ public class CommonController
     }
 
     /**
-     * 都アドレス コンボボックスデータを取得する
-     *
-     * @return アドレスコンボボックスリスト
-     */
-    @GetMapping(value = "/ken/options")
-    public AjaxResult getKenCommonOptions() {
-        OptionsParamBo optionsParam = new OptionsParamBo();
-        optionsParam.setCmdOptionName("ken");
-        return AjaxResult.success(commonService.selectAddressOptionsList(optionsParam));
-    }
-
-    /**
-     * 市区アドレス コンボボックスデータを取得する
-     *
-     * @return アドレスコンボボックスリスト
-     */
-    @GetMapping(value = "/{kenId}/city/options")
-    public AjaxResult getCityCommonOptions(@PathVariable("kenId") String kenId) {
-        OptionsParamBo optionsParam = new OptionsParamBo();
-        optionsParam.setCmdOptionName("city");
-        optionsParam.setConditionValue1(kenId);
-        return AjaxResult.success(commonService.selectAddressOptionsList(optionsParam));
-    }
-
-    /**
-     * 郵便番号を使用して住所を検索します。
-     *
-     * @return 住所
-     */
-    @GetMapping(value = "/address/byPostalCode")
-    public AjaxResult getAddressByPostalCode(@RequestParam("postalCode") String postalCode) {
-
-        return AjaxResult.success(commonService.selectMastAddressByPostalCode(postalCode));
-    }
-
-    /**
      * 汎用ダウンロードリクエスト
      * 
      * @param fileName ファイル名
