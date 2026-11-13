@@ -5,6 +5,7 @@ import jp.newpart.common.core.controller.BaseController;
 import jp.newpart.common.core.domain.AjaxResult;
 import jp.newpart.common.core.domain.entity.SysRole;
 import jp.newpart.common.core.domain.entity.SysUser;
+import jp.newpart.externalwarehouse.biz.sys.domain.SysUserRole;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.core.page.TableDataInfo;
 import jp.newpart.common.core.service.TokenService;
@@ -114,6 +115,40 @@ public class SysRoleController extends BaseController {
             return success();
         }
         return error("ロール'" + role.getRoleName() + "'の更新に失敗しました、管理者にお問い合わせください。");
+    }
+
+    /**
+     * ロールに割り当て済みのユーザー一覧を取得
+     */
+    @GetMapping("/authUser/allocatedList")
+    public AjaxResult allocatedList(SysUser user) {
+        return success(userService.selectAllocatedList(user));
+    }
+
+    /**
+     * ロール未割り当てのユーザー一覧を取得
+     */
+    @GetMapping("/authUser/unallocatedList")
+    public AjaxResult unallocatedList(SysUser user) {
+        return success(userService.selectUnallocatedList(user));
+    }
+
+    /**
+     * ロールにユーザーを追加
+     */
+    @Log(title = "ロール管理", businessType = BusinessType.INSERT)
+    @PostMapping("/authUser")
+    public AjaxResult addAuthUsers(@RequestBody SysUser user) {
+        return toAjax(roleService.insertAuthUsers(user.getRoleId(), user.getRoleIds()));
+    }
+
+    /**
+     * ロールからユーザーを削除
+     */
+    @Log(title = "ロール管理", businessType = BusinessType.DELETE)
+    @PostMapping("/authUser/delete")
+    public AjaxResult deleteAuthUser(@RequestBody SysUserRole userRole) {
+        return toAjax(roleService.deleteAuthUser(userRole));
     }
 
     /**
