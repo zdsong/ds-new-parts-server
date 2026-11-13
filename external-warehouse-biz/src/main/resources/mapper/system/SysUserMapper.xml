@@ -213,7 +213,7 @@
 	</update>
 
 	<update id="resetUserPwd" parameterType="SysUser">
-		update sys_user set password = #{password} where user_name = #{userName}
+		update sys_user set password = #{password} 	,version = version + 1 where user_name = #{userName}
 	</update>
 
 	<delete id="deleteUserById" parameterType="String">
