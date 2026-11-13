@@ -57,5 +57,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="cleanLogininfor">
         truncate table sys_logininfor
     </update>
-    
+
+	<!--
+		直近のログイン成功日時を取得する。
+		status はログアウト（Constants.LOGOUT）も成功扱いの '0' で記録されるため、
+		対象メッセージを呼び出し元から受け取ってログイン成功のみに絞り込む。
+	-->
+	<select id="selectLastLoginTime" resultType="java.util.Date">
+		select max(login_time)
+		from sys_logininfor
+		where user_name = #{userName}
+		  and status = '0'
+		  and msg in
+		<foreach collection="successMessages" item="successMessage" open="(" separator="," close=")">
+			#{successMessage}
+		</foreach>
+	</select>
+
 </mapper> 

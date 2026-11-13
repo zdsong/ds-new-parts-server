@@ -12,6 +12,7 @@ import jp.newpart.common.enums.UserStatus;
 import jp.newpart.common.exception.ServiceException;
 import jp.newpart.common.exception.user.AuthVerifyCodeNotMatchException;
 import jp.newpart.common.exception.user.UserPasswordNotMatchException;
+import jp.newpart.common.mapper.SysLogininforMapper;
 import jp.newpart.common.manager.AsyncManager;
 import jp.newpart.common.manager.factory.AsyncFactory;
 import jp.newpart.common.security.context.AuthenticationContextHolder;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +58,9 @@ public class AuthService {
 
     @Autowired
     private IBssUserCertificationService bssUserCertificationService;
+
+    @Autowired
+    private SysLogininforMapper sysLogininforMapper;
 
     /**
      * ログイン検証
@@ -270,6 +275,28 @@ public class AuthService {
         }
 
         sysUserMapper.resetUserPwd(loginUser.getUsername(), SecurityUtils.encryptPassword(authResetPwdBo.getNewPassword()));
+    }
+
+    /**
+     * 最終ログイン日時を取得する
+     * ログイン記録（sys_logininfor）の直近成功日時を優先し、
+     * 記録が無い場合のみ sys_user の最終ログイン日時にフォールバックする。
+     * （sys_user.login_date は二段階認証ログインでしか更新されないため、
+     * 　直接ログインも含めた実際のログイン履歴はログイン記録側が正確）
+     *
+     * @param userName ユーザーID
+     * @return 最終ログイン日時（取得できない場合は null）
+     */
+    public Date selectLastLoginDate(String userName){
+        // I0008=ログインしました。 I0011=二段階認証に成功しました。
+        Date lastLoginDate = sysLogininforMapper.selectLastLoginTime(userName,
+                List.of(MessageUtils.message("I0008"), MessageUtils.message("I0011")));
+        if (lastLoginDate != null) {
+            return lastLoginDate;
+        }
+
+        SysUser user = sysUserMapper.selectUserByUserName(userName);
+        return StringUtils.isNull(user) ? null : user.getLoginDate();
     }
 
     /**

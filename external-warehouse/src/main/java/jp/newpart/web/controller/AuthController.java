@@ -7,6 +7,7 @@ import jp.newpart.common.core.domain.entity.SysUser;
 import jp.newpart.common.core.domain.model.LoginBody;
 import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.enums.BusinessType;
+import jp.newpart.common.utils.DateUtils;
 import jp.newpart.common.utils.SecurityUtils;
 import jp.newpart.common.validator.utils.ValidatorGroup;
 import jp.newpart.externalwarehouse.auth.domain.AuthReSendVerifyCodeBo;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * ログイン認証
@@ -111,7 +114,15 @@ public class AuthController
         UserInfoVo userInfoVo = new UserInfoVo();
         userInfoVo.setUserName(user.getUserName());
         userInfoVo.setUserId(user.getUserId());
-        userInfoVo.setFirstLogin(user.getVersion() <= 1);
+        userInfoVo.setNickName(user.getNickName());
+        userInfoVo.setUserType(user.getUserType());
+        userInfoVo.setFirstLogin(user.getVersion() == null || user.getVersion() <= 1);
+
+        // 最終ログイン日時（AppBar 表示用に整形して返す）
+        Date lastLoginDate = authService.selectLastLoginDate(loginUser.getUsername());
+        userInfoVo.setLastLoginDate(lastLoginDate == null ? null
+                : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM, lastLoginDate));
+        userInfoVo.setLastLoginIp(user.getLoginIp());
 
         AjaxResult ajax = AjaxResult.success(userInfoVo);
 

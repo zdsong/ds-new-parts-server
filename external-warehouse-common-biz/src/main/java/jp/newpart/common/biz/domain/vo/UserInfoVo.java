@@ -21,6 +21,21 @@ public class UserInfoVo {
     private String userName;
 
     /**
+     * ユーザー名称
+     */
+    private String nickName;
+
+    /**
+     * 最終ログイン日時（画面表示用 yyyy/MM/dd HH:mm）
+     */
+    private String lastLoginDate;
+
+    /**
+     * 最終ログインIP
+     */
+    private String lastLoginIp;
+
+    /**
      * 初回ログイン
      */
     private boolean isFirstLogin;
