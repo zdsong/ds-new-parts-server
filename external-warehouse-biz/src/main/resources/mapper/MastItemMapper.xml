@@ -63,9 +63,8 @@
     </sql>
     <select id="selectList" parameterType="MastItemSearchBo" resultMap="MastItemResult">
         <include refid="selectMastItem"/>
+        <!-- 農家IDによる絞り込みは行わない（本システムは単一農家の外部倉庫運用のため） -->
         <where>
-            farmer_id = #{farmerId}
-
             <if test="itemId != null  and itemId != ''">
                 and item_id = #{itemId}
             </if>
@@ -104,13 +103,11 @@
     <select id="selectById" parameterType="String"  resultMap="MastItemResult">
         <include refid="selectMastItem"/>
         where id = #{id}
-        AND farmer_id = #{farmerId}
     </select>
 
     <select id="selectByItemId" parameterType="String"  resultMap="MastItemResult">
         <include refid="selectMastItem"/>
         where item_id = #{itemId}
-        AND farmer_id = #{farmerId}
     </select>
 
     <select id="selectItemImageList" parameterType="String" resultType="MastItemImageVo">

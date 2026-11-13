@@ -66,9 +66,4 @@ public class MastItemSearchBo  implements Serializable {
      * 商品カテゴリ(中)
      */
     private String category2;
-
-    /**
-     * 農家ID
-     */
-    private String farmerId;
 }

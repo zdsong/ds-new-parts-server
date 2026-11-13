@@ -18,19 +18,17 @@ public interface MastItemMapper {
      * 商品マスタを検索
      *
      * @param id 商品マスタプライマリ・キー
-     * @param farmerId
      * @return 商品マスタ
      */
-     MastItemVo selectById(@Param("id") String id, @Param("farmerId") String farmerId);
+     MastItemVo selectById(@Param("id") String id);
 
     /**
      * 商品マスタを検索
      *
      * @param itemId 商品Id
-     * @param farmerId
      * @return 商品マスタ
      */
-    MastItemVo selectByItemId(@Param("itemId") String itemId, @Param("farmerId") String farmerId);
+    MastItemVo selectByItemId(@Param("itemId") String itemId);
 
     /**
      * 商品マスタを検索リスト

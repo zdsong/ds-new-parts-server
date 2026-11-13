@@ -81,7 +81,7 @@ public class MastItemServiceImpl implements IMastItemService {
      */
     @Override
     public MastItemVo selectByItemId(String itemId) {
-        MastItemVo mastItemVo = mastItemMapper.selectByItemId(itemId, SecurityUtils.getLoginUser().getUsername());
+        MastItemVo mastItemVo = mastItemMapper.selectByItemId(itemId);
         if(ValueUtils.isNotEmpty(mastItemVo)){
             List<MastItemImageVo> imagesList = mastItemMapper.selectItemImageList(mastItemVo.getId());
             if (!CollectionUtils.isEmpty(imagesList)) {
@@ -138,7 +138,8 @@ public class MastItemServiceImpl implements IMastItemService {
      */
     @Override
     public List<MastItemVo> selectList(MastItemSearchBo mastItemSearchBo) {
-        mastItemSearchBo.setFarmerId(SecurityUtils.getLoginUser().getUsername());
+        // 農家ID（ログインユーザー名）による絞り込みは行わない。
+        // 商品マスタは旧システムのCSV連携で登録されており、farmer_id は旧農家IDのまま保持されているため。
         return mastItemMapper.selectList(mastItemSearchBo);
     }
 
