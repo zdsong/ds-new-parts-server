@@ -22,8 +22,9 @@ public class ExcelToJavaGenerator {
 
     public static void main(String[] args) {
         // 文件路径配置
-        String excelFilePath = "/Users/apple/Desktop/临时文件/外部倉庫管理システム（仮称）/テーブル設計書_新部品管理システム｜外部倉庫管理v1.0.xlsx"; // 输入的Excel文件路径
-        String outputSqlPath = "/Users/apple/Desktop/临时文件/外部倉庫管理システム（仮称）/codes"; // 输出的SQL文件路径
+
+        String excelFilePath = "/Users/apple/mys/project/テーブル設計書_新部品管理システム｜外部倉庫管理v1.0.xlsx";; // 输入的Excel文件l文件路径
+        String outputSqlPath = "/Users/apple/mys/project/autocodes"; // 输出的SQL文件路径
         generateMapperL(excelFilePath, outputSqlPath);
 
     }
@@ -49,7 +50,8 @@ public class ExcelToJavaGenerator {
             }
 
             // 遍历每个Sheet，每个Sheet生成一个文件
-            for (int sheetIndex = 4; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+            for (int sheetIndex = 6; sheetIndex < 10; sheetIndex++) {
+            //for (int sheetIndex = 4; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
 //	            if (sheetIndex > 6) {
 //	                continue;
 //	            }
