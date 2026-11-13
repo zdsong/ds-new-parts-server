@@ -2,7 +2,7 @@ package jp.newpart.web.controller.system;
 
 import jp.newpart.common.annotation.Anonymous;
 import jp.newpart.common.core.domain.AjaxResult;
-import jp.newpart.externalwarehouse.biz.sys.mapper.AdminDataMapper;
+import jp.newpart.externalwarehouse.sys.mapper.AdminDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

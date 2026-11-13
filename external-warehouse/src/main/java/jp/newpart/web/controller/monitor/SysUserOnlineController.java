@@ -9,10 +9,9 @@ import jp.newpart.common.core.domain.model.LoginUser;
 import jp.newpart.common.core.page.TableDataInfo;
 import jp.newpart.common.enums.BusinessType;
 import jp.newpart.common.utils.StringUtils;
-import jp.newpart.externalwarehouse.biz.sys.domain.SysUserOnline;
-import jp.newpart.externalwarehouse.biz.sys.service.ISysUserOnlineService;
+import jp.newpart.externalwarehouse.sys.domain.SysUserOnline;
+import jp.newpart.externalwarehouse.sys.service.ISysUserOnlineService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

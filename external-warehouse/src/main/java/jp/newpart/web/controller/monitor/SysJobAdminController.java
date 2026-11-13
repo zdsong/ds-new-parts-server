@@ -5,7 +5,7 @@ import jp.newpart.common.core.controller.BaseController;
 import jp.newpart.common.core.domain.AjaxResult;
 import jp.newpart.common.core.page.TableDataInfo;
 import jp.newpart.common.utils.uuid.IdUtils;
-import jp.newpart.externalwarehouse.biz.sys.mapper.SysJobAdminMapper;
+import jp.newpart.externalwarehouse.sys.mapper.SysJobAdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

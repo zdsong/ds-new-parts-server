@@ -19,7 +19,7 @@ import jp.newpart.common.utils.*;
 import jp.newpart.externalwarehouse.auth.domain.*;
 import jp.newpart.externalwarehouse.biz.domain.bo.BssUserAuthCodeMailBo;
 import jp.newpart.externalwarehouse.biz.service.IBssUserCertificationService;
-import jp.newpart.externalwarehouse.biz.sys.mapper.SysUserMapper;
+import jp.newpart.externalwarehouse.sys.mapper.SysUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

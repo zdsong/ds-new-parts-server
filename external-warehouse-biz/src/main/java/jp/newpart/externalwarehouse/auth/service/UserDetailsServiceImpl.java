@@ -9,7 +9,7 @@ import jp.newpart.common.exception.ServiceException;
 import jp.newpart.common.exception.user.AuthVerifyCodeNotMatchException;
 import jp.newpart.common.security.context.AuthenticationContextHolder;
 import jp.newpart.externalwarehouse.biz.service.IBssUserCertificationService;
-import jp.newpart.externalwarehouse.biz.sys.mapper.SysUserMapper;
+import jp.newpart.externalwarehouse.sys.mapper.SysUserMapper;
 import jp.newpart.common.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
