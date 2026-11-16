@@ -20,4 +20,21 @@ public interface IExternalWarehouseCommonService {
      * @return コンボボックスリスト
      */
     public List<OptionsKeyValueVo> getCommonOptions(OptionsParamBo optionsParam);
+
+
+    /**
+     * コンボボックスデータ(倉庫)を取得する
+     *
+     * @param userName コンボボックスパラメータ
+     * @return コンボボックスリスト
+     */
+    public List<OptionsKeyValueVo> getWarehouseCommonOptions(String userName);
+
+    /**
+     * コンボボックスデータ(倉庫ロケーション)を取得する
+     *
+     * @param whCd 倉庫コード
+     * @return コンボボックスリスト
+     */
+    public List<OptionsKeyValueVo> getLocationCommonOptions(String whCd);
 }

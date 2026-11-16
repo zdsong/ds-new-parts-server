@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.common.biz.mapper.ExternalWarehouseCommonMapper">
+    <resultMap type="MastWarehouseEntity" id="MastWarehouseEntityResult">
+        <result property="id" column="id"/>
+        <result property="whCd" column="wh_cd"/>
+        <result property="whNm" column="wh_nm"/>
+        <result property="whAlias" column="wh_alias"/>
+        <result property="whType" column="wh_type"/>
+        <result property="address" column="address"/>
+        <result property="memo" column="memo"/>
+        <result property="deleteFlg" column="delete_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+
+    </resultMap>
+    <sql id="selectMstWarehouse">
+        SELECT
+            distinct  mw.wh_cd,
+            mw.wh_nm
+        FROM
+            mast_warehouse mw
+                INNER JOIN mast_user_relations mur ON mur.mapping_id = mw.wh_cd
+                AND mur.delete_flg = '0'
+                AND mw.delete_flg = '0'
+    </sql>
+    <select id="selectMstWarehouseList" parameterType="String"  resultMap="MastWarehouseEntityResult">
+        <include refid="selectMstWarehouse"/>
+        <where>
+            <if test="userName != null  and userName != ''">
+                and mur.user_name= #{userName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 倉庫コードに紐づくロケーション一覧を取得する -->
+    <select id="selectLocationOptionsList" parameterType="String" resultType="map">
+        SELECT
+            ml.loc_cd AS key,
+            COALESCE(ml.loc_nm, ml.loc_cd) AS value
+        FROM
+            mast_location ml
+        WHERE
+            ml.delete_flg = '0'
+            AND ml.wh_cd = #{whCd}
+        ORDER BY
+            ml.loc_cd
+    </select>
+
+</mapper>

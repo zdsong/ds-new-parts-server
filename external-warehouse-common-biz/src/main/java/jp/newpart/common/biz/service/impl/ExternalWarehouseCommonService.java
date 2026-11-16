@@ -2,8 +2,11 @@ package jp.newpart.common.biz.service.impl;
 
 import jp.newpart.common.biz.domain.bo.OptionsParamBo;
 
+import jp.newpart.common.biz.domain.entity.MastItemEntity;
+import jp.newpart.common.biz.domain.entity.MastWarehouseEntity;
 import jp.newpart.common.biz.domain.vo.OptionsKeyValueVo;
 
+import jp.newpart.common.biz.mapper.ExternalWarehouseCommonMapper;
 import jp.newpart.common.biz.mapper.SysDictDataMapper;
 import jp.newpart.common.biz.service.IExternalWarehouseCommonService;
 import jp.newpart.common.core.domain.entity.SysDictData;
@@ -16,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 共通ロジックのサービスクラス
+ * 共通のサービスクラス
  *
  * @author nextosd
  */
@@ -25,6 +28,10 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
 
     @Autowired
     private SysDictDataMapper dictDataMapper;
+
+    @Autowired
+    private ExternalWarehouseCommonMapper ewCommonMapper;
+
     /**
      * コンボボックスデータを取得する
      *
@@ -53,4 +60,42 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * コンボボックスデータ(倉庫)を取得する
+     *
+     * @param userName コンボボックスパラメータ
+     * @return コンボボックスリスト
+     */
+    public List<OptionsKeyValueVo> getWarehouseCommonOptions(String userName) {
+        List<MastWarehouseEntity> mastWarehouseList =  ewCommonMapper.selectMstWarehouseList(userName);
+        return mastWarehouseList.stream()
+                // 倉庫コード順に並べ替える（削除済みデータは SQL 側で除外済み）
+                .sorted(Comparator.comparing(
+                        MastWarehouseEntity::getWhCd,
+                        Comparator.nullsFirst(String::compareTo)
+                ))
+                .map(e -> OptionsKeyValueVo.builder()
+                        .key(e.getWhCd())
+                        .value(e.getWhNm())
+
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * コンボボックスデータ(倉庫ロケーション)を取得する
+     *
+     * @param whCd 倉庫コード
+     * @return コンボボックスリスト
+     */
+    @Override
+    public List<OptionsKeyValueVo> getLocationCommonOptions(String whCd) {
+        return ewCommonMapper.selectLocationOptionsList(whCd).stream()
+                .map(row -> OptionsKeyValueVo.builder()
+                        .key(String.valueOf(row.get("key")))
+                        .value(String.valueOf(row.get("value")))
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

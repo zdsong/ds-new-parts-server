@@ -8,6 +8,8 @@ import jp.newpart.common.config.AppConfig;
 import jp.newpart.common.config.ServerConfig;
 import jp.newpart.common.constant.Constants;
 import jp.newpart.common.core.domain.AjaxResult;
+import jp.newpart.common.core.domain.model.LoginUser;
+import jp.newpart.common.utils.SecurityUtils;
 import jp.newpart.common.utils.StringUtils;
 import jp.newpart.common.utils.file.FileUploadUtils;
 import jp.newpart.common.utils.file.FileUtils;
@@ -48,6 +50,31 @@ public class CommonController
     @PostMapping(value = "/options")
     public AjaxResult getCommonOptions(@RequestBody OptionsParamBo optionsParam) {
         return AjaxResult.success(commonService.getCommonOptions(optionsParam));
+    }
+
+    /**
+     * 倉庫 コンボボックスデータを取得する
+     *
+     * @return 倉庫コンボボックスリスト
+     */
+    @GetMapping(value = "/wh/options")
+    public AjaxResult getWarehouseCommonOptions() {
+
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        // sys_user.user_name に対応するユーザー名
+        String userName = loginUser.getUsername();
+        return AjaxResult.success(commonService.getWarehouseCommonOptions(userName));
+    }
+
+    /**
+     * 倉庫ロケーション コンボボックスデータを取得する
+     *
+     * @param whCd 倉庫コード
+     * @return ロケーションコンボボックスリスト
+     */
+    @GetMapping(value = "/{whCd}/location/options")
+    public AjaxResult getLocationComOptionsByWhCd(@PathVariable("whCd") String whCd) {
+        return AjaxResult.success(commonService.getLocationCommonOptions(whCd));
     }
 
     /**
