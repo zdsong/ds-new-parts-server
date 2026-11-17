@@ -195,7 +195,7 @@ public class Constants
     /**
      * パレットキー
      */
-    public static final String SERIAL_PREFIX_PALLET = "C";
+    public static final String SERIAL_PREFIX_PALLET = "S";
 
     /**
      * パレット番号
