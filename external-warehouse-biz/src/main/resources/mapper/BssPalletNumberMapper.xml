@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.BssPalletNumberMapper">
+
+    <resultMap type="jp.newpart.externalwarehouse.biz.domain.vo.BssPalletNumberVo"
+               id="BssPalletNumberVoResult">
+        <id property="id" column="id"/>
+        <result property="palletNo" column="pallet_no"/>
+        <result property="barcode" column="barcode"/>
+        <result property="storagePeriod" column="storage_period"/>
+        <result property="classification" column="classification"/>
+        <result property="inboundDate" column="inbound_date"/>
+        <result property="whCd" column="wh_cd"/>
+        <result property="zoneCd" column="zone_cd"/>
+        <result property="locCd" column="loc_cd"/>
+        <result property="memo1" column="memo1"/>
+        <result property="memo2" column="memo2"/>
+        <result property="printedFlg" column="printed_flg"/>
+        <result property="deleteFlg" column="delete_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+        <result property="whNm" column="wh_nm"/>
+    </resultMap>
+
+    <resultMap type="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity"
+               id="BssPalletNumberDetailResult">
+        <id property="id" column="id"/>
+        <result property="palletNo" column="pallet_no"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemName" column="item_name"/>
+        <result property="productGroup" column="product_group"/>
+        <result property="arrangementNo" column="arrangement_no"/>
+        <result property="storageQty" column="storage_qty"/>
+        <result property="storageCapacity" column="storage_capacity"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="usableFlag" column="usable_flag"/>
+        <result property="remarks" column="remarks"/>
+        <result property="deleteFlg" column="delete_flg"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createPgId" column="create_pg_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updatePgId" column="update_pg_id"/>
+        <result property="version" column="version"/>
+    </resultMap>
+
+    <!-- パレット番号検索用の共通SQL -->
+    <sql id="selectBssPalletNumberVo">
+        select
+            pn.id,
+            pn.pallet_no,
+            pn.barcode,
+            pn.storage_period,
+            pn.classification,
+            pn.inbound_date,
+            pn.wh_cd,
+            pn.zone_cd,
+            pn.loc_cd,
+            pn.memo1,
+            pn.memo2,
+            pn.printed_flg,
+            pn.delete_flg,
+            pn.create_time,
+            pn.create_by,
+            pn.create_pg_id,
+            pn.update_time,
+            pn.update_by,
+            pn.update_pg_id,
+            pn.version,
+            mw.wh_nm
+        from bss_pallet_number pn
+        left join mast_warehouse mw
+            on mw.wh_cd = pn.wh_cd
+            and mw.delete_flg = '0'
+    </sql>
+
+    <!-- 積載明細検索用の共通SQL -->
+    <sql id="selectBssPalletNumberDetail">
+        select
+            pnd.id,
+            pnd.pallet_no,
+            pnd.item_code,
+            pnd.item_name,
+            pnd.product_group,
+            pnd.arrangement_no,
+            pnd.storage_qty,
+            pnd.storage_capacity,
+            pnd.storage_type,
+            pnd.usable_flag,
+            pnd.remarks,
+            pnd.delete_flg,
+            pnd.create_time,
+            pnd.create_by,
+            pnd.create_pg_id,
+            pnd.update_time,
+            pnd.update_by,
+            pnd.update_pg_id,
+            pnd.version
+        from bss_pallet_number_detail pnd
+    </sql>
+
+    <!-- パレット番号を検索リスト -->
+    <select id="selectList" parameterType="jp.newpart.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo"
+            resultMap="BssPalletNumberVoResult">
+        <include refid="selectBssPalletNumberVo"/>
+        where pn.delete_flg = '0'
+        <if test="whCd != null and whCd != ''">
+            and pn.wh_cd = #{whCd}
+        </if>
+        <if test="locCd != null and locCd != ''">
+            and pn.loc_cd like concat('%', #{locCd}, '%')
+        </if>
+        <if test="palletNo != null and palletNo != ''">
+            and pn.pallet_no like concat('%', #{palletNo}, '%')
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+            and exists (
+                select 1
+                from bss_pallet_number_detail pnd
+                where pnd.pallet_no = pn.pallet_no
+                  and pnd.delete_flg = '0'
+                  and pnd.item_code like concat('%', #{itemCode}, '%')
+            )
+        </if>
+        <if test="itemName != null and itemName != ''">
+            and exists (
+                select 1
+                from bss_pallet_number_detail pnd
+                where pnd.pallet_no = pn.pallet_no
+                  and pnd.delete_flg = '0'
+                  and pnd.item_name like concat('%', #{itemName}, '%')
+            )
+        </if>
+        order by pn.pallet_no desc
+    </select>
+
+    <!-- パレット番号を検索 -->
+    <select id="selectByPalletNo" parameterType="String" resultMap="BssPalletNumberVoResult">
+        <include refid="selectBssPalletNumberVo"/>
+        where pn.delete_flg = '0'
+          and pn.pallet_no = #{palletNo}
+    </select>
+
+    <!-- 積載明細を検索する -->
+    <select id="selectDetailsByPalletNos" resultMap="BssPalletNumberDetailResult">
+        <include refid="selectBssPalletNumberDetail"/>
+        where pnd.delete_flg = '0'
+          and pnd.pallet_no in
+        <foreach collection="palletNos" item="palletNo" open="(" separator="," close=")">
+            #{palletNo}
+        </foreach>
+        order by pnd.pallet_no, pnd.item_code
+    </select>
+
+    <!-- パレット番号が存在するか確認する -->
+    <select id="countByPalletNo" resultType="int">
+        select count(1)
+        from bss_pallet_number
+        where pallet_no = #{palletNo}
+    </select>
+
+    <!-- パレット番号を登録 -->
+    <insert id="insert" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+        insert into bss_pallet_number
+        (
+            id,
+            pallet_no,
+            barcode,
+            storage_period,
+            classification,
+            inbound_date,
+            wh_cd,
+            zone_cd,
+            loc_cd,
+            memo1,
+            memo2,
+            printed_flg,
+            delete_flg,
+            create_time,
+            create_by,
+            create_pg_id,
+            update_time,
+            update_by,
+            update_pg_id,
+            version
+        )
+        values
+        (
+            #{id},
+            #{palletNo},
+            #{barcode},
+            #{storagePeriod},
+            #{classification},
+            #{inboundDate,jdbcType=VARCHAR},
+            #{whCd},
+            #{zoneCd,jdbcType=VARCHAR},
+            #{locCd},
+            #{memo1},
+            #{memo2},
+            #{printedFlg},
+            #{deleteFlg},
+            #{createTime},
+            #{createBy},
+            #{createPgId},
+            #{updateTime},
+            #{updateBy},
+            #{updatePgId},
+            #{version}
+        )
+    </insert>
+
+    <!-- パレット番号を更新（楽観的排他制御） -->
+    <update id="update" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+        update bss_pallet_number
+        set
+            storage_period = #{storagePeriod},
+            classification = #{classification},
+            inbound_date = #{inboundDate,jdbcType=VARCHAR},
+            wh_cd = #{whCd},
+            zone_cd = #{zoneCd,jdbcType=VARCHAR},
+            loc_cd = #{locCd},
+            memo1 = #{memo1},
+            memo2 = #{memo2},
+            update_time = #{updateTime},
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where pallet_no = #{palletNo}
+          and version = #{version}
+    </update>
+
+    <!-- 印刷フラグを印刷済みに更新 -->
+    <update id="updatePrintedFlg" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+        update bss_pallet_number
+        set
+            printed_flg = '1',
+            update_time = #{updateTime},
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where pallet_no = #{palletNo}
+          and delete_flg = '0'
+    </update>
+
+    <!-- パレット番号を論理削除 -->
+    <update id="deleteLogical" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+        update bss_pallet_number
+        set
+            delete_flg = '1',
+            update_time = #{updateTime},
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where pallet_no = #{palletNo}
+    </update>
+
+    <!-- 積載明細を登録 -->
+    <insert id="insertDetail" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity">
+        insert into bss_pallet_number_detail
+        (
+            id,
+            pallet_no,
+            item_code,
+            item_name,
+            product_group,
+            arrangement_no,
+            storage_qty,
+            storage_capacity,
+            storage_type,
+            usable_flag,
+            remarks,
+            delete_flg,
+            create_time,
+            create_by,
+            create_pg_id,
+            update_time,
+            update_by,
+            update_pg_id,
+            version
+        )
+        values
+        (
+            #{id},
+            #{palletNo},
+            #{itemCode},
+            #{itemName,jdbcType=VARCHAR},
+            #{productGroup,jdbcType=VARCHAR},
+            #{arrangementNo,jdbcType=VARCHAR},
+            #{storageQty},
+            #{storageCapacity,jdbcType=INTEGER},
+            #{storageType,jdbcType=VARCHAR},
+            #{usableFlag},
+            #{remarks,jdbcType=VARCHAR},
+            #{deleteFlg},
+            #{createTime},
+            #{createBy},
+            #{createPgId},
+            #{updateTime},
+            #{updateBy},
+            #{updatePgId},
+            #{version}
+        )
+    </insert>
+
+    <!-- 積載明細を論理削除（パレット番号単位） -->
+    <update id="deleteDetailsByPalletNo"
+            parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity">
+        update bss_pallet_number_detail
+        set
+            delete_flg = '1',
+            update_time = #{updateTime},
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where pallet_no = #{palletNo}
+          and delete_flg = '0'
+    </update>
+
+</mapper>
