@@ -1,56 +1,48 @@
 package jp.newpart.externalwarehouse.biz.mapper;
 
-import jp.newpart.externalwarehouse.biz.domain.vo.MastItemImageVo;
-import jp.newpart.externalwarehouse.biz.domain.vo.MastItemVo;
+import jp.newpart.common.biz.domain.entity.MastItemEntity;
 import jp.newpart.externalwarehouse.biz.domain.bo.MastItemSearchBo;
+import jp.newpart.externalwarehouse.biz.domain.vo.MastItemVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
- * 商品マスタ Mapperインタフェース
+ * 品目マスタ Mapperインタフェース
  *
  * @author nextosd
  */
 public interface MastItemMapper {
 
     /**
-     * 商品マスタを検索
-     *
-     * @param id 商品マスタプライマリ・キー
-     * @return 商品マスタ
-     */
-     MastItemVo selectById(@Param("id") String id);
-
-    /**
-     * 商品マスタを検索
-     *
-     * @param itemId 商品Id
-     * @return 商品マスタ
-     */
-    MastItemVo selectByItemId(@Param("itemId") String itemId);
-
-    /**
-     * 商品マスタを検索リスト
+     * 品目マスタを検索リスト
      *
      * @param mastItemSearchBo 検索パラメータ対象
-     * @return 商品マスタリスト
+     * @return 品目マスタリスト
      */
     List<MastItemVo> selectList(MastItemSearchBo mastItemSearchBo);
 
     /**
-     * 商品写真マスタを検索リスト
+     * 品目コードで品目マスタを検索
      *
-     * @param itemId
-     * @return
+     * @param itemCode 品目コード
+     * @return 品目マスタ
      */
-    List<MastItemImageVo> selectItemImageList(String itemId);
+    MastItemVo selectByItemCode(@Param("itemCode") String itemCode);
 
     /**
-     * 商品写真マスタを削除
+     * 品目マスタを登録
      *
-     * @param itemId 商品マスタID
-     * @return
+     * @param entity 品目マスタ
+     * @return 登録件数
      */
-    int deleteItemImageByItemId(String itemId);
+    int insert(MastItemEntity entity);
+
+    /**
+     * 品目マスタを更新
+     *
+     * @param entity 品目マスタ
+     * @return 更新件数
+     */
+    int update(MastItemEntity entity);
 }

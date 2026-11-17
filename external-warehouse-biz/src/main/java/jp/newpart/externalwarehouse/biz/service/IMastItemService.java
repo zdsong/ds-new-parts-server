@@ -1,41 +1,40 @@
 package jp.newpart.externalwarehouse.biz.service;
 
 import jp.newpart.common.core.domain.ImportFileErrorVo;
-import jp.newpart.externalwarehouse.biz.domain.vo.MastItemVo;
 import jp.newpart.externalwarehouse.biz.domain.bo.MastItemSearchBo;
+import jp.newpart.externalwarehouse.biz.domain.vo.MastItemVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 /**
- * 商品マスタ Serviceインタフェース
+ * 品目マスタ Serviceインタフェース
  *
  * @author nextosd
  */
 public interface IMastItemService {
 
-
     /**
-     * 商品マスタを検索
+     * 品目コードで品目マスタを検索
      *
-     * @param itemId 商品ID
-     * @return 商品マスタ
+     * @param itemCode 品目コード
+     * @return 品目マスタ
      */
-    MastItemVo selectByItemId(String itemId);
+    MastItemVo selectByItemCode(String itemCode);
 
     /**
-     * 商品マスタを検索リスト
+     * 品目マスタを検索リスト
      *
      * @param mastItemSearchBo 検索パラメータ対象
-     * @return 商品マスタリスト
+     * @return 品目マスタリスト
      */
-     List<MastItemVo> selectList(MastItemSearchBo mastItemSearchBo);
+    List<MastItemVo> selectList(MastItemSearchBo mastItemSearchBo);
 
     /**
-     * 商品情報を取り込む
+     * 品目情報を取り込む
      *
-     * @param csvFile エクセルファイル
+     * @param csvFile CSVファイル
      * @return エラー情報のリスト
      */
-     List<ImportFileErrorVo> importCsvData(MultipartFile csvFile);
+    List<ImportFileErrorVo> importCsvData(MultipartFile csvFile);
 }

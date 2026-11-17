@@ -43,11 +43,11 @@ public class ItemController extends BaseController {
     }
 
     /**
-     * 商品マスタの詳細情報
+     * 品目マスタの詳細情報
      */
-    @GetMapping(value = "/info/{itemId}")
-    public AjaxResult getInfo(@PathVariable("itemId") String itemId) {
-        return AjaxResult.success(mastItemService.selectByItemId(itemId));
+    @GetMapping(value = "/info/{itemCode}")
+    public AjaxResult getInfo(@PathVariable("itemCode") String itemCode) {
+        return AjaxResult.success(mastItemService.selectByItemCode(itemCode));
     }
 
     /**
@@ -56,7 +56,7 @@ public class ItemController extends BaseController {
      * @param file アップロードするファイル
      * @return アップロード結果
      */
-    @Log(title = "新産直くん 商品マスタ CSVインポート", businessType = BusinessType.IMPORT)
+    @Log(title = "品目マスタ CSVインポート", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     public AjaxResult importCsvData(@RequestParam("file") MultipartFile file) {
         List<ImportFileErrorVo> errorList = mastItemService.importCsvData(file);

@@ -24,7 +24,7 @@ public class ExcelToSQLGenerator {
     public static final String CONST_ECODE = "○";
 	public static void main(String[] args) {
         // 文件路径配置
-        String excelFilePath = "/Users/apple/mys/project/テーブル設計書_新部品管理システム｜外部倉庫管理v1.0.xlsx";; // 输入的Excel文件l文件路径
+        String excelFilePath = "/Users/apple/mys/project/外部倉庫管理システム（仮称）/テーブル設計書_新部品管理システム｜外部倉庫管理v1.0.xlsx";; // 输入的Excel文件l文件路径
         String outputSqlPath = "/Users/apple/mys/project/autocodes/create_table_sql.sql"; // 输出的SQL文件路径
         String outputIndexPath = "/Users/apple/mys/project/autocodes/create-index_structure_sql.sql"; // 输出的SQL文件路径
 
