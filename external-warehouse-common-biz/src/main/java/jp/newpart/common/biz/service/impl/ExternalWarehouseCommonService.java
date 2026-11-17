@@ -11,12 +11,15 @@ import jp.newpart.common.biz.mapper.SysDictDataMapper;
 import jp.newpart.common.biz.service.IExternalWarehouseCommonService;
 import jp.newpart.common.core.domain.entity.SysDictData;
 
+import jp.newpart.common.core.service.ISysRangedSeqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static jp.newpart.common.constant.Constants.SERIAL_PREFIX_PALLET;
 
 /**
  * 共通のサービスクラス
@@ -31,6 +34,9 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
 
     @Autowired
     private ExternalWarehouseCommonMapper ewCommonMapper;
+
+    @Autowired
+    private ISysRangedSeqService sysRangedSeqService;
 
     /**
      * コンボボックスデータを取得する
@@ -97,5 +103,14 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
                         .value(String.valueOf(row.get("value")))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * パレット番号の生成
+     *
+     * @return パレット番号
+     */
+    public String generatePalletNo() {
+       return  sysRangedSeqService.generateSerialNo(SERIAL_PREFIX_PALLET);
     }
 }

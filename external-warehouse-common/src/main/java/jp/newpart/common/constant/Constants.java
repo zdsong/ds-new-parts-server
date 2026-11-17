@@ -191,4 +191,14 @@ public class Constants
      * カンマ
      */
     public static final char COMMA = ',';
+
+    /**
+     * パレットキー
+     */
+    public static final String SERIAL_PREFIX_PALLET = "C";
+
+    /**
+     * パレット番号
+     */
+    public static final String SERIAL_TYPE_PALLET = "pallet";
 }

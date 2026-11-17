@@ -1,27 +1,27 @@
 package jp.newpart.common.mapper;
 
-import jp.newpart.common.core.domain.entity.RangedSeq;
+import jp.newpart.common.core.domain.entity.SysRangedSeq;
 
 /**
  * シリアルナンバー状況情報
  *
  * @author nextosd
  */
-public interface RangedSeqMapper
+public interface SysRangedSeqMapper
 {
     /**
      * シリアルナンバー追加
      *
      * @param rangeSeq ログ・オブジェクトへのアクセス
      */
-    public void insert(RangedSeq rangeSeq);
+    public void insert(SysRangedSeq rangeSeq);
 
     /**
      * シリアルナンバー更新
      *
      * @param rangeSeq ログ・オブジェクトへのアクセス
      */
-    public void update(RangedSeq rangeSeq);
+    public void update(SysRangedSeq rangeSeq);
 
     /**
      * シリアルナンバーを検索リスト
@@ -29,6 +29,6 @@ public interface RangedSeqMapper
      * @param rangeSeq ID List
      * @return シリアルナンバー
      */
-    public RangedSeq selectRangedSeq(RangedSeq rangeSeq);
+    public SysRangedSeq selectSysRangedSeq(SysRangedSeq rangeSeq);
 
 }

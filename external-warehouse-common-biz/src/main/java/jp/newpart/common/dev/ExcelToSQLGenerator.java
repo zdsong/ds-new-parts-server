@@ -59,7 +59,7 @@ public class ExcelToSQLGenerator {
 
 
             // 遍历每个Sheet，假设每个Sheet定义一张表
-            for (int sheetIndex = 6; sheetIndex < 21; sheetIndex++) {
+            for (int sheetIndex = 6; sheetIndex < 19; sheetIndex++) {
             //for (int sheetIndex = 4; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
 
                 Sheet sheet = workbook.getSheetAt(sheetIndex);

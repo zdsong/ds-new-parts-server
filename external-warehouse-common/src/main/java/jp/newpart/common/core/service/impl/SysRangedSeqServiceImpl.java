@@ -1,8 +1,8 @@
 package jp.newpart.common.core.service.impl;
 
-import jp.newpart.common.core.domain.entity.RangedSeq;
-import jp.newpart.common.core.service.IRangedSeqService;
-import jp.newpart.common.mapper.RangedSeqMapper;
+import jp.newpart.common.core.domain.entity.SysRangedSeq;
+import jp.newpart.common.core.service.ISysRangedSeqService;
+import jp.newpart.common.mapper.SysRangedSeqMapper;
 import jp.newpart.common.utils.DateUtils;
 import jp.newpart.common.utils.StringUtils;
 import jp.newpart.common.utils.ValueUtils;
@@ -10,29 +10,22 @@ import jp.newpart.common.utils.uuid.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static jp.newpart.common.constant.Constants.SERIAL_PREFIX_PALLET;
+import static jp.newpart.common.constant.Constants.SERIAL_TYPE_PALLET;
+
 /**
  * シーケンス状況情報サービス層処理
  *
  * @author nextosd
  */
 @Service
-public class RangedSeqServiceImpl implements IRangedSeqService {
+public class SysRangedSeqServiceImpl implements ISysRangedSeqService {
 
-    /**
-     * 顧客シリアルキー
-     */
-    private static final String SERIAL_PREFIX_CUSTOMER = "C";
-    /**
-     * 顧客シリアルキー
-     */
-    private static final String SERIAL_PREFIX_FARMER = "F";
-    /**
-     * お問い合わせシリアルキー
-     */
-    private static final String SERIAL_PREFIX_ASK = "Y";
+
+
 
     @Autowired
-    private RangedSeqMapper rangedSeqMapper;
+    private SysRangedSeqMapper rangedSeqMapper;
 
     /**
      * シリアル取得済
@@ -43,21 +36,12 @@ public class RangedSeqServiceImpl implements IRangedSeqService {
     public String generateSerialNo(String serialType) {
         Integer seq = 0;
         StringBuilder result = new StringBuilder();
-        if( ValueUtils.isEqual(SERIAL_TYPE_CUSTOMER, serialType)) {
-            seq = this.increaseSequence(SERIAL_PREFIX_CUSTOMER,SERIAL_PREFIX_CUSTOMER,serialType,serialType,null,null);
-            String serialNo = StringUtils.leftPad(String.valueOf(seq), 10, '0');
-            result.append(SERIAL_PREFIX_CUSTOMER);
-            result.append(serialNo);
-        } else if( ValueUtils.isEqual(SERIAL_TYPE_FARMER, serialType)) {
-            seq = this.increaseSequence(SERIAL_PREFIX_FARMER,SERIAL_PREFIX_FARMER,serialType,serialType,null,null);
-            String serialNo = StringUtils.leftPad(String.valueOf(seq), 8, '0');
-            result.append(SERIAL_PREFIX_FARMER);
-            result.append(serialNo);
-        } else if( ValueUtils.isEqual(SERIAL_TYPE_ASK, serialType)) {
+         if( ValueUtils.isEqual(SERIAL_PREFIX_PALLET, serialType)) {
             String dateTimeNowStr = DateUtils.dateTimeNow(DateUtils.YYYYMMDD);
-            seq = this.increaseSequence(SERIAL_PREFIX_FARMER,dateTimeNowStr,serialType,serialType,null,null);
-            String serialNo = StringUtils.leftPad(String.valueOf(seq), 7, '0');
-            result.append(SERIAL_PREFIX_ASK);
+            String subDateTimeNowStr =dateTimeNowStr.substring(2,dateTimeNowStr.length());
+            seq = this.increaseSequence(SERIAL_TYPE_PALLET,subDateTimeNowStr,serialType,serialType,null,null);
+            String serialNo = StringUtils.leftPad(String.valueOf(seq), 3, '0');
+            result.append(SERIAL_PREFIX_PALLET);
             result.append(dateTimeNowStr);
             result.append(serialNo);
         }
@@ -77,7 +61,7 @@ public class RangedSeqServiceImpl implements IRangedSeqService {
      */
     @Override
     public  Integer increaseSequence( String key1, String value1, String key2, String value2, String key3, String value3) {
-        RangedSeq condition = new RangedSeq();
+        SysRangedSeq condition = new SysRangedSeq();
         condition.setKey1(key1);
         condition.setValue1(value1);
         condition.setKey2(key2);
@@ -93,9 +77,9 @@ public class RangedSeqServiceImpl implements IRangedSeqService {
      * @param condition シーケンス
      * @return シーケンス結果
      */
-    private  Integer increaseSequence(RangedSeq condition) {
+    private  Integer increaseSequence(SysRangedSeq condition) {
 
-        RangedSeq rs = rangedSeqMapper.selectRangedSeq(condition);
+        SysRangedSeq rs = rangedSeqMapper.selectSysRangedSeq(condition);
 
         if(rs == null) {
             rs = condition;

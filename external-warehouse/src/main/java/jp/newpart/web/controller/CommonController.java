@@ -77,6 +77,16 @@ public class CommonController
         return AjaxResult.success(commonService.getLocationCommonOptions(whCd));
     }
 
+
+    /**
+     * パレット番号の生成
+     * @return
+     */
+    @GetMapping(value = "/generate/pallet_no")
+    public String generatePalletNo() {
+        return  commonService.generatePalletNo();
+    }
+
     /**
      * 汎用ダウンロードリクエスト
      * 

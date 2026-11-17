@@ -5,21 +5,8 @@ package jp.newpart.common.core.service;
  *
  * @author nextosd
  */
-public interface IRangedSeqService {
-    /**
-     * 顧客シリアル
-     */
-    public static final String SERIAL_TYPE_CUSTOMER = "customer";
+public interface ISysRangedSeqService {
 
-    /**
-     * 顧客シリアル
-     */
-    public static final String SERIAL_TYPE_FARMER = "farmer";
-
-    /**
-     * お問い合わせ
-     */
-    public static final String SERIAL_TYPE_ASK= "askNo";
 
     /**
      * RangedSeqを見つけてシーケンスを上げて返します

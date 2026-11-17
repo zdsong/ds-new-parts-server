@@ -37,4 +37,12 @@ public interface IExternalWarehouseCommonService {
      * @return コンボボックスリスト
      */
     public List<OptionsKeyValueVo> getLocationCommonOptions(String whCd);
+
+
+    /**
+     * パレット番号の生成
+     *
+     * @return パレット番号
+     */
+    public String generatePalletNo();
 }

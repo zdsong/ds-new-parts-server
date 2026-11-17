@@ -8,7 +8,7 @@ import lombok.Data;
  * @author nextosd
  */
 @Data
-public class RangedSeq {
+public class SysRangedSeq {
 
     /**
      * Id
