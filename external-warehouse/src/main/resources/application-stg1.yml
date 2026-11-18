@@ -7,7 +7,7 @@ external-warehouse:
   # copyrightyear year
   copyrightYear: 2026
   # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
-  profile: ./temp
+  profile: /opt/pms/temp
   # ipアドレス取得スイッチ
   addressEnabled: false
   # 検証コードタイプmath数値計算char文字検証
@@ -25,7 +25,7 @@ server:
 # ログ
 logging:
   file:
-    path: ./logs/external-warehouse
+    path: /opt/pms/logs
   level:
     jp.newpart: error
     org.springframework: warn

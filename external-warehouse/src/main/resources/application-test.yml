@@ -7,7 +7,7 @@ external-warehouse:
   # copyrightyear year
   copyrightYear: 2026
   # File Path（ Windows D:/farm/uploadPath，Linux  /home/farm/uploadPath）
-  profile: ./temp
+  profile: /mnt/pms/temp
   # ipアドレス取得スイッチ
   addressEnabled: false
   # 検証コードタイプmath数値計算char文字検証
@@ -18,12 +18,12 @@ external-warehouse:
 # 開発環境の構成
 server:
   # サーバのHTTPポート、デフォルトは8080
-  port: 9181
+  port: 9281
 
 # ログ
 logging:
   file:
-    path: ./logs/external-warehouse-quartz/external-warehouse
+    path: /mnt/pms/logs
   level:
     jp.newpart: error
     org.springframework: warn
@@ -31,7 +31,7 @@ logging:
 # Spring
 spring:
   datasource:
-    url: jdbc:postgresql://8.147.128.107:5432/stg1?currentSchema=farm
+    url: jdbc:postgresql://8.147.128.107:5432/ew_dev?currentSchema=ew
     username: postgres
     password: postgres123$
 

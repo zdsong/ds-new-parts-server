@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<sql id="selectSeq">
         select id,key1,value1,key2,value2,key3,value3,seq
-        from ranged_seq
+        from sys_ranged_seq
 
     </sql>
 
@@ -51,12 +51,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
 	<insert id="insert" parameterType="SysRangedSeq">
-		insert into ranged_seq(id, key1, value1, key2, value2, key3, value3,seq,update_time)
+		insert into sys_ranged_seq(id, key1, value1, key2, value2, key3, value3,seq,update_time)
         values (#{id}, #{key1}, #{value1}, #{key2}, #{value2}, #{key3}, #{value3}, #{seq}, now())
 	</insert>
 
     <update id="update" parameterType="SysRangedSeq">
-        update ranged_seq
+        update sys_ranged_seq
         <trim prefix="SET" suffixOverrides=",">
             <if test="seq != null">
                 seq = #{seq},
