@@ -1,7 +1,7 @@
 package jp.newpart.externalwarehouse.biz.constants;
 
 /**
- * 農家支援システム 新・産直くん（仮称）共通定数情報
+ * 外部倉庫管理システム（仮称）共通定数情報
  */
 public class BizConstants {
     /**

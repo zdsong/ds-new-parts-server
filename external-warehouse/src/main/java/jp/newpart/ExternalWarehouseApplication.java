@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * 新・産直 Start Application
+ * 外部倉庫管理システム（仮称） Start Application
  * 
  * @author nextosd
  */

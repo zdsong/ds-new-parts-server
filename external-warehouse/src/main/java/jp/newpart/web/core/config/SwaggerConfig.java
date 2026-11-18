@@ -53,8 +53,8 @@ public class SwaggerConfig
     {
         return new Info()
             // タイトルの設定
-            .title("タイトル: 農家（農業法人）支援_インタフェース・ドキュメント")
-            .description("ヤマト運輸 農家（農業法人）支援 - 新・産直 システム")
+            .title("タイトル: 外部倉庫管理システム（仮称）_インタフェース・ドキュメント")
+            .description("外部倉庫管理システム（仮称） システム")
             .contact(new Contact().name(appConfig.getName()))
             .version("Version:" + appConfig.getVersion());
     }
