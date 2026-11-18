@@ -10,8 +10,7 @@ import jp.newpart.common.utils.uuid.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static jp.newpart.common.constant.Constants.SERIAL_PREFIX_PALLET;
-import static jp.newpart.common.constant.Constants.SERIAL_TYPE_PALLET;
+import static jp.newpart.common.constant.Constants.*;
 
 /**
  * シーケンス状況情報サービス層処理
@@ -42,7 +41,8 @@ public class SysRangedSeqServiceImpl implements ISysRangedSeqService {
             seq = this.increaseSequence(SERIAL_TYPE_PALLET,subDateTimeNowStr,serialType,serialType,null,null);
             String serialNo = StringUtils.leftPad(String.valueOf(seq), 3, '0');
             result.append(SERIAL_PREFIX_PALLET);
-            result.append(dateTimeNowStr);
+            result.append(subDateTimeNowStr);
+            result.append(HORIZONTAL_LINE);
             result.append(serialNo);
         }
 

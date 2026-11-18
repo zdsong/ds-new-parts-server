@@ -193,6 +193,11 @@ public class Constants
     public static final char COMMA = ',';
 
     /**
+     * 横線
+     */
+    public static final char HORIZONTAL_LINE = '-';
+
+    /**
      * パレットキー
      */
     public static final String SERIAL_PREFIX_PALLET = "S";
