@@ -94,7 +94,7 @@ public class AuthController
     /**
      * パスワード再設定
      */
-    @Log(title = "新産直くん ログイン パスワード再設定", businessType = BusinessType.UPDATE)
+    @Log(title = "ログイン パスワード再設定", businessType = BusinessType.UPDATE)
     @PostMapping("/resetPwd")
     public AjaxResult resetPwd(@RequestBody @Validated({ValidatorGroup.AddGroup.class}) AuthResetPwdBo userResetPwdBo) {
         authService.resetPwd(userResetPwdBo);

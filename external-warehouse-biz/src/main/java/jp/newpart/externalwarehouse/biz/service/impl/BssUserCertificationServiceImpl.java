@@ -106,11 +106,11 @@ public class BssUserCertificationServiceImpl implements IBssUserCertificationSer
         bssUserCertificationEntity.setDiscontinuedFlg(DelFlgEnum.OFF.getCode());
 
         // 分間有効
-        int minutes = ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_EXPIRE_MINUTES), 10);
+        int minutes = ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_EXPIRE_MINUTES), 10);
         // 開始時間
         long startTime = System.currentTimeMillis();
         // 有効終了時間
-        long endTime = startTime + ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_EXPIRE_MINUTES), 10) * 60 * 1000;
+        long endTime = startTime + ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_EXPIRE_MINUTES), 10) * 60 * 1000;
 
         bssUserCertificationEntity.setStartTime(DateUtils.getTime(startTime));
         bssUserCertificationEntity.setEndTime(DateUtils.getTime(endTime));
@@ -118,18 +118,18 @@ public class BssUserCertificationServiceImpl implements IBssUserCertificationSer
         bssUserCertificationBaseService.insert(bssUserCertificationEntity);
 
         // Email 送信
-        String mailInfo =StringUtils.format(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_LOGIN_EMAIL_CONTENT)
+        String mailInfo =StringUtils.format(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_LOGIN_EMAIL_CONTENT)
                 , params.getUserName()
                 , bssUserCertificationEntity.getCertificationCode()
                 , minutes);
-        String mailTitle = sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_LOGIN_EMAIL_TITLE);
+        String mailTitle = sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_LOGIN_EMAIL_TITLE);
         String mailAddress = DecryptUtils.decryptAES(params.getMailAddress());
 
         log.debug("DEV 認証コード = " + bssUserCertificationEntity.getCertificationCode());
 
         if(ValueUtils.isNotEqual(AppConfig.isMailEnabled(), false)) {
             // BCCメールアドレス
-            String bcc = sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_BCC_EMAIL_ADDRESS);
+            String bcc = sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_BCC_EMAIL_ADDRESS);
 
             if(ValueUtils.isNotEmpty(bcc)){
                 // Email 送信 & Bcc
@@ -162,7 +162,7 @@ public class BssUserCertificationServiceImpl implements IBssUserCertificationSer
     private String generateCode() {
         Random random = new Random();
         StringBuilder code = new StringBuilder();
-        int codeLength = ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.SANCHOKU_AUTH_CODE_LENGTH), 6);
+        int codeLength = ConvertUtils.toInt(sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_AUTH_CODE_LENGTH), 6);
         for (int i = 0; i < codeLength; i++) {
             code.append(random.nextInt(10));
         }
