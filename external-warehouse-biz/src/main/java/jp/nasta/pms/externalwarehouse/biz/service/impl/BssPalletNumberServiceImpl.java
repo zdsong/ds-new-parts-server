@@ -43,7 +43,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
     /**
      * 更新プログラムＩＤ：パレット情報詳細
      */
-    private static final String PG_ID_UPDATE = ExternalWarehousePgIdEnum.SP305.getCode();
+    private static final String PG_ID_UPDATE = ExternalWarehousePgIdEnum.P305.getCode();
 
     /**
      * 削除フラグ：未削除
@@ -191,7 +191,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
             return 0;
         }
 
-        // 積載明細は登録し直す（旧明細は論理削除する）
+        // 画面から外した明細を残さないため、旧明細は削除してから登録し直す
         BssPalletNumberDetailEntity deleteCondition = new BssPalletNumberDetailEntity();
         deleteCondition.setPalletNo(bo.getPalletNo());
         deleteCondition.setUpdateTime(now);
@@ -204,7 +204,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
     }
 
     /**
-     * パレット情報を論理削除する（積載明細も論理削除する）
+     * パレット情報を論理削除する（積載明細は削除する）
      *
      * @param entity パレット番号
      * @return 削除件数（ヘッダ）

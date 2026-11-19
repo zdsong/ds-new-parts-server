@@ -16,6 +16,7 @@ import jp.nasta.pms.common.utils.MessageUtils;
 import jp.nasta.pms.common.utils.SecurityUtils;
 import jp.nasta.pms.common.utils.StringUtils;
 import jp.nasta.pms.common.utils.uuid.IdUtils;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssInventoryInboundLineBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssInventoryMapper;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssInventoryService;
@@ -112,7 +113,7 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
         Map<String, MastItemEntity> itemMap = loadItems(pallet.getDetails());
 
         for (BssPalletNumberDetailEntity line : pallet.getDetails()) {
-            InboundLine inboundLine = toInboundLine(pallet, line, itemMap);
+            BssInventoryInboundLineBo inboundLine = toInboundLine(pallet, line, itemMap);
             insertDetail(pallet, inboundLine, now, operator);
             insertHistory(pallet, inboundLine, zoneCd, ioDatetime, ioOperator, storagePeriod, now, operator);
         }
@@ -126,7 +127,7 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
      * @param itemMap 品目マスタ
      * @return 在庫登録行
      */
-    private InboundLine toInboundLine(BssPalletNumberVo pallet, BssPalletNumberDetailEntity line,
+    private BssInventoryInboundLineBo toInboundLine(BssPalletNumberVo pallet, BssPalletNumberDetailEntity line,
                                       Map<String, MastItemEntity> itemMap) {
         if (StringUtils.isEmpty(line.getItemCode())) {
             throw new ServiceException(MessageUtils.message("E0003", MessageUtils.message("label.partItemCode")));
@@ -143,20 +144,20 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
         String masterUom = item == null ? null : item.getPrztic();
         String itemName = firstNonBlank(line.getItemName(), masterName, line.getItemCode());
 
-        InboundLine inboundLine = new InboundLine();
-        inboundLine.itemCode = line.getItemCode().trim();
-        inboundLine.itemName = StringUtils.substring(itemName, 0, ITEM_NAME_MAX);
-        inboundLine.uom = StringUtils.substring(StringUtils.trimToNull(masterUom), 0, UOM_MAX);
-        inboundLine.qty = line.getStorageQty();
-        inboundLine.storageType = StringUtils.trimToNull(line.getStorageType());
-        inboundLine.remarks = StringUtils.substring(firstNonBlank(line.getRemarks(), pallet.getMemo1()), 0, REMARKS_MAX);
+        BssInventoryInboundLineBo inboundLine = new BssInventoryInboundLineBo();
+        inboundLine.setItemCode(line.getItemCode().trim());
+        inboundLine.setItemName(StringUtils.substring(itemName, 0, ITEM_NAME_MAX));
+        inboundLine.setUom(StringUtils.substring(StringUtils.trimToNull(masterUom), 0, UOM_MAX));
+        inboundLine.setQty(line.getStorageQty());
+        inboundLine.setStorageType(StringUtils.trimToNull(line.getStorageType()));
+        inboundLine.setRemarks(StringUtils.substring(firstNonBlank(line.getRemarks(), pallet.getMemo1()), 0, REMARKS_MAX));
         return inboundLine;
     }
 
     /**
      * 在庫情報詳細を登録する
      */
-    private void insertDetail(BssPalletNumberVo pallet, InboundLine line, Date now, String operator) {
+    private void insertDetail(BssPalletNumberVo pallet, BssInventoryInboundLineBo line, Date now, String operator) {
         BssInventoryDetailEntity detail = new BssInventoryDetailEntity();
         detail.setId(IdUtils.nextIdStr());
         detail.setPalletNo(pallet.getPalletNo());
@@ -164,12 +165,12 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
         detail.setWhCd(pallet.getWhCd());
         detail.setLocCd(pallet.getLocCd());
         detail.setClassification(pallet.getClassification());
-        detail.setItemCode(line.itemCode);
-        detail.setItemName(line.itemName);
-        detail.setQty(line.qty);
+        detail.setItemCode(line.getItemCode());
+        detail.setItemName(line.getItemName());
+        detail.setQty(line.getQty());
         detail.setStatus(BssInventoryStatusEnum.PA.getCode());
         detail.setLastStatus(BssInventoryLastStatusEnum.PO_INED.getCode());
-        detail.setRemarks(line.remarks);
+        detail.setRemarks(line.getRemarks());
         detail.setDeleteFlg(DelFlgEnum.OFF.getCode());
         detail.setVersion(INITIAL_VERSION);
         EntityAuditHelper.fillForInsert(detail, now, operator, PG_ID);
@@ -179,20 +180,20 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
     /**
      * 在庫履歴を登録する
      */
-    private void insertHistory(BssPalletNumberVo pallet, InboundLine line, String zoneCd, String ioDatetime,
+    private void insertHistory(BssPalletNumberVo pallet, BssInventoryInboundLineBo line, String zoneCd, String ioDatetime,
                                String ioOperator, String storagePeriod, Date now, String operator) {
         BssInventoryHistoryEntity history = new BssInventoryHistoryEntity();
         history.setId(IdUtils.nextIdStr());
         history.setWhCd(pallet.getWhCd());
         history.setZoneCd(zoneCd);
         history.setLocCd(pallet.getLocCd());
-        history.setItemCode(line.itemCode);
-        history.setItemName(line.itemName);
-        history.setUom(line.uom);
+        history.setItemCode(line.getItemCode());
+        history.setItemName(line.getItemName());
+        history.setUom(line.getUom());
         history.setPalletNo(pallet.getPalletNo());
         history.setStatus(BssInventoryHistStatusEnum.IN.getCode());
-        history.setStorageType(line.storageType);
-        history.setStorageQty(line.qty);
+        history.setStorageType(line.getStorageType());
+        history.setStorageQty(line.getQty());
         history.setIoDatetime(ioDatetime);
         history.setIoOperator(ioOperator);
         history.setStoragePeriod(storagePeriod);
@@ -268,17 +269,5 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
             }
         }
         return null;
-    }
-
-    /**
-     * 在庫情報詳細と在庫履歴で共有する明細
-     */
-    private static final class InboundLine {
-        private String itemCode;
-        private String itemName;
-        private String uom;
-        private BigDecimal qty;
-        private String storageType;
-        private String remarks;
     }
 }

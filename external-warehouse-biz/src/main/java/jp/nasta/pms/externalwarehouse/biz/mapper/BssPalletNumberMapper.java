@@ -88,9 +88,9 @@ public interface BssPalletNumberMapper {
     int insertDetail(BssPalletNumberDetailEntity entity);
 
     /**
-     * 積載明細を論理削除（パレット番号単位）
+     * 積載明細をパレット番号単位で削除する
      *
-     * @param entity パレット番号詳細（palletNo と更新項目を設定する）
+     * @param entity パレット番号詳細（palletNo を設定する）
      * @return 削除件数
      */
     int deleteDetailsByPalletNo(BssPalletNumberDetailEntity entity);

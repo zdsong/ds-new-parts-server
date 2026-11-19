@@ -57,7 +57,7 @@ public interface IBssPalletNumberService {
     int updatePallet(BssPalletNumberBo bo);
 
     /**
-     * パレット情報を論理削除する（積載明細も論理削除する）
+     * パレット情報を論理削除する（積載明細は削除する）
      *
      * @param entity パレット番号
      * @return 削除件数（ヘッダ）

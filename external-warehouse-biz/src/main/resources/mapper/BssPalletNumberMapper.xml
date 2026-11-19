@@ -311,18 +311,11 @@
         )
     </insert>
 
-    <!-- 積載明細を論理削除（パレット番号単位） -->
-    <update id="deleteDetailsByPalletNo"
+    <!-- 積載明細をパレット番号単位で削除する（削除フラグは更新せず、行を消す） -->
+    <delete id="deleteDetailsByPalletNo"
             parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity">
-        update bss_pallet_number_detail
-        set
-            delete_flg = '1',
-            update_time = #{updateTime},
-            update_by = #{updateBy},
-            update_pg_id = #{updatePgId},
-            version = version + 1
+        delete from bss_pallet_number_detail
         where pallet_no = #{palletNo}
-          and delete_flg = '0'
-    </update>
+    </delete>
 
 </mapper>
