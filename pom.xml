@@ -9,9 +9,9 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>yamato</name>
-    <url>http://www.yamato.jp</url>
-    <description>農家（農業法人）支援</description>
+    <name>nasta</name>
+    <url>http://www.nasta.jp</url>
+    <description>ナスタ｜新部品管理システム｜外部倉庫管理</description>
     
     <properties>
         <external-warehouse.version>1.0.0</external-warehouse.version>
