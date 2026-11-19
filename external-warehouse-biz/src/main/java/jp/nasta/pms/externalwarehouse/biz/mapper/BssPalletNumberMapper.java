@@ -72,9 +72,9 @@ public interface BssPalletNumberMapper {
     int deleteLogical(BssPalletNumberEntity entity);
 
     /**
-     * 印刷フラグを印刷済み（1）に更新
+     * 未印刷のパレット番号を印刷済みに更新する
      *
-     * @param entity パレット番号（palletNo と更新項目を設定する）
+     * @param entity パレット番号（palletNo、printedFlg と更新項目を設定する）
      * @return 更新件数
      */
     int updatePrintedFlg(BssPalletNumberEntity entity);

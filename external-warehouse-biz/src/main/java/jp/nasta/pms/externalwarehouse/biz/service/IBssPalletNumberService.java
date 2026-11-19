@@ -65,10 +65,12 @@ public interface IBssPalletNumberService {
     int deletePallet(BssPalletNumberEntity entity);
 
     /**
-     * パレット番号表を印刷済みにする（印刷フラグを 1 に更新する）
+     * パレット番号表を印刷済みにする。
+     * 未印刷の場合は在庫情報詳細と在庫履歴を登録してから印刷フラグを更新する。
+     * 印刷済みの場合は在庫を登録せず、現状のままとする。
      *
      * @param palletNo パレット番号
-     * @return 更新件数
+     * @return 更新件数。存在しない場合は 0
      */
     int updatePrintedFlg(String palletNo);
 }

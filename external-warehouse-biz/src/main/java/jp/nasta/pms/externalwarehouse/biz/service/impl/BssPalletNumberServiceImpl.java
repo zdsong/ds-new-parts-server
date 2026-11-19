@@ -2,6 +2,7 @@ package jp.nasta.pms.externalwarehouse.biz.service.impl;
 
 import jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity;
 import jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity;
+import jp.nasta.pms.common.biz.enums.BssPrintedFlgEnum;
 import jp.nasta.pms.common.biz.enums.ExternalWarehousePgIdEnum;
 import jp.nasta.pms.common.biz.service.IExternalWarehouseCommonService;
 import jp.nasta.pms.common.exception.ServiceException;
@@ -13,6 +14,7 @@ import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssPalletNumberMapper;
+import jp.nasta.pms.externalwarehouse.biz.service.IBssInventoryService;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssPalletNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
     /**
      * 更新プログラムＩＤ：パレット情報詳細
      */
-    private static final String PG_ID_UPDATE = ExternalWarehousePgIdEnum.P305.getCode();
+    private static final String PG_ID_UPDATE = ExternalWarehousePgIdEnum.SP305.getCode();
 
     /**
      * 削除フラグ：未削除
@@ -53,18 +55,11 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
      */
     private static final String USABLE_FLAG_USABLE = "0";
 
-    /**
-     * 印刷フラグ：未印刷
-     */
-    private static final String PRINTED_FLG_UNPRINTED = "0";
-
-    /**
-     * 印刷フラグ：印刷済み
-     */
-    private static final String PRINTED_FLG_PRINTED = "1";
-
     @Autowired
     private BssPalletNumberMapper bssPalletNumberMapper;
+
+    @Autowired
+    private IBssInventoryService bssInventoryService;
 
     @Autowired
     private IExternalWarehouseCommonService commonService;
@@ -147,7 +142,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
         bo.setId(IdUtils.nextIdStr());
         bo.setDeleteFlg(DELETE_FLG_NORMAL);
         // 発番直後は未印刷とする
-        bo.setPrintedFlg(PRINTED_FLG_UNPRINTED);
+        bo.setPrintedFlg(BssPrintedFlgEnum.UNPRINTED.getCode());
         bo.setVersion(1);
         bo.setCreateTime(now);
         bo.setCreateBy(username);
@@ -177,7 +172,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
             // パレット番号は存在しません。
             throw new ServiceException(MessageUtils.message("E0016", MessageUtils.message("label.palletNo")));
         }
-        if (PRINTED_FLG_PRINTED.equals(current.getPrintedFlg())) {
+        if (BssPrintedFlgEnum.PRINTED.getCode().equals(current.getPrintedFlg())) {
             // パレット番号表を印刷済みのため、更新できません。
             throw new ServiceException(MessageUtils.message("E0068"));
         }
@@ -239,19 +234,38 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
     }
 
     /**
-     * パレット番号表を印刷済みにする（印刷フラグを 1 に更新する）
+     * パレット番号表を印刷済みにする。
+     * 未印刷の場合は在庫情報詳細と在庫履歴を登録してから印刷フラグを更新する。
+     * 印刷済みの場合は在庫を登録せず、現状のままとする。
      *
      * @param palletNo パレット番号
-     * @return 更新件数
+     * @return 更新件数。存在しない場合は 0
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updatePrintedFlg(String palletNo) {
+        BssPalletNumberVo current = selectByPalletNo(palletNo);
+        if (current == null) {
+            return 0;
+        }
+        // 印刷済みの再印刷では在庫を重複登録しない
+        if (BssPrintedFlgEnum.PRINTED.getCode().equals(current.getPrintedFlg())) {
+            return 1;
+        }
+
         BssPalletNumberEntity entity = new BssPalletNumberEntity();
         entity.setPalletNo(palletNo);
+        entity.setPrintedFlg(BssPrintedFlgEnum.PRINTED.getCode());
         entity.setUpdateTime(new Date());
         entity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         entity.setUpdatePgId(PG_ID_UPDATE);
-        return bssPalletNumberMapper.updatePrintedFlg(entity);
+        int rows = bssPalletNumberMapper.updatePrintedFlg(entity);
+        if (rows == 0) {
+            // 同時に印刷済みへ更新された場合は、在庫登録を行わない
+            return 1;
+        }
+        bssInventoryService.registerInboundFromPallet(current);
+        return rows;
     }
 
     /**

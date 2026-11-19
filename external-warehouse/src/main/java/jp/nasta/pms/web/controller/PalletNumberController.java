@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -101,7 +102,8 @@ public class PalletNumberController extends BaseController {
     }
 
     /**
-     * パレット番号表を印刷済みにする（印刷フラグを 1 に更新）
+     * パレット番号表を印刷済みにする。
+     * 未印刷の場合は在庫情報詳細と在庫履歴を登録する。印刷済みの場合は現状のままとする。
      */
     @Log(title = "パレット番号表印刷", businessType = BusinessType.UPDATE)
     @PutMapping("/{palletNo}/printed")
@@ -166,6 +168,10 @@ public class PalletNumberController extends BaseController {
             }
             if (detail.getStorageQty() == null) {
                 return error(MessageUtils.message("E0003", MessageUtils.message("label.storageQty")));
+            }
+            // 保管数は 0 より大きい値のみ登録できる
+            if (detail.getStorageQty().compareTo(BigDecimal.ZERO) <= 0) {
+                return error(MessageUtils.message("E0069", MessageUtils.message("label.storageQty")));
             }
         }
 

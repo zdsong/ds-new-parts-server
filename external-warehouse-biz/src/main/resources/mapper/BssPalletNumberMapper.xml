@@ -237,17 +237,18 @@
           and version = #{version}
     </update>
 
-    <!-- 印刷フラグを印刷済みに更新 -->
+    <!-- 未印刷のパレット番号を印刷済みに更新する -->
     <update id="updatePrintedFlg" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         update bss_pallet_number
         set
-            printed_flg = '1',
+            printed_flg = #{printedFlg},
             update_time = #{updateTime},
             update_by = #{updateBy},
             update_pg_id = #{updatePgId},
             version = version + 1
         where pallet_no = #{palletNo}
           and delete_flg = '0'
+          and printed_flg &lt;&gt; #{printedFlg}
     </update>
 
     <!-- パレット番号を論理削除 -->

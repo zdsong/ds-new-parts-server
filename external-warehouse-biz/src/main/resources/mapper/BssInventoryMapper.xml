@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.nasta.pms.externalwarehouse.biz.mapper.BssInventoryMapper">
+
+    <!-- 登録・更新の共通列 -->
+    <sql id="auditColumns">
+        create_time,
+        create_by,
+        create_pg_id,
+        update_time,
+        update_by,
+        update_pg_id,
+        version
+    </sql>
+
+    <!-- 登録・更新の共通値 -->
+    <sql id="auditValues">
+        #{createTime},
+        #{createBy},
+        #{createPgId},
+        #{updateTime},
+        #{updateBy},
+        #{updatePgId},
+        #{version}
+    </sql>
+
+    <!-- 在庫情報詳細を登録 -->
+    <insert id="insertDetail" parameterType="jp.nasta.pms.common.biz.domain.entity.BssInventoryDetailEntity">
+        insert into bss_inventory_detail
+        (
+            id,
+            pallet_no,
+            barcode,
+            wh_cd,
+            loc_cd,
+            classification,
+            item_code,
+            item_name,
+            qty,
+            allocation_qty,
+            status,
+            last_status,
+            remarks,
+            delete_flg,
+            <include refid="auditColumns"/>
+        )
+        values
+        (
+            #{id},
+            #{palletNo},
+            #{barcode},
+            #{whCd},
+            #{locCd},
+            #{classification},
+            #{itemCode},
+            #{itemName,jdbcType=VARCHAR},
+            #{qty},
+            #{allocationQty,jdbcType=NUMERIC},
+            #{status},
+            #{lastStatus},
+            #{remarks,jdbcType=VARCHAR},
+            #{deleteFlg},
+            <include refid="auditValues"/>
+        )
+    </insert>
+
+    <!-- 在庫履歴を登録 -->
+    <insert id="insertHistory" parameterType="jp.nasta.pms.common.biz.domain.entity.BssInventoryHistoryEntity">
+        insert into bss_inventory_history
+        (
+            id,
+            wh_cd,
+            zone_cd,
+            loc_cd,
+            item_code,
+            item_name,
+            uom,
+            pallet_no,
+            status,
+            storage_type,
+            storage_qty,
+            used_qty,
+            lost_damaged_qty,
+            transfer_datetime,
+            transfer_request_no,
+            request_datetime,
+            requester,
+            io_datetime,
+            io_operator,
+            storage_period,
+            <include refid="auditColumns"/>
+        )
+        values
+        (
+            #{id},
+            #{whCd},
+            #{zoneCd},
+            #{locCd},
+            #{itemCode},
+            #{itemName},
+            #{uom,jdbcType=VARCHAR},
+            #{palletNo},
+            #{status},
+            #{storageType,jdbcType=VARCHAR},
+            #{storageQty},
+            #{usedQty,jdbcType=NUMERIC},
+            #{lostDamagedQty,jdbcType=NUMERIC},
+            #{transferDatetime,jdbcType=VARCHAR},
+            #{transferRequestNo,jdbcType=VARCHAR},
+            #{requestDatetime,jdbcType=VARCHAR},
+            #{requester,jdbcType=VARCHAR},
+            #{ioDatetime,jdbcType=VARCHAR},
+            #{ioOperator,jdbcType=VARCHAR},
+            #{storagePeriod,jdbcType=VARCHAR},
+            <include refid="auditValues"/>
+        )
+    </insert>
+
+    <!-- 品目の単位と品目名を取得する -->
+    <select id="selectItemsByCodes" resultType="jp.nasta.pms.common.biz.domain.entity.MastItemEntity">
+        select
+            item_code as itemCode,
+            item_name as itemName,
+            prztic
+        from mast_item
+        where item_code in
+        <foreach collection="itemCodes" item="itemCode" open="(" separator="," close=")">
+            #{itemCode}
+        </foreach>
+    </select>
+
+    <!-- ロケーションの保管エリアコードを取得する -->
+    <select id="selectZoneCd" resultType="string">
+        select zone_cd
+        from mast_location
+        where wh_cd = #{whCd}
+          and loc_cd = #{locCd}
+          and delete_flg = '0'
+        limit 1
+    </select>
+
+</mapper>
