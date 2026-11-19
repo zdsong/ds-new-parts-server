@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jp.newpart.common.biz.mapper.BssUserCertificationBaseMapper">
+<mapper namespace="jp.nasta.pms.common.biz.mapper.BssUserCertificationBaseMapper">
    <resultMap type="BssUserCertificationEntity" id="BssUserCertificationEntityResult">
         <result property="id" column="id"/>
         <result property="certificationFlg" column="certification_flg"/>

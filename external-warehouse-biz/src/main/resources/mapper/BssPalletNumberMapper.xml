@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jp.newpart.externalwarehouse.biz.mapper.BssPalletNumberMapper">
+<mapper namespace="jp.nasta.pms.externalwarehouse.biz.mapper.BssPalletNumberMapper">
 
-    <resultMap type="jp.newpart.externalwarehouse.biz.domain.vo.BssPalletNumberVo"
+    <resultMap type="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo"
                id="BssPalletNumberVoResult">
         <id property="id" column="id"/>
         <result property="palletNo" column="pallet_no"/>
@@ -29,7 +29,7 @@
         <result property="whNm" column="wh_nm"/>
     </resultMap>
 
-    <resultMap type="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity"
+    <resultMap type="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity"
                id="BssPalletNumberDetailResult">
         <id property="id" column="id"/>
         <result property="palletNo" column="pallet_no"/>
@@ -108,7 +108,7 @@
     </sql>
 
     <!-- パレット番号を検索リスト -->
-    <select id="selectList" parameterType="jp.newpart.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo"
+    <select id="selectList" parameterType="jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo"
             resultMap="BssPalletNumberVoResult">
         <include refid="selectBssPalletNumberVo"/>
         where pn.delete_flg = '0'
@@ -168,7 +168,7 @@
     </select>
 
     <!-- パレット番号を登録 -->
-    <insert id="insert" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+    <insert id="insert" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         insert into bss_pallet_number
         (
             id,
@@ -218,7 +218,7 @@
     </insert>
 
     <!-- パレット番号を更新（楽観的排他制御） -->
-    <update id="update" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+    <update id="update" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         update bss_pallet_number
         set
             storage_period = #{storagePeriod},
@@ -238,7 +238,7 @@
     </update>
 
     <!-- 印刷フラグを印刷済みに更新 -->
-    <update id="updatePrintedFlg" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+    <update id="updatePrintedFlg" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         update bss_pallet_number
         set
             printed_flg = '1',
@@ -251,7 +251,7 @@
     </update>
 
     <!-- パレット番号を論理削除 -->
-    <update id="deleteLogical" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberEntity">
+    <update id="deleteLogical" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         update bss_pallet_number
         set
             delete_flg = '1',
@@ -263,7 +263,7 @@
     </update>
 
     <!-- 積載明細を登録 -->
-    <insert id="insertDetail" parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity">
+    <insert id="insertDetail" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity">
         insert into bss_pallet_number_detail
         (
             id,
@@ -312,7 +312,7 @@
 
     <!-- 積載明細を論理削除（パレット番号単位） -->
     <update id="deleteDetailsByPalletNo"
-            parameterType="jp.newpart.common.biz.domain.entity.BssPalletNumberDetailEntity">
+            parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity">
         update bss_pallet_number_detail
         set
             delete_flg = '1',

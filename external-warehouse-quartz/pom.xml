@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>jp.newpart</groupId>
+        <groupId>jp.nasta.pms</groupId>
         <artifactId>external-warehouse-parent</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -38,13 +38,13 @@
 
         <!-- Farm Common Biz-->
         <dependency>
-            <groupId>jp.newpart</groupId>
+            <groupId>jp.nasta.pms</groupId>
             <artifactId>external-warehouse-common-biz</artifactId>
         </dependency>
 
         <!-- Farm Common-->
         <dependency>
-            <groupId>jp.newpart</groupId>
+            <groupId>jp.nasta.pms</groupId>
             <artifactId>external-warehouse-common</artifactId>
         </dependency>
 

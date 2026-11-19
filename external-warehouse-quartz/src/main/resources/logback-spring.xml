@@ -2,7 +2,7 @@
 <configuration>
     <!-- ログ・ステージング・パス -->
     <springProperty scope="context" name="log.path" source="logging.file.path" defaultValue="./logs"/>
-    <springProperty scope="context" name="log.level.jp.newpart" source="logging.level.jp.newpart" defaultValue="info"/>
+    <springProperty scope="context" name="log.level.jp.nasta.pms" source="logging.level.jp.nasta.pms" defaultValue="info"/>
     <springProperty scope="context" name="log.level.org.springframework" source="logging.level.org.springframework" defaultValue="warn"/>
 
     <!-- ログ出力フォーマット -->
@@ -91,7 +91,7 @@
     </appender>
 	
 	<!-- システムモジュールログレベル制御  -->
-	<logger name="jp.newpart" level="${log.level.jp.newpart}" />
+	<logger name="jp.nasta.pms" level="${log.level.jp.nasta.pms}" />
 	<!-- Springログレベル制御  -->
 	<logger name="org.springframework" level="${log.level.org.springframework}" />
 

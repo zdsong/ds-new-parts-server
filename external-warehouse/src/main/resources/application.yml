@@ -52,7 +52,7 @@ logging:
   file:
     path: ./logs/external-warehouse
   level:
-    jp.newpart: debug
+    jp.nasta.pms: debug
     org.springframework: warn
 
 # ユーザー
@@ -172,7 +172,7 @@ xss:
 # MyBatis
 mybatis:
   # 指定されたパッケージ別名の検索
-  typeAliasesPackage: jp.newpart.**.domain
+  typeAliasesPackage: jp.nasta.pms.**.domain
   # mapperのスキャンを設定して、すべてのmapper.xmlマップファイルを見つける
   mapperLocations: classpath*:mapper/**/*Mapper.xml
   # グローバルなプロファイルのロード

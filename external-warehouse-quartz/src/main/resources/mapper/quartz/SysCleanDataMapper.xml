@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jp.newpart.quartz.mapper.SysCleanDataMapper">
+<mapper namespace="jp.nasta.pms.quartz.mapper.SysCleanDataMapper">
 
 	<delete id="deleteSysOperLogByDate" parameterType="String">
 		delete

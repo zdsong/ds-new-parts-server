@@ -41,7 +41,7 @@ logging:
   file:
     path: ./logs/external-warehouse-quartz
   level:
-    jp.newpart: info
+    jp.nasta.pms: info
     org.springframework: warn
 
 # SFTP関連設定

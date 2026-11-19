@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jp.newpart.common.biz.mapper.BssBatchExecuteHistoryBaseMapper">
+<mapper namespace="jp.nasta.pms.common.biz.mapper.BssBatchExecuteHistoryBaseMapper">
    <resultMap type="BssBatchExecuteHistoryEntity" id="BssBatchExecuteHistoryEntityResult">
         <result property="id" column="id"/>
         <result property="farmerId" column="farmer_id"/>

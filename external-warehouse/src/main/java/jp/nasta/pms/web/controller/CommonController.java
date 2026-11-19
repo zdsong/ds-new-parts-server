@@ -1,0 +1,214 @@
+package jp.nasta.pms.web.controller;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jp.nasta.pms.common.biz.domain.bo.OptionsParamBo;
+import jp.nasta.pms.common.biz.service.IExternalWarehouseCommonService;
+import jp.nasta.pms.common.config.AppConfig;
+import jp.nasta.pms.common.config.ServerConfig;
+import jp.nasta.pms.common.constant.Constants;
+import jp.nasta.pms.common.core.domain.AjaxResult;
+import jp.nasta.pms.common.core.domain.model.LoginUser;
+import jp.nasta.pms.common.utils.SecurityUtils;
+import jp.nasta.pms.common.utils.StringUtils;
+import jp.nasta.pms.common.utils.file.FileUploadUtils;
+import jp.nasta.pms.common.utils.file.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 汎用リクエスト処理
+ * 
+ * @author nextosd
+ */
+@RestController
+@RequestMapping("/api/common")
+public class CommonController
+{
+    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
+
+    @Autowired
+    private ServerConfig serverConfig;
+
+    private static final String FILE_DELIMETER = ",";
+
+    @Autowired
+    private IExternalWarehouseCommonService commonService;
+
+    /**
+     * コンボボックスデータを取得する
+     * @param optionsParam
+     * @return
+     */
+    @PostMapping(value = "/options")
+    public AjaxResult getCommonOptions(@RequestBody OptionsParamBo optionsParam) {
+        return AjaxResult.success(commonService.getCommonOptions(optionsParam));
+    }
+
+    /**
+     * 倉庫 コンボボックスデータを取得する
+     *
+     * @return 倉庫コンボボックスリスト
+     */
+    @GetMapping(value = "/wh/options")
+    public AjaxResult getWarehouseCommonOptions() {
+
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        // sys_user.user_name に対応するユーザー名
+        String userName = loginUser.getUsername();
+        return AjaxResult.success(commonService.getWarehouseCommonOptions(userName));
+    }
+
+    /**
+     * 倉庫ロケーション コンボボックスデータを取得する
+     *
+     * @param whCd 倉庫コード
+     * @return ロケーションコンボボックスリスト
+     */
+    @GetMapping(value = "/{whCd}/location/options")
+    public AjaxResult getLocationComOptionsByWhCd(@PathVariable("whCd") String whCd) {
+        return AjaxResult.success(commonService.getLocationCommonOptions(whCd));
+    }
+
+
+    /**
+     * パレット番号の生成
+     * @return
+     */
+    @GetMapping(value = "/generate/pallet_no")
+    public String generatePalletNo() {
+        return  commonService.generatePalletNo();
+    }
+
+    /**
+     * 汎用ダウンロードリクエスト
+     * 
+     * @param fileName ファイル名
+     * @param delete 削除するかどうか
+     */
+    @GetMapping("/download")
+    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
+    {
+        try
+        {
+            if (!FileUtils.checkAllowDownload(fileName))
+            {
+                throw new Exception(StringUtils.format("ファイル名（{}）が不正で、ダウンロードは許可されていません。", fileName));
+            }
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = AppConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            if (delete)
+            {
+                FileUtils.deleteFile(filePath);
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("ファイルのダウンロードに失敗しました", e);
+        }
+    }
+
+    /**
+     * 汎用アップロードリクエスト（単一）
+     */
+    @PostMapping("/upload")
+    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    {
+        try
+        {
+            // ファイルパスのアップロード
+            String filePath = AppConfig.getUploadPath();
+            // 新しいファイル名をアップロードして戻す
+            String fileName = FileUploadUtils.upload(filePath, file);
+            String url = serverConfig.getUrl() + fileName;
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("url", url);
+            ajax.put("fileName", fileName);
+            ajax.put("newFileName", FileUtils.getName(fileName));
+            ajax.put("originalFilename", file.getOriginalFilename());
+            return ajax;
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 汎用アップロードリクエスト（複数）
+     */
+    @PostMapping("/uploads")
+    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception
+    {
+        try
+        {
+            // ファイルパスのアップロード
+            String filePath = AppConfig.getUploadPath();
+            List<String> urls = new ArrayList<String>();
+            List<String> fileNames = new ArrayList<String>();
+            List<String> newFileNames = new ArrayList<String>();
+            List<String> originalFilenames = new ArrayList<String>();
+            for (MultipartFile file : files)
+            {
+                // 新しいファイル名をアップロードして戻す
+                String fileName = FileUploadUtils.upload(filePath, file);
+                String url = serverConfig.getUrl() + fileName;
+                urls.add(url);
+                fileNames.add(fileName);
+                newFileNames.add(FileUtils.getName(fileName));
+                originalFilenames.add(file.getOriginalFilename());
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("urls", StringUtils.join(urls, FILE_DELIMETER));
+            ajax.put("fileNames", StringUtils.join(fileNames, FILE_DELIMETER));
+            ajax.put("newFileNames", StringUtils.join(newFileNames, FILE_DELIMETER));
+            ajax.put("originalFilenames", StringUtils.join(originalFilenames, FILE_DELIMETER));
+            return ajax;
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * ローカルリソースの一般的なダウンロード
+     */
+    @GetMapping("/download/resource")
+    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
+            throws Exception
+    {
+        try
+        {
+            if (!FileUtils.checkAllowDownload(resource))
+            {
+                throw new Exception(StringUtils.format("リソースファイル({})は不正で、ダウンロードは許可されていません。 ", resource));
+            }
+
+            String localPath = AppConfig.getProfile();
+
+            String downloadPath = localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX);
+
+            String downloadName = StringUtils.substringAfterLast(downloadPath, "/");
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, downloadName);
+            FileUtils.writeBytes(downloadPath, response.getOutputStream());
+        }
+        catch (Exception e)
+        {
+            log.error("ファイルのダウンロードに失敗しました", e);
+        }
+    }
+}

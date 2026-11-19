@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-    <groupId>jp.newpart</groupId>
+    <groupId>jp.nasta.pms</groupId>
     <artifactId>external-warehouse-parent</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -163,28 +163,28 @@
 
             <!-- JOB-->
             <dependency>
-                <groupId>jp.newpart</groupId>
+                <groupId>jp.nasta.pms</groupId>
                 <artifactId>external-warehouse-quartz</artifactId>
                 <version>${external-warehouse.version}</version>
             </dependency>
 
             <!-- External Warehouse sanchoku Biz-->
             <dependency>
-                <groupId>jp.newpart</groupId>
+                <groupId>jp.nasta.pms</groupId>
                 <artifactId>external-warehouse-biz</artifactId>
                 <version>${external-warehouse.version}</version>
             </dependency>
 
             <!-- Common-->
             <dependency>
-                <groupId>jp.newpart</groupId>
+                <groupId>jp.nasta.pms</groupId>
                 <artifactId>external-warehouse-common</artifactId>
                 <version>${external-warehouse.version}</version>
             </dependency>
 
             <!-- Common biz-->
             <dependency>
-                <groupId>jp.newpart</groupId>
+                <groupId>jp.nasta.pms</groupId>
                 <artifactId>external-warehouse-common-biz</artifactId>
                 <version>${external-warehouse.version}</version>
             </dependency>

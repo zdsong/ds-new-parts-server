@@ -27,7 +27,7 @@ logging:
   file:
     path: /opt/pms/logs
   level:
-    jp.newpart: error
+    jp.nasta.pms: error
     org.springframework: warn
 
 # Spring

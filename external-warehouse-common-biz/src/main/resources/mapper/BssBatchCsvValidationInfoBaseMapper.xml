@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="jp.newpart.common.biz.mapper.BssBatchCsvValidationInfoBaseMapper">
+<mapper namespace="jp.nasta.pms.common.biz.mapper.BssBatchCsvValidationInfoBaseMapper">
    <resultMap type="BssBatchCsvValidationInfoEntity" id="BssBatchCsvValidationInfoEntityResult">
         <result property="id" column="id"/>
         <result property="csvFileType" column="csv_file_type"/>
