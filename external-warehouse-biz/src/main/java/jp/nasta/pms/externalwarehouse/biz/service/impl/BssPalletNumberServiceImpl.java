@@ -2,7 +2,9 @@ package jp.nasta.pms.externalwarehouse.biz.service.impl;
 
 import jp.nasta.pms.common.biz.domain.entity.BssPalletNumberDetailEntity;
 import jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity;
+import jp.nasta.pms.common.biz.enums.BssInventoryStatusEnum;
 import jp.nasta.pms.common.biz.enums.BssPrintedFlgEnum;
+import jp.nasta.pms.common.biz.enums.BssTransferStatusEnum;
 import jp.nasta.pms.common.biz.enums.ExternalWarehousePgIdEnum;
 import jp.nasta.pms.common.biz.service.IExternalWarehouseCommonService;
 import jp.nasta.pms.common.exception.ServiceException;
@@ -13,7 +15,13 @@ import jp.nasta.pms.common.utils.uuid.IdUtils;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanRequestVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferOpenLineVo;
+import jp.nasta.pms.externalwarehouse.biz.mapper.BssInventoryMapper;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssPalletNumberMapper;
+import jp.nasta.pms.externalwarehouse.biz.mapper.BssTransferOrderMapper;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssInventoryService;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssPalletNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,8 +64,24 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
      */
     private static final String USABLE_FLAG_USABLE = "0";
 
+    /**
+     * 在庫状況が移動依頼のときの注意
+     */
+    private static final String MSG_TRANSFER_REQUESTED = "このパレットは既に移動依頼済みです。";
+
+    /**
+     * 在庫明細が無いときの注意
+     */
+    private static final String MSG_INVENTORY_MISSING = "在庫情報が存在しません。";
+
     @Autowired
     private BssPalletNumberMapper bssPalletNumberMapper;
+
+    @Autowired
+    private BssInventoryMapper bssInventoryMapper;
+
+    @Autowired
+    private BssTransferOrderMapper bssTransferOrderMapper;
 
     @Autowired
     private IBssInventoryService bssInventoryService;
@@ -266,6 +291,68 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
         }
         bssInventoryService.registerInboundFromPallet(current);
         return rows;
+    }
+
+    /**
+     * 移動のバーコード読取結果を組み立てる
+     *
+     * @param palletNo パレット番号
+     * @return 読取結果。パレット番号が無い場合は null
+     */
+    @Override
+    public BssPalletScanVo selectForMoveScan(String palletNo) {
+        BssPalletNumberVo pallet = bssPalletNumberMapper.selectByPalletNo(palletNo);
+        if (pallet == null) {
+            return null;
+        }
+
+        List<BssPalletScanLineVo> details = bssInventoryMapper.selectScanLinesByPalletNo(palletNo);
+        if (details == null) {
+            details = new ArrayList<>();
+        }
+        boolean transferRequested = details.stream()
+                .anyMatch(line -> BssInventoryStatusEnum.TF.getCode().equals(line.getStatus()));
+
+        Map<String, BssTransferOpenLineVo> requestByItem = new LinkedHashMap<>();
+        List<BssTransferOpenLineVo> requests = bssTransferOrderMapper.selectOpenByPalletNo(
+                palletNo, BssTransferStatusEnum.TF.getCode());
+        if (!CollectionUtils.isEmpty(requests)) {
+            for (BssTransferOpenLineVo request : requests) {
+                requestByItem.putIfAbsent(request.getItemCode(), request);
+            }
+        }
+
+        List<BssPalletScanLineVo> lines = new ArrayList<>();
+        for (BssPalletScanLineVo detail : details) {
+            detail.setMoveQty(detail.getStorageQty());
+            BssTransferOpenLineVo request = requestByItem.get(detail.getItemCode());
+            if (request != null) {
+                BssPalletScanRequestVo requestVo = new BssPalletScanRequestVo();
+                requestVo.setRequestNo(request.getTransferRequestNo());
+                requestVo.setDestinationLabel(StringUtils.isNotEmpty(request.getToWhNm())
+                        ? request.getToWhNm() : request.getTransferToWhCd());
+                requestVo.setRequester(request.getRequesterName());
+                requestVo.setDesiredDate(request.getTransferShipDate());
+                requestVo.setRemark(request.getMemo());
+                detail.setRequest(requestVo);
+                if (request.getStorageQty() != null) {
+                    detail.setMoveQty(request.getStorageQty());
+                }
+            }
+            lines.add(detail);
+        }
+
+        BssPalletScanVo result = new BssPalletScanVo();
+        result.setPalletNo(pallet.getPalletNo());
+        result.setTransferRequested(transferRequested);
+        result.setLines(lines);
+        result.setDependent(lines.stream().anyMatch(line -> line.getRequest() != null));
+        if (transferRequested) {
+            result.setWarningMessage(MSG_TRANSFER_REQUESTED);
+        } else if (lines.isEmpty()) {
+            result.setWarningMessage(MSG_INVENTORY_MISSING);
+        }
+        return result;
     }
 
     /**

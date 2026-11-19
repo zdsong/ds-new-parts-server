@@ -141,4 +141,24 @@
         limit 1
     </select>
 
+    <!-- パレット番号の在庫明細を取得する -->
+    <select id="selectScanLinesByPalletNo"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo">
+        select
+            d.id as id,
+            d.item_code as itemCode,
+            d.item_name as itemName,
+            d.classification as category,
+            d.qty as storageQty,
+            d.pallet_no as palletNo,
+            d.status as status,
+            concat(coalesce(nullif(mw.wh_nm, ''), d.wh_cd), '/', d.loc_cd) as storagePlace
+        from bss_inventory_detail d
+        left join mast_warehouse mw
+            on mw.wh_cd = d.wh_cd
+        where d.delete_flg = '0'
+          and d.pallet_no = #{palletNo}
+        order by d.item_code
+    </select>
+
 </mapper>

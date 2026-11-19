@@ -4,6 +4,7 @@ import jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanVo;
 
 import java.util.List;
 
@@ -73,4 +74,13 @@ public interface IBssPalletNumberService {
      * @return 更新件数。存在しない場合は 0
      */
     int updatePrintedFlg(String palletNo);
+
+    /**
+     * 移動のバーコード読取結果を組み立てる。
+     * パレット番号が無い場合は null。
+     *
+     * @param palletNo パレット番号
+     * @return 読取結果
+     */
+    BssPalletScanVo selectForMoveScan(String palletNo);
 }

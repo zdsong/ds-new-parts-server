@@ -3,6 +3,7 @@ package jp.nasta.pms.externalwarehouse.biz.mapper;
 import jp.nasta.pms.common.biz.domain.entity.BssInventoryDetailEntity;
 import jp.nasta.pms.common.biz.domain.entity.BssInventoryHistoryEntity;
 import jp.nasta.pms.common.biz.domain.entity.MastItemEntity;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -46,4 +47,12 @@ public interface BssInventoryMapper {
      * @return 保管エリアコード
      */
     String selectZoneCd(@Param("whCd") String whCd, @Param("locCd") String locCd);
+
+    /**
+     * パレット番号の在庫明細を取得する
+     *
+     * @param palletNo パレット番号
+     * @return 在庫明細
+     */
+    List<BssPalletScanLineVo> selectScanLinesByPalletNo(@Param("palletNo") String palletNo);
 }

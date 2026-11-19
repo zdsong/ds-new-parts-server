@@ -12,6 +12,7 @@ import jp.nasta.pms.common.utils.StringUtils;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssPalletNumberSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanVo;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssPalletNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -118,6 +119,21 @@ public class PalletNumberController extends BaseController {
             return error(MessageUtils.message("E0016", MessageUtils.message("label.palletNo")));
         }
         return success(MessageUtils.message("I0001"));
+    }
+
+    /**
+     * 移動のバーコード読取。パレット番号の有無、在庫、移動依頼を返す。
+     */
+    @GetMapping("/scan/{palletNo}")
+    public AjaxResult scan(@PathVariable("palletNo") String palletNo) {
+        if (StringUtils.isEmpty(palletNo)) {
+            return error(MessageUtils.message("E0003", MessageUtils.message("label.palletNo")));
+        }
+        BssPalletScanVo scan = bssPalletNumberService.selectForMoveScan(palletNo);
+        if (scan == null) {
+            return error(MessageUtils.message("E0016", "パレット情報"));
+        }
+        return success(scan);
     }
 
     /**
