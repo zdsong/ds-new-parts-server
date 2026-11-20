@@ -28,4 +28,119 @@
         order by o.transfer_request_no, d.detail_no
     </select>
 
+    <!-- 日付文字列を yyyyMMdd にして範囲比較する -->
+    <sql id="dateDigits">
+        replace(replace(coalesce(${column}, ''), '/', ''), '-', '')
+    </sql>
+
+    <!-- 移動依頼一覧。日時列は文字列のまま返す -->
+    <select id="selectTransferList"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferListVo">
+        select
+            o.id as id,
+            o.transfer_request_no as requestNo,
+            o.status as status,
+            coalesce(nullif(trim(st.dict_label), ''), o.status) as statusLabel,
+            o.transfer_fm_wh_cd as sourceWhCd,
+            coalesce(nullif(fw.wh_nm, ''), o.transfer_fm_wh_cd) as sourceWarehouse,
+            o.transfer_to_wh_cd as destWhCd,
+            coalesce(nullif(tw.wh_nm, ''), o.transfer_to_wh_cd) as destWarehouse,
+            nullif(o.transfer_ship_date, '') as desiredDate,
+            nullif(o.transfer_date, '') as requestDate,
+            nullif(o.registration_date, '') as registeredDate,
+            nullif(o.completion_date, '') as completedDate,
+            o.requester_name as requester
+        from bss_transfer_order o
+        left join mast_warehouse fw
+            on fw.wh_cd = o.transfer_fm_wh_cd
+        left join mast_warehouse tw
+            on tw.wh_cd = o.transfer_to_wh_cd
+        left join sys_dict_data st
+            on st.dict_type = 'bss_transfer_status'
+           and st.dict_value = o.status
+        left join sys_user ru
+            on ru.user_name = o.registered_by
+        left join sys_user cu
+            on cu.user_name = o.completed_by
+        where o.delete_flg = '0'
+        <if test="moveNo != null and moveNo != ''">
+            and o.transfer_request_no like concat('%', #{moveNo}, '%')
+        </if>
+        <if test="sourceWhCd != null and sourceWhCd != ''">
+            and o.transfer_fm_wh_cd = #{sourceWhCd}
+        </if>
+        <if test="destWhCd != null and destWhCd != ''">
+            and o.transfer_to_wh_cd = #{destWhCd}
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+            and exists (
+                select 1
+                from bss_transfer_order_detail d
+                where d.transfer_request_no = o.transfer_request_no
+                  and d.delete_flg = '0'
+                  and d.item_code like concat('%', #{itemCode}, '%')
+            )
+        </if>
+        <if test="itemName != null and itemName != ''">
+            and exists (
+                select 1
+                from bss_transfer_order_detail d
+                where d.transfer_request_no = o.transfer_request_no
+                  and d.delete_flg = '0'
+                  and d.item_name like concat('%', #{itemName}, '%')
+            )
+        </if>
+        <if test="registrar != null and registrar != ''">
+            and (
+                o.registered_by like concat('%', #{registrar}, '%')
+                or ru.nick_name like concat('%', #{registrar}, '%')
+            )
+        </if>
+        <if test="completer != null and completer != ''">
+            and (
+                o.completed_by like concat('%', #{completer}, '%')
+                or cu.nick_name like concat('%', #{completer}, '%')
+            )
+        </if>
+        <if test="registeredFrom != null and registeredFrom != ''">
+            and <include refid="dateDigits"><property name="column" value="o.registration_date"/></include>
+                &gt;= #{registeredFrom}
+        </if>
+        <if test="registeredTo != null and registeredTo != ''">
+            and <include refid="dateDigits"><property name="column" value="o.registration_date"/></include>
+                &lt;= #{registeredTo}
+        </if>
+        <if test="completedFrom != null and completedFrom != ''">
+            and <include refid="dateDigits"><property name="column" value="o.completion_date"/></include>
+                &gt;= #{completedFrom}
+        </if>
+        <if test="completedTo != null and completedTo != ''">
+            and <include refid="dateDigits"><property name="column" value="o.completion_date"/></include>
+                &lt;= #{completedTo}
+        </if>
+        <if test="statuses != null and statuses.size() > 0">
+            and o.status in
+            <foreach collection="statuses" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+        </if>
+        order by o.update_time desc nulls last, o.transfer_request_no
+    </select>
+
+    <!-- 一覧に載せる品目 -->
+    <select id="selectItemsByRequestNos"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferItemVo">
+        select
+            d.transfer_request_no as requestNo,
+            d.item_code as itemCode,
+            d.item_name as itemName
+        from bss_transfer_order_detail d
+        where d.delete_flg = '0'
+          and d.transfer_request_no in
+        <foreach collection="requestNos" item="requestNo" open="(" separator="," close=")">
+            #{requestNo}
+        </foreach>
+        order by d.transfer_request_no, d.detail_no
+    </select>
+
 </mapper>
