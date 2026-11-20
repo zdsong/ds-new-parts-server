@@ -17,7 +17,8 @@ import jp.nasta.pms.common.utils.SecurityUtils;
 import jp.nasta.pms.common.utils.StringUtils;
 import jp.nasta.pms.common.utils.uuid.IdUtils;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssInventoryInboundLineBo;
-import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssInventorySearchBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.*;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssInventoryMapper;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -245,6 +248,116 @@ public class BssInventoryServiceImpl implements IBssInventoryService {
             return value;
         }
         return DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, now);
+    }
+
+    /**
+     * 在庫一覧を取得する
+     */
+    @Override
+    public List<BssInventoryListVo> selectStockList(BssInventorySearchBo searchBo) {
+        return bssInventoryMapper.selectStockList(searchBo == null ? new BssInventorySearchBo() : searchBo);
+    }
+
+    /**
+     * 品目の在庫詳細を取得する
+     */
+    @Override
+    public BssInventoryItemVo selectItemDetail(String itemCode) {
+        String code = StringUtils.trimToNull(itemCode);
+        if (code == null) {
+            return null;
+        }
+        BssInventoryItemVo header = bssInventoryMapper.selectItemHeader(code);
+        if (header == null) {
+            return null;
+        }
+        List<BssInventoryPalletVo> pallets = bssInventoryMapper.selectPalletsByItemCode(code);
+        header.setPallets(pallets == null ? List.of() : pallets);
+        header.setHistories(groupHistories(bssInventoryMapper.selectHistoryByItemCode(code)));
+        return header;
+    }
+
+    /**
+     * ロケ番の在庫詳細を取得する
+     */
+    @Override
+    public BssInventoryLocationVo selectLocationDetail(String whCd, String locCd) {
+        String warehouseCode = StringUtils.trimToNull(whCd);
+        String locationCode = StringUtils.trimToNull(locCd);
+        if (warehouseCode == null || locationCode == null) {
+            return null;
+        }
+        BssInventoryLocationVo header = bssInventoryMapper.selectLocationHeader(warehouseCode, locationCode);
+        if (header == null) {
+            return null;
+        }
+        header.setPallets(groupLocationPallets(bssInventoryMapper.selectLocationLines(warehouseCode, locationCode)));
+        return header;
+    }
+
+    /**
+     * 移動履歴をパレット番号ごとにまとめる
+     */
+    private List<BssInventoryHistoryGroupVo> groupHistories(List<BssInventoryHistoryFlatVo> rows) {
+        if (CollectionUtils.isEmpty(rows)) {
+            return List.of();
+        }
+        Map<String, BssInventoryHistoryGroupVo> groups = new LinkedHashMap<>();
+        for (BssInventoryHistoryFlatVo row : rows) {
+            String key = StringUtils.defaultString(row.getPalletNo());
+            BssInventoryHistoryGroupVo group = groups.computeIfAbsent(key, ignored -> {
+                BssInventoryHistoryGroupVo created = new BssInventoryHistoryGroupVo();
+                created.setPalletNo(row.getPalletNo());
+                created.setStoragePeriod(row.getStoragePeriod());
+                created.setPlace(row.getPlace());
+                created.setRows(new ArrayList<>());
+                return created;
+            });
+            BssInventoryHistoryRowVo line = new BssInventoryHistoryRowVo();
+            line.setId(row.getId());
+            line.setStatus(row.getStatus());
+            line.setWarehouse(row.getWarehouse());
+            line.setQuantity(row.getQuantity());
+            line.setUsedQty(row.getUsedQty());
+            line.setLostQty(row.getLostQty());
+            line.setMoveAt(row.getMoveAt());
+            line.setRequestNo(row.getRequestNo());
+            line.setRequestAt(row.getRequestAt());
+            line.setRequester(row.getRequester());
+            line.setUpdatedAt(row.getUpdatedAt());
+            line.setUpdater(row.getUpdater());
+            group.getRows().add(line);
+        }
+        return new ArrayList<>(groups.values());
+    }
+
+    /**
+     * ロケ番の在庫をパレット番号ごとにまとめる
+     */
+    private List<BssInventoryLocationPalletVo> groupLocationPallets(List<BssInventoryLocationFlatVo> rows) {
+        if (CollectionUtils.isEmpty(rows)) {
+            return List.of();
+        }
+        Map<String, BssInventoryLocationPalletVo> groups = new LinkedHashMap<>();
+        for (BssInventoryLocationFlatVo row : rows) {
+            String key = StringUtils.defaultString(row.getPalletNo());
+            BssInventoryLocationPalletVo group = groups.computeIfAbsent(key, ignored -> {
+                BssInventoryLocationPalletVo created = new BssInventoryLocationPalletVo();
+                created.setPalletNo(row.getPalletNo());
+                created.setStoragePeriod(row.getStoragePeriod());
+                created.setItems(new ArrayList<>());
+                return created;
+            });
+            BssInventoryLocationItemVo item = new BssInventoryLocationItemVo();
+            item.setId(row.getId());
+            item.setItemCode(row.getItemCode());
+            item.setItemName(row.getItemName());
+            item.setStorageType(row.getStorageType());
+            item.setQuantity(row.getQuantity());
+            item.setUsable(row.getUsable());
+            group.getItems().add(item);
+        }
+        return new ArrayList<>(groups.values());
     }
 
     /**

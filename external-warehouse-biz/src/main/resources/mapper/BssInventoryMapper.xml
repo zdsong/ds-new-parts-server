@@ -161,4 +161,196 @@
         order by d.item_code
     </select>
 
+    <!-- 最終更新者。ユーザー名があれば表示名を使う -->
+    <sql id="latestUpdater">
+        (
+            select coalesce(nullif(su.nick_name, ''), d2.update_by)
+            from bss_inventory_detail d2
+            left join sys_user su
+                on su.user_name = d2.update_by
+            where d2.delete_flg = '0'
+              and d2.wh_cd = d.wh_cd
+              and d2.loc_cd = d.loc_cd
+              and d2.item_code = d.item_code
+            order by d2.update_time desc nulls last
+            limit 1
+        )
+    </sql>
+
+    <!-- 在庫一覧。倉庫・ロケ・品目で数量を合計する -->
+    <select id="selectStockList"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryListVo">
+        select
+            concat(d.wh_cd, ':', d.loc_cd, ':', d.item_code) as id,
+            d.wh_cd as whCd,
+            coalesce(nullif(mw.wh_nm, ''), d.wh_cd) as warehouse,
+            d.loc_cd as location,
+            d.item_code as itemCode,
+            max(d.item_name) as itemName,
+            sum(d.qty) as quantity,
+            to_char(max(d.update_time), 'YYYY/MM/DD') as updatedDate,
+            <include refid="latestUpdater"/> as updater
+        from bss_inventory_detail d
+        left join mast_warehouse mw
+            on mw.wh_cd = d.wh_cd
+        where d.delete_flg = '0'
+        <if test="whCd != null and whCd != ''">
+            and d.wh_cd = #{whCd}
+        </if>
+        <if test="locCd != null and locCd != ''">
+            and d.loc_cd = #{locCd}
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+            and d.item_code like concat('%', #{itemCode}, '%')
+        </if>
+        <if test="itemName != null and itemName != ''">
+            and d.item_name like concat('%', #{itemName}, '%')
+        </if>
+        group by d.wh_cd, mw.wh_nm, d.loc_cd, d.item_code
+        order by d.item_code, d.loc_cd
+    </select>
+
+    <!-- 品目の在庫ヘッダ -->
+    <select id="selectItemHeader"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryItemVo">
+        select
+            d.item_code as itemCode,
+            max(d.item_name) as itemName,
+            max(coalesce(nullif(cl.dict_label, ''), d.classification)) as classification,
+            sum(d.qty) as quantity,
+            to_char(max(d.update_time), 'YYYY/MM/DD HH24:MI') as updatedAt,
+            (
+                select coalesce(nullif(su.nick_name, ''), d2.update_by)
+                from bss_inventory_detail d2
+                left join sys_user su
+                    on su.user_name = d2.update_by
+                where d2.delete_flg = '0'
+                  and d2.item_code = d.item_code
+                order by d2.update_time desc nulls last
+                limit 1
+            ) as updater
+        from bss_inventory_detail d
+        left join sys_dict_data cl
+            on cl.dict_type = 'bss_classification'
+           and cl.dict_value = d.classification
+        where d.delete_flg = '0'
+          and d.item_code = #{itemCode}
+        group by d.item_code
+    </select>
+
+    <!-- 品目が載っているパレット -->
+    <select id="selectPalletsByItemCode"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryPalletVo">
+        select
+            cast(d.id as varchar) as id,
+            d.pallet_no as palletNo,
+            coalesce(nullif(mw.wh_nm, ''), d.wh_cd) as warehouse,
+            coalesce(nullif(st.dict_label, ''), pnd.storage_type) as storageType,
+            d.qty as quantity,
+            coalesce(nullif(uf.dict_label, ''), pnd.usable_flag) as usable,
+            pnd.remarks as remark
+        from bss_inventory_detail d
+        left join bss_pallet_number_detail pnd
+            on pnd.pallet_no = d.pallet_no
+           and pnd.item_code = d.item_code
+           and pnd.delete_flg = '0'
+        left join mast_warehouse mw
+            on mw.wh_cd = d.wh_cd
+        left join sys_dict_data st
+            on st.dict_type = 'bss_pallet_storage_type'
+           and st.dict_value = pnd.storage_type
+        left join sys_dict_data uf
+            on uf.dict_type = 'sys_usable_flag'
+           and uf.dict_value = pnd.usable_flag
+        where d.delete_flg = '0'
+          and d.item_code = #{itemCode}
+        order by d.pallet_no
+    </select>
+
+    <!-- 品目の移動履歴。日時3列は文字列。破棄数の列は履歴表に無い -->
+    <select id="selectHistoryByItemCode"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryHistoryFlatVo">
+        select
+            cast(h.id as varchar) as id,
+            h.pallet_no as palletNo,
+            nullif(pn.storage_period, '') as storagePeriod,
+            concat(coalesce(nullif(mw.wh_nm, ''), h.wh_cd), ' ', h.loc_cd) as place,
+            coalesce(nullif(hs.dict_label, ''), h.status) as status,
+            coalesce(nullif(mw.wh_nm, ''), h.wh_cd) as warehouse,
+            h.storage_qty as quantity,
+            h.used_qty as usedQty,
+            h.lost_damaged_qty as lostQty,
+            nullif(substring(h.transfer_datetime from 1 for 16), '') as moveAt,
+            nullif(h.transfer_request_no, '') as requestNo,
+            nullif(substring(h.request_datetime from 1 for 16), '') as requestAt,
+            h.requester as requester,
+            coalesce(nullif(substring(h.io_datetime from 1 for 16), ''), to_char(h.update_time, 'YYYY/MM/DD HH24:MI')) as updatedAt,
+            coalesce(nullif(su.nick_name, ''), h.update_by) as updater
+        from bss_inventory_history h
+        left join bss_pallet_number pn
+            on pn.pallet_no = h.pallet_no
+           and pn.delete_flg = '0'
+        left join mast_warehouse mw
+            on mw.wh_cd = h.wh_cd
+        left join sys_dict_data hs
+            on hs.dict_type = 'bss_inventory_hist_status'
+           and hs.dict_value = h.status
+        left join sys_user su
+            on su.user_name = h.update_by
+        where h.item_code = #{itemCode}
+        order by h.pallet_no, h.update_time
+    </select>
+
+    <!-- ロケ番の最新更新 -->
+    <select id="selectLocationHeader"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryLocationVo">
+        select
+            coalesce(nullif(mw.wh_nm, ''), d.wh_cd) as warehouse,
+            d.loc_cd as location,
+            coalesce(nullif(su.nick_name, ''), d.update_by) as updater,
+            to_char(d.update_time, 'YYYY/MM/DD HH24:MI') as updatedAt
+        from bss_inventory_detail d
+        left join mast_warehouse mw
+            on mw.wh_cd = d.wh_cd
+        left join sys_user su
+            on su.user_name = d.update_by
+        where d.delete_flg = '0'
+          and d.wh_cd = #{whCd}
+          and d.loc_cd = #{locCd}
+        order by d.update_time desc nulls last
+        limit 1
+    </select>
+
+    <!-- ロケ番にあるパレットと品目 -->
+    <select id="selectLocationLines"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryLocationFlatVo">
+        select
+            cast(d.id as varchar) as id,
+            d.pallet_no as palletNo,
+            nullif(pn.storage_period, '') as storagePeriod,
+            d.item_code as itemCode,
+            d.item_name as itemName,
+            coalesce(nullif(st.dict_label, ''), pnd.storage_type) as storageType,
+            d.qty as quantity,
+            coalesce(nullif(uf.dict_label, ''), pnd.usable_flag) as usable
+        from bss_inventory_detail d
+        left join bss_pallet_number pn
+            on pn.pallet_no = d.pallet_no
+           and pn.delete_flg = '0'
+        left join bss_pallet_number_detail pnd
+            on pnd.pallet_no = d.pallet_no
+           and pnd.item_code = d.item_code
+           and pnd.delete_flg = '0'
+        left join sys_dict_data st
+            on st.dict_type = 'bss_pallet_storage_type'
+           and st.dict_value = pnd.storage_type
+        left join sys_dict_data uf
+            on uf.dict_type = 'sys_usable_flag'
+           and uf.dict_value = pnd.usable_flag
+        where d.delete_flg = '0'
+          and d.wh_cd = #{whCd}
+          and d.loc_cd = #{locCd}
+        order by d.pallet_no, d.item_code
+    </select>
+
 </mapper>
