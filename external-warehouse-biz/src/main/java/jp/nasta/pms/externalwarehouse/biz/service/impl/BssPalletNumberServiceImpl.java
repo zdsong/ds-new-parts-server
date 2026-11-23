@@ -156,7 +156,7 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
     public int insertPallet(BssPalletNumberBo bo) {
         // パレット番号が未指定の場合は採番する（採番結果は呼び出し元へ返す）
         if (StringUtils.isEmpty(bo.getPalletNo())) {
-            bo.setPalletNo(commonService.generatePalletNo());
+            bo.setPalletNo(commonService.generatePalletNo(bo.getClassification()));
         }
 
         Date now = new Date();

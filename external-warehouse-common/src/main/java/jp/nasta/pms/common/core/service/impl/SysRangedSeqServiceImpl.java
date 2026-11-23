@@ -35,12 +35,12 @@ public class SysRangedSeqServiceImpl implements ISysRangedSeqService {
     public String generateSerialNo(String serialType) {
         Integer seq = 0;
         StringBuilder result = new StringBuilder();
-         if( ValueUtils.isEqual(SERIAL_PREFIX_PALLET, serialType)) {
+         if( ValueUtils.isEqual(SERIAL_PREFIX_PALLET, serialType) || ValueUtils.isEqual(SERIAL_PREFIX_PALLET_PART, serialType)) {
             String dateTimeNowStr = DateUtils.dateTimeNow(DateUtils.YYYYMMDD);
             String subDateTimeNowStr =dateTimeNowStr.substring(2,dateTimeNowStr.length());
             seq = this.increaseSequence(SERIAL_TYPE_PALLET,subDateTimeNowStr,serialType,serialType,null,null);
             String serialNo = StringUtils.leftPad(String.valueOf(seq), 3, '0');
-            result.append(SERIAL_PREFIX_PALLET);
+            result.append(serialType);
             result.append(subDateTimeNowStr);
             result.append(HORIZONTAL_LINE);
             result.append(serialNo);

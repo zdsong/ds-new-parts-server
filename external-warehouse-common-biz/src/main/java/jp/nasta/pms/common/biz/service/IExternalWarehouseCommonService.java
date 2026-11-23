@@ -42,7 +42,8 @@ public interface IExternalWarehouseCommonService {
     /**
      * パレット番号の生成
      *
+     * @param classification 区分（部品は B、製品は S を先頭に付ける）
      * @return パレット番号
      */
-    public String generatePalletNo();
+    public String generatePalletNo(String classification);
 }

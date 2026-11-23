@@ -83,8 +83,8 @@ public class CommonController
      * @return
      */
     @GetMapping(value = "/generate/pallet_no")
-    public String generatePalletNo() {
-        return  commonService.generatePalletNo();
+    public String generatePalletNo(@RequestParam(value = "classification", required = false) String classification) {
+        return  commonService.generatePalletNo(classification);
     }
 
     /**

@@ -203,6 +203,11 @@ public class Constants
     public static final String SERIAL_PREFIX_PALLET = "S";
 
     /**
+     * パレット番号の先頭文字（部品）
+     */
+    public static final String SERIAL_PREFIX_PALLET_PART = "B";
+
+    /**
      * パレット番号
      */
     public static final String SERIAL_TYPE_PALLET = "pallet";

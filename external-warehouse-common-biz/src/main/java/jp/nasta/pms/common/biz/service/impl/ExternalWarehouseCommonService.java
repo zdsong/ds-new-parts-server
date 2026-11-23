@@ -12,6 +12,7 @@ import jp.nasta.pms.common.biz.service.IExternalWarehouseCommonService;
 import jp.nasta.pms.common.core.domain.entity.SysDictData;
 
 import jp.nasta.pms.common.core.service.ISysRangedSeqService;
+import jp.nasta.pms.common.enums.ClassificationEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static jp.nasta.pms.common.constant.Constants.SERIAL_PREFIX_PALLET;
+import static jp.nasta.pms.common.constant.Constants.SERIAL_PREFIX_PALLET_PART;
 
 /**
  * 共通のサービスクラス
@@ -108,9 +110,12 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
     /**
      * パレット番号の生成
      *
+     * @param classification 区分（部品は B、製品は S を先頭に付ける）
      * @return パレット番号
      */
-    public String generatePalletNo() {
-       return  sysRangedSeqService.generateSerialNo(SERIAL_PREFIX_PALLET);
+    public String generatePalletNo(String classification) {
+        // 品目区分が部品の場合は B、それ以外（製品）は S を先頭に付ける
+        String prefix = ClassificationEnum.PART.getCode().equals(classification) ? SERIAL_PREFIX_PALLET_PART : SERIAL_PREFIX_PALLET;
+        return sysRangedSeqService.generateSerialNo(prefix);
     }
 }
