@@ -47,8 +47,11 @@
             coalesce(nullif(tw.wh_nm, ''), o.transfer_to_wh_cd) as destWarehouse,
             nullif(o.transfer_ship_date, '') as desiredDate,
             nullif(o.transfer_date, '') as requestDate,
+            coalesce(nullif(trim(ru.nick_name), ''), o.registered_by) as registrar,
+            coalesce(nullif(trim(cu.nick_name), ''), o.completed_by) as completer,
             nullif(o.registration_date, '') as registeredDate,
             nullif(o.completion_date, '') as completedDate,
+            nullif(o.memo, '') as memo,
             o.requester_name as requester
         from bss_transfer_order o
         left join mast_warehouse fw

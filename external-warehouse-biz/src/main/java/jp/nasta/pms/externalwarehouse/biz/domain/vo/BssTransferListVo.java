@@ -73,6 +73,21 @@ public class BssTransferListVo {
     private String requester;
 
     /**
+     * 移動登録者
+     */
+    private String registrar;
+
+    /**
+     * 移動完了者
+     */
+    private String completer;
+
+    /**
+     * 備考
+     */
+    private String memo;
+
+    /**
      * 明細の品目
      */
     private List<BssTransferItemVo> items;
