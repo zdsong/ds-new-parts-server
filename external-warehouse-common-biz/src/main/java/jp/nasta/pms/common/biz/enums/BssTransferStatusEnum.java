@@ -8,7 +8,15 @@ public enum BssTransferStatusEnum {
     /**
      * 移動依頼
      */
-    TF("TF", "移動依頼");
+    TF("TF", "移動依頼"),
+    /**
+     * 移動依頼
+     */
+    TF_P("TF_P", "移動予定"),
+    /**
+     * 移動依頼
+     */
+    TF_F("TF", "移動完了");;
 
     /**
      * 辞書タイプ

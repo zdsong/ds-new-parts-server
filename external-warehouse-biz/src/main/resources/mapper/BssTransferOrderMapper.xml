@@ -146,4 +146,255 @@
         order by d.transfer_request_no, d.detail_no
     </select>
 
+    <!-- 移動依頼（出庫）の対象在庫。在庫状況が在庫で、割り当て数量を超えて残っている明細 -->
+    <select id="selectTransferCandidates"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferCandidateVo">
+        select
+            cast(d.id as varchar) as id,
+            d.item_code as itemCode,
+            d.item_name as itemName,
+            d.classification as classification,
+            coalesce(nullif(cl.dict_label, ''), d.classification) as classificationLabel,
+            d.wh_cd as whCd,
+            coalesce(nullif(mw.wh_nm, ''), d.wh_cd) as whName,
+            d.loc_cd as locCd,
+            d.pallet_no as palletNo,
+            d.qty as qty,
+            d.allocation_qty as allocationQty
+        from bss_inventory_detail d
+        left join mast_warehouse mw
+            on mw.wh_cd = d.wh_cd
+        left join sys_dict_data cl
+            on cl.dict_type = 'bss_classification'
+           and cl.dict_value = d.classification
+        where d.delete_flg = '0'
+          and d.status = #{status}
+          and d.qty &gt; coalesce(d.allocation_qty, 0)
+        <if test="whCd != null and whCd != ''">
+            and d.wh_cd = #{whCd}
+        </if>
+        <if test="classifications != null and classifications.size() > 0">
+            and d.classification in
+            <foreach collection="classifications" item="classification" open="(" separator="," close=")">
+                #{classification}
+            </foreach>
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+            and d.item_code like concat('%', #{itemCode}, '%')
+        </if>
+        <if test="itemName != null and itemName != ''">
+            and d.item_name like concat('%', #{itemName}, '%')
+        </if>
+        order by d.item_code, d.pallet_no
+    </select>
+
+    <!-- 移動依頼を登録する -->
+    <insert id="insertTransferOrder"
+            parameterType="jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferOrderBo">
+        insert into bss_transfer_order
+        (
+            id,
+            transfer_request_no,
+            transfer_fm_wh_cd,
+            transfer_to_wh_cd,
+            status,
+            requester_name,
+            transfer_date,
+            transfer_ship_date,
+            registered_by,
+            registration_date,
+            completed_by,
+            completion_date,
+            memo,
+            delete_flg,
+            create_time,
+            create_by,
+            create_pg_id,
+            update_time,
+            update_by,
+            update_pg_id,
+            version
+        )
+        values
+        (
+            #{id},
+            #{requestNo},
+            #{sourceWhCd,jdbcType=VARCHAR},
+            #{destWhCd,jdbcType=VARCHAR},
+            #{status},
+            #{requester},
+            #{transferDate},
+            #{desiredDate,jdbcType=VARCHAR},
+            #{registeredBy},
+            #{registrationDate},
+            '',
+            null,
+            #{memo,jdbcType=VARCHAR},
+            '0',
+            now(),
+            #{registeredBy},
+            #{createPgId},
+            now(),
+            #{registeredBy},
+            #{createPgId},
+            1
+        )
+    </insert>
+
+    <!-- 移動依頼明細を登録する -->
+    <insert id="insertTransferOrderDetails">
+        insert into bss_transfer_order_detail
+        (
+            id,
+            transfer_request_no,
+            detail_no,
+            status,
+            item_code,
+            item_name,
+            storage_qty,
+            used_qty,
+            lost_damaged_qty,
+            disposal_qty,
+            pallet_no,
+            remarks,
+            delete_flg,
+            create_time,
+            create_by,
+            create_pg_id,
+            update_time,
+            update_by,
+            update_pg_id,
+            version
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.id},
+                #{item.transferRequestNo},
+                #{item.detailNo},
+                #{item.status},
+                #{item.itemCode},
+                #{item.itemName,jdbcType=VARCHAR},
+                #{item.storageQty},
+                #{item.usedQty,jdbcType=NUMERIC},
+                #{item.lostDamagedQty,jdbcType=NUMERIC},
+                #{item.disposalQty,jdbcType=NUMERIC},
+                #{item.palletNo,jdbcType=VARCHAR},
+                #{item.remarks,jdbcType=VARCHAR},
+                '0',
+                now(),
+                #{item.createBy},
+                #{item.createPgId},
+                now(),
+                #{item.createBy},
+                #{item.createPgId},
+                1
+            )
+        </foreach>
+    </insert>
+
+    <!-- 移動依頼番号のヘッダ -->
+    <select id="selectTransferDetailByRequestNo"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferDetailVo">
+        select
+            o.transfer_request_no as requestNo,
+            o.status as status,
+            coalesce(nullif(trim(st.dict_label), ''), o.status) as statusLabel,
+            o.transfer_fm_wh_cd as sourceWhCd,
+            coalesce(nullif(fw.wh_nm, ''), o.transfer_fm_wh_cd) as sourceWarehouse,
+            o.transfer_to_wh_cd as destWhCd,
+            coalesce(nullif(tw.wh_nm, ''), o.transfer_to_wh_cd) as destWarehouse,
+            nullif(o.transfer_date, '') as requestDate,
+            nullif(o.transfer_ship_date, '') as desiredDate,
+            o.requester_name as requester,
+            nullif(o.memo, '') as memo
+        from bss_transfer_order o
+        left join mast_warehouse fw
+            on fw.wh_cd = o.transfer_fm_wh_cd
+        left join mast_warehouse tw
+            on tw.wh_cd = o.transfer_to_wh_cd
+        left join sys_dict_data st
+            on st.dict_type = 'bss_transfer_status'
+           and st.dict_value = o.status
+        where o.delete_flg = '0'
+          and o.transfer_request_no = #{requestNo}
+        limit 1
+    </select>
+
+    <!-- 移動依頼番号の明細 -->
+    <select id="selectTransferDetailLines"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferDetailLineVo">
+        select
+            d.detail_no as detailNo,
+            d.item_code as itemCode,
+            d.item_name as itemName,
+            d.storage_qty as storageQty,
+            d.used_qty as usedQty,
+            d.lost_damaged_qty as lostDamagedQty,
+            d.disposal_qty as disposalQty,
+            d.pallet_no as palletNo
+        from bss_transfer_order_detail d
+        where d.delete_flg = '0'
+          and d.transfer_request_no = #{requestNo}
+        order by d.detail_no
+    </select>
+
+    <!-- 移動依頼を更新する -->
+    <update id="updateTransferOrder"
+            parameterType="jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferOrderBo">
+        update bss_transfer_order
+        set
+            transfer_to_wh_cd = #{destWhCd,jdbcType=VARCHAR},
+            transfer_ship_date = #{desiredDate,jdbcType=VARCHAR},
+            requester_name = #{requester},
+            memo = #{memo,jdbcType=VARCHAR},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where transfer_request_no = #{requestNo}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動依頼明細の移動数を更新する -->
+    <update id="updateTransferOrderDetail"
+            parameterType="jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferOrderDetailBo">
+        update bss_transfer_order_detail
+        set
+            used_qty = #{usedQty,jdbcType=NUMERIC},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where transfer_request_no = #{transferRequestNo}
+          and detail_no = #{detailNo}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動依頼番号の最大明細番号 -->
+    <select id="selectMaxDetailNo" resultType="java.lang.Integer">
+        select coalesce(max(detail_no), 0)
+        from bss_transfer_order_detail
+        where transfer_request_no = #{requestNo}
+    </select>
+
+    <!-- 画面から削除された明細を論理削除する -->
+    <update id="deleteTransferOrderDetails">
+        update bss_transfer_order_detail
+        set
+            delete_flg = '1',
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where transfer_request_no = #{requestNo}
+          and delete_flg = '0'
+        <if test="detailNos != null and detailNos.size() > 0">
+            and detail_no not in
+            <foreach collection="detailNos" item="detailNo" open="(" separator="," close=")">
+                #{detailNo}
+            </foreach>
+        </if>
+    </update>
+
 </mapper>
