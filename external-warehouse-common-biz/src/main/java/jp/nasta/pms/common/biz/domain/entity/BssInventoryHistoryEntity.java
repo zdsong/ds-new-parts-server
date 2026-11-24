@@ -95,6 +95,11 @@ public class BssInventoryHistoryEntity extends BaseEntity {
     private String transferRequestNo;
 
     /**
+     * 移動番号
+     */
+    private String transferNo;
+
+    /**
      * 依頼日時
      */
     private String requestDatetime;

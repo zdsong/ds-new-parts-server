@@ -51,6 +51,11 @@ public class BssTransferOrderDetailBo {
     private BigDecimal usedQty;
 
     /**
+     * 移動済数量
+     */
+    private BigDecimal movedQty;
+
+    /**
      * 紛失／破損数
      */
     private BigDecimal lostDamagedQty;

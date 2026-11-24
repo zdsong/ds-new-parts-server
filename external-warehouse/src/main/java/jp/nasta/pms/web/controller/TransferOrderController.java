@@ -2,6 +2,10 @@ package jp.nasta.pms.web.controller;
 
 import jp.nasta.pms.common.core.controller.BaseController;
 import jp.nasta.pms.common.core.domain.AjaxResult;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCompleteBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveRegisterBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveSearchBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveStockSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferCandidateSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferOrderBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssTransferSearchBo;
@@ -77,6 +81,73 @@ public class TransferOrderController extends BaseController {
     @PostMapping("/update")
     public AjaxResult update(@RequestBody BssTransferOrderBo bo) {
         bssTransferOrderService.updateTransferOrder(bo);
+        return success();
+    }
+
+    /**
+     * 移動登録を行う（SP402）
+     *
+     * @param bo 移動登録の内容
+     * @return 移動依頼番号と移動後のパレット番号
+     */
+    @PostMapping("/register")
+    public AjaxResult register(@RequestBody BssMoveRegisterBo bo) {
+        return success(bssTransferOrderService.registerMove(bo));
+    }
+
+    /**
+     * 移動一覧を取得する
+     *
+     * @param searchBo 検索条件
+     * @return 移動一覧
+     */
+    @GetMapping("/moves")
+    public AjaxResult moves(BssMoveSearchBo searchBo) {
+        return success(bssTransferOrderService.selectMoveList(searchBo));
+    }
+
+    /**
+     * 移動情報詳細を取得する
+     *
+     * @param transferNo 移動番号
+     * @return 移動情報詳細
+     */
+    @GetMapping("/move/detail")
+    public AjaxResult moveDetail(@RequestParam("transferNo") String transferNo) {
+        return success(bssTransferOrderService.selectMoveDetail(transferNo));
+    }
+
+    /**
+     * 移動元の在庫明細を取得する
+     *
+     * @param searchBo 検索条件
+     * @return 在庫明細
+     */
+    @GetMapping("/stock")
+    public AjaxResult stock(BssMoveStockSearchBo searchBo) {
+        return success(bssTransferOrderService.selectMoveStockList(searchBo));
+    }
+
+    /**
+     * 移動先パレットの移動情報を取得する（SP406 読取）
+     *
+     * @param palletNo パレット番号
+     * @return 移動情報
+     */
+    @GetMapping("/receive/scan")
+    public AjaxResult receiveScan(@RequestParam("palletNo") String palletNo) {
+        return success(bssTransferOrderService.selectReceiveMove(palletNo));
+    }
+
+    /**
+     * 移動完了を登録する（SP406）
+     *
+     * @param bo 移動完了の内容
+     * @return 処理結果
+     */
+    @PostMapping("/complete")
+    public AjaxResult complete(@RequestBody BssMoveCompleteBo bo) {
+        bssTransferOrderService.completeMove(bo);
         return success();
     }
 }

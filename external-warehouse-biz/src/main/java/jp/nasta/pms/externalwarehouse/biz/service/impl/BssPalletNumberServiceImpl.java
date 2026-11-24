@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -329,14 +330,20 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
             if (request != null) {
                 BssPalletScanRequestVo requestVo = new BssPalletScanRequestVo();
                 requestVo.setRequestNo(request.getTransferRequestNo());
+                requestVo.setRequestDetailNo(request.getRequestDetailNo());
                 requestVo.setDestinationLabel(StringUtils.isNotEmpty(request.getToWhNm())
                         ? request.getToWhNm() : request.getTransferToWhCd());
                 requestVo.setRequester(request.getRequesterName());
                 requestVo.setDesiredDate(request.getTransferShipDate());
                 requestVo.setRemark(request.getMemo());
                 detail.setRequest(requestVo);
-                if (request.getStorageQty() != null) {
-                    detail.setMoveQty(request.getStorageQty());
+                // 依頼数から移動済数量を差し引いた残数量を移動数にする
+                if (request.getUsedQty() != null) {
+                    BigDecimal movedQty = request.getMovedQty() == null
+                            ? BigDecimal.ZERO : request.getMovedQty();
+                    BigDecimal remaining = request.getUsedQty().subtract(movedQty);
+                    detail.setMoveQty(remaining.compareTo(BigDecimal.ZERO) > 0
+                            ? remaining : BigDecimal.ZERO);
                 }
             }
             lines.add(detail);

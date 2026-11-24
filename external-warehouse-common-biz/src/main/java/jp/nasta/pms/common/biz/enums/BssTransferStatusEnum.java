@@ -16,7 +16,7 @@ public enum BssTransferStatusEnum {
     /**
      * 移動依頼
      */
-    TF_F("TF", "移動完了");;
+    TF_F("TF_F", "移動完了");;
 
     /**
      * 辞書タイプ

@@ -26,9 +26,24 @@ public class BssTransferOpenLineVo implements Serializable {
     private BigDecimal storageQty;
 
     /**
+     * 移動依頼数
+     */
+    private BigDecimal usedQty;
+
+    /**
+     * 移動済数量
+     */
+    private BigDecimal movedQty;
+
+    /**
      * 移動依頼番号
      */
     private String transferRequestNo;
+
+    /**
+     * 移動依頼明細番号
+     */
+    private Integer requestDetailNo;
 
     /**
      * 依頼者氏名

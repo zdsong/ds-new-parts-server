@@ -63,6 +63,11 @@ public class BssPalletScanLineVo implements Serializable {
     private String status;
 
     /**
+     * 在庫情報詳細のバージョン（移動登録の楽観ロック用）
+     */
+    private Integer version;
+
+    /**
      * 移動依頼。依頼がない品目は null
      */
     private BssPalletScanRequestVo request;

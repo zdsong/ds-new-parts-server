@@ -13,6 +13,7 @@ import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssInventoryPalletVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -54,6 +55,72 @@ public interface BssInventoryMapper {
      * @return 保管エリアコード
      */
     String selectZoneCd(@Param("whCd") String whCd, @Param("locCd") String locCd);
+
+    /**
+     * 在庫情報詳細をIDで取得する
+     *
+     * @param id 在庫情報詳細ID
+     * @return 在庫情報詳細。無い場合は null
+     */
+    BssInventoryDetailEntity selectDetailById(@Param("id") String id);
+
+    /**
+     * パレット番号の在庫中の明細を取得する（全量移動の判定用）
+     *
+     * @param palletNo パレット番号
+     * @return 在庫情報詳細
+     */
+    List<BssInventoryDetailEntity> selectPaDetailsByPalletNo(@Param("palletNo") String palletNo);
+
+    /**
+     * 割り当て数量を加算する。バージョン不一致の場合は更新しない
+     *
+     * @param id         在庫情報詳細ID
+     * @param moveQty    移動数量
+     * @param version    画面が読み取ったバージョン
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @param lastStatus 最終状態
+     * @return 更新件数
+     */
+    int updateAllocationQty(@Param("id") String id,
+                            @Param("moveQty") BigDecimal moveQty,
+                            @Param("version") Integer version,
+                            @Param("updateBy") String updateBy,
+                            @Param("updatePgId") String updatePgId,
+                            @Param("lastStatus") String lastStatus);
+
+    /**
+     * 移動先の在庫明細の倉庫・ロケ番を更新し、引当数量を 0 にする
+     *
+     * @param id         在庫情報詳細ID
+     * @param whCd       移動先倉庫コード
+     * @param locCd      移動先ロケコード
+     * @param lastStatus 最終状態
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int updateReceivedInventory(@Param("id") String id,
+                                @Param("whCd") String whCd,
+                                @Param("locCd") String locCd,
+                                @Param("lastStatus") String lastStatus,
+                                @Param("updateBy") String updateBy,
+                                @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動元の在庫数量と引当数量を移動数だけ減らす
+     *
+     * @param id         在庫情報詳細ID
+     * @param moveQty    移動数量
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int decreaseInventoryForReceived(@Param("id") String id,
+                                     @Param("moveQty") BigDecimal moveQty,
+                                     @Param("updateBy") String updateBy,
+                                     @Param("updatePgId") String updatePgId);
 
     /**
      * パレット番号の在庫明細を取得する

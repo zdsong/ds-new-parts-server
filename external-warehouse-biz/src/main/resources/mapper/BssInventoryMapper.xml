@@ -85,6 +85,7 @@
             lost_damaged_qty,
             transfer_datetime,
             transfer_request_no,
+            transfer_no,
             request_datetime,
             requester,
             io_datetime,
@@ -109,6 +110,7 @@
             #{lostDamagedQty,jdbcType=NUMERIC},
             #{transferDatetime,jdbcType=VARCHAR},
             #{transferRequestNo,jdbcType=VARCHAR},
+            #{transferNo,jdbcType=VARCHAR},
             #{requestDatetime,jdbcType=VARCHAR},
             #{requester,jdbcType=VARCHAR},
             #{ioDatetime,jdbcType=VARCHAR},
@@ -141,6 +143,101 @@
         limit 1
     </select>
 
+    <!-- 在庫情報詳細をIDで取得する -->
+    <select id="selectDetailById" resultType="jp.nasta.pms.common.biz.domain.entity.BssInventoryDetailEntity">
+        select
+            id,
+            pallet_no as palletNo,
+            barcode,
+            wh_cd as whCd,
+            loc_cd as locCd,
+            classification,
+            item_code as itemCode,
+            item_name as itemName,
+            qty,
+            allocation_qty as allocationQty,
+            status,
+            last_status as lastStatus,
+            remarks,
+            delete_flg as deleteFlg,
+            version
+        from bss_inventory_detail
+        where id = #{id}
+          and delete_flg = '0'
+        limit 1
+    </select>
+
+    <!-- パレット番号の在庫中の明細。全量移動の判定に使う -->
+    <select id="selectPaDetailsByPalletNo"
+            resultType="jp.nasta.pms.common.biz.domain.entity.BssInventoryDetailEntity">
+        select
+            id,
+            pallet_no as palletNo,
+            barcode,
+            wh_cd as whCd,
+            loc_cd as locCd,
+            classification,
+            item_code as itemCode,
+            item_name as itemName,
+            qty,
+            allocation_qty as allocationQty,
+            status,
+            last_status as lastStatus,
+            remarks,
+            delete_flg as deleteFlg,
+            version
+        from bss_inventory_detail
+        where pallet_no = #{palletNo}
+          and delete_flg = '0'
+          and status = 'PA'
+        order by item_code, id
+    </select>
+
+    <!-- 割り当て数量を加算する。画面が読み取ったバージョンと一致する場合だけ更新する -->
+    <update id="updateAllocationQty">
+        update bss_inventory_detail
+        set
+            allocation_qty = coalesce(allocation_qty, 0) + #{moveQty},
+            last_status = #{lastStatus},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and version = #{version,jdbcType=INTEGER}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動先の在庫明細の倉庫・ロケ番を更新し、引当数量を 0 にする -->
+    <update id="updateReceivedInventory">
+        update bss_inventory_detail
+        set
+            wh_cd = #{whCd},
+            loc_cd = #{locCd},
+            allocation_qty = 0,
+            last_status = #{lastStatus},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動元の在庫数量と引当数量を移動数だけ減らす -->
+    <update id="decreaseInventoryForReceived">
+        update bss_inventory_detail
+        set
+            qty = greatest(coalesce(qty, 0) - #{moveQty}, 0),
+            allocation_qty = greatest(coalesce(allocation_qty, 0) - #{moveQty}, 0),
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and delete_flg = '0'
+    </update>
+
     <!-- パレット番号の在庫明細を取得する -->
     <select id="selectScanLinesByPalletNo"
             resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo">
@@ -152,6 +249,7 @@
             d.qty as storageQty,
             d.pallet_no as palletNo,
             d.status as status,
+            d.version as version,
             concat(coalesce(nullif(mw.wh_nm, ''), d.wh_cd), '/', d.loc_cd) as storagePlace
         from bss_inventory_detail d
         left join mast_warehouse mw

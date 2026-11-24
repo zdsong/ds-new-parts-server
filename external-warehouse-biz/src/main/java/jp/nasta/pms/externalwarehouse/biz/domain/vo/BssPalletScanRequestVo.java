@@ -20,6 +20,11 @@ public class BssPalletScanRequestVo implements Serializable {
     private String requestNo;
 
     /**
+     * 移動依頼明細番号
+     */
+    private Integer requestDetailNo;
+
+    /**
      * 移動先
      */
     private String destinationLabel;
