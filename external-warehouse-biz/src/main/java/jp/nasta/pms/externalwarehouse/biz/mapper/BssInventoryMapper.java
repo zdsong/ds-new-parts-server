@@ -131,6 +131,82 @@ public interface BssInventoryMapper {
     int deleteInventoryIfEmpty(@Param("id") String id);
 
     /**
+     * 移動完了取消で同一パレットの在庫を移動前の状態に戻す
+     *
+     * @param id         在庫情報詳細ID
+     * @param whCd       移動元倉庫コード
+     * @param locCd      移動元ロケコード
+     * @param moveQty    移動数量
+     * @param lastStatus 最終状況
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int restoreMatchedInventoryForCancel(@Param("id") String id,
+                                         @Param("whCd") String whCd,
+                                         @Param("locCd") String locCd,
+                                         @Param("moveQty") BigDecimal moveQty,
+                                         @Param("lastStatus") String lastStatus,
+                                         @Param("updateBy") String updateBy,
+                                         @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動完了取消で移動元の数量・引当数量を戻す
+     *
+     * @param id         在庫情報詳細ID
+     * @param moveQty    移動数量
+     * @param lastStatus 最終状況
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int restoreSourceInventoryForCancel(@Param("id") String id,
+                                        @Param("moveQty") BigDecimal moveQty,
+                                        @Param("lastStatus") String lastStatus,
+                                        @Param("updateBy") String updateBy,
+                                        @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動完了で登録した移動先在庫を削除する
+     *
+     * @param palletNo    移動先パレット番号
+     * @param itemCode    品目コード
+     * @param createPgId  登録プログラムＩＤ
+     * @param lastStatus  最終状況
+     * @param completedAt 移動完了日時
+     * @return 削除件数
+     */
+    int deleteReceivedInventoryForCancel(@Param("palletNo") String palletNo,
+                                         @Param("itemCode") String itemCode,
+                                         @Param("createPgId") String createPgId,
+                                         @Param("lastStatus") String lastStatus,
+                                         @Param("completedAt") String completedAt);
+
+    /**
+     * 移動登録削除で在庫の引当数量を戻す
+     *
+     * @param id         在庫情報詳細ID
+     * @param moveQty    移動数量
+     * @param lastStatus 最終状況
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int revertAllocationForRegistrationDelete(@Param("id") String id,
+                                              @Param("moveQty") BigDecimal moveQty,
+                                              @Param("lastStatus") String lastStatus,
+                                              @Param("updateBy") String updateBy,
+                                              @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動番号に紐づく在庫履歴を物理削除する
+     *
+     * @param transferNo 移動番号
+     * @return 削除件数
+     */
+    int deleteHistoryByTransferNo(@Param("transferNo") String transferNo);
+
+    /**
      * パレット番号の在庫明細を取得する
      *
      * @param palletNo パレット番号

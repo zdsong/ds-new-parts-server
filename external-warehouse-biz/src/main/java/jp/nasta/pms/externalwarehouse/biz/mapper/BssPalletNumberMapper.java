@@ -72,6 +72,22 @@ public interface BssPalletNumberMapper {
     int deleteLogical(BssPalletNumberEntity entity);
 
     /**
+     * パレット番号を物理削除
+     *
+     * @param palletNo パレット番号
+     * @return 削除件数
+     */
+    int deletePhysically(@Param("palletNo") String palletNo);
+
+    /**
+     * 積載明細をパレット番号で物理削除
+     *
+     * @param palletNo パレット番号
+     * @return 削除件数
+     */
+    int deleteDetailsPhysically(@Param("palletNo") String palletNo);
+
+    /**
      * 未印刷のパレット番号を印刷済みに更新する
      *
      * @param entity パレット番号（palletNo、printedFlg と更新項目を設定する）

@@ -356,6 +356,107 @@
           and delete_flg = '0'
     </update>
 
+    <!-- 移動完了を取り消して移動登録済の状態に戻す -->
+    <update id="cancelTransfer">
+        update bss_transfer
+        set
+            status = #{status},
+            completed_by = null,
+            completed_at = null,
+            completion_memo = null,
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where transfer_no = #{transferNo}
+          and status = #{fromStatus}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動登録時の移動元ロケ番を在庫履歴から取得する -->
+    <select id="selectMoveSourceLocCd" resultType="java.lang.String">
+        select h.loc_cd
+        from bss_inventory_history h
+        where h.transfer_no = #{transferNo}
+          and h.item_code = #{itemCode}
+          and h.pallet_no = #{palletNo}
+        order by h.create_time desc
+        limit 1
+    </select>
+
+    <!-- 移動管理（明細）を物理削除する -->
+    <delete id="deleteTransferDetailsPhysically">
+        delete from bss_transfer_detail
+        where transfer_no = #{transferNo}
+    </delete>
+
+    <!-- 移動管理（ヘッダ）を物理削除する -->
+    <delete id="deleteTransferPhysically">
+        delete from bss_transfer
+        where transfer_no = #{transferNo}
+    </delete>
+
+    <!-- 移動依頼明細の移動済数量を減算する -->
+    <update id="subtractRequestDetailMovedQty">
+        update bss_transfer_order_detail
+        set
+            moved_qty = greatest(coalesce(moved_qty, 0) - #{moveQty}, 0),
+            status = #{status},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where transfer_request_no = #{requestNo}
+          and detail_no = #{detailNo}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動登録削除後、未完了の移動依頼を移動依頼に戻す -->
+    <update id="revertRequestStatus">
+        update bss_transfer_order o
+        set
+            status = #{status},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where o.transfer_request_no = #{requestNo}
+          and o.delete_flg = '0'
+          and exists (
+              select 1
+              from bss_transfer_order_detail d
+              where d.transfer_request_no = o.transfer_request_no
+                and d.delete_flg = '0'
+                and coalesce(d.moved_qty, 0) &lt; coalesce(d.used_qty, 0)
+          )
+    </update>
+
+    <!-- 移動管理を排他ロックして取得する -->
+    <select id="selectTransferForUpdate"
+            resultType="jp.nasta.pms.common.biz.domain.entity.BssTransferEntity">
+        select
+            id as id,
+            transfer_no as transferNo,
+            status as status,
+            transfer_fm_wh_cd as transferFmWhCd,
+            transfer_to_wh_cd as transferToWhCd,
+            transfer_to_loc_cd as transferToLocCd,
+            transfer_registered_by as transferRegisteredBy,
+            transfer_registered_at as transferRegisteredAt,
+            completed_by as completedBy,
+            completed_at as completedAt,
+            canceled_by as canceledBy,
+            canceled_at as canceledAt,
+            memo as memo,
+            completion_memo as completionMemo,
+            delete_flg as deleteFlg,
+            version as version
+        from bss_transfer
+        where transfer_no = #{transferNo}
+          and delete_flg = '0'
+        for update
+    </select>
+
     <!-- 移動番号の明細 -->
     <select id="selectMoveDetailLines"
             resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssMoveDetailLineVo">

@@ -2,7 +2,9 @@ package jp.nasta.pms.web.controller;
 
 import jp.nasta.pms.common.core.controller.BaseController;
 import jp.nasta.pms.common.core.domain.AjaxResult;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCancelBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCompleteBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveDeleteBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveRegisterBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveStockSearchBo;
@@ -148,6 +150,30 @@ public class TransferOrderController extends BaseController {
     @PostMapping("/complete")
     public AjaxResult complete(@RequestBody BssMoveCompleteBo bo) {
         bssTransferOrderService.completeMove(bo);
+        return success();
+    }
+
+    /**
+     * 移動完了取消を行う
+     *
+     * @param bo 移動完了取消の内容
+     * @return 処理結果
+     */
+    @PostMapping("/cancel")
+    public AjaxResult cancel(@RequestBody BssMoveCancelBo bo) {
+        bssTransferOrderService.cancelMove(bo);
+        return success();
+    }
+
+    /**
+     * 移動登録を削除し、移動登録前の状態へ戻す
+     *
+     * @param bo 移動登録削除の内容
+     * @return 処理結果
+     */
+    @PostMapping("/delete")
+    public AjaxResult delete(@RequestBody BssMoveDeleteBo bo) {
+        bssTransferOrderService.deleteMove(bo);
         return success();
     }
 }

@@ -252,6 +252,18 @@
     </update>
 
     <!-- パレット番号を論理削除 -->
+    <!-- パレット番号を物理削除 -->
+    <delete id="deletePhysically">
+        delete from bss_pallet_number
+        where pallet_no = #{palletNo}
+    </delete>
+
+    <!-- 積載明細をパレット番号で物理削除 -->
+    <delete id="deleteDetailsPhysically">
+        delete from bss_pallet_number_detail
+        where pallet_no = #{palletNo}
+    </delete>
+
     <update id="deleteLogical" parameterType="jp.nasta.pms.common.biz.domain.entity.BssPalletNumberEntity">
         update bss_pallet_number
         set

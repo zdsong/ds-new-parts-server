@@ -245,6 +245,67 @@
           and coalesce(qty, 0) &lt;= 0
     </delete>
 
+    <!-- 移動登録削除で在庫の引当数量を戻す -->
+    <update id="revertAllocationForRegistrationDelete">
+        update bss_inventory_detail
+        set
+            allocation_qty = greatest(coalesce(allocation_qty, 0) - #{moveQty}, 0),
+            last_status = #{lastStatus},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動番号に紐づく在庫履歴を物理削除する -->
+    <delete id="deleteHistoryByTransferNo">
+        delete from bss_inventory_history
+        where transfer_no = #{transferNo}
+    </delete>
+
+    <!-- 移動完了取消で同一パレットの在庫を移動前の状態に戻す -->
+    <update id="restoreMatchedInventoryForCancel">
+        update bss_inventory_detail
+        set
+            wh_cd = #{whCd},
+            loc_cd = #{locCd},
+            allocation_qty = coalesce(allocation_qty, 0) + #{moveQty},
+            last_status = #{lastStatus},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動完了取消で移動元の数量・引当数量を戻す -->
+    <update id="restoreSourceInventoryForCancel">
+        update bss_inventory_detail
+        set
+            qty = coalesce(qty, 0) + #{moveQty},
+            allocation_qty = coalesce(allocation_qty, 0) + #{moveQty},
+            last_status = #{lastStatus},
+            update_time = now(),
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and delete_flg = '0'
+    </update>
+
+    <!-- 移動完了で登録した移動先在庫を削除する -->
+    <delete id="deleteReceivedInventoryForCancel">
+        delete from bss_inventory_detail
+        where pallet_no = #{palletNo}
+          and item_code = #{itemCode}
+          and create_pg_id = #{createPgId}
+          and last_status = #{lastStatus}
+          and to_char(create_time, 'YYYY/MM/DD HH24:MI:SS') = #{completedAt}
+    </delete>
+
     <!-- パレット番号の在庫明細を取得する -->
     <select id="selectScanLinesByPalletNo"
             resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo">

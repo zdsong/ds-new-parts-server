@@ -114,6 +114,90 @@ public interface BssTransferMapper {
     List<BssMoveDetailLineVo> selectMoveDetailLines(@Param("transferNo") String transferNo);
 
     /**
+     * 移動完了を取り消して移動登録済の状態に戻す
+     *
+     * @param transferNo 移動番号
+     * @param status     取消後の状況
+     * @param fromStatus 取消前の状況
+     * @param updateBy   更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int cancelTransfer(@Param("transferNo") String transferNo,
+                       @Param("status") String status,
+                       @Param("fromStatus") String fromStatus,
+                       @Param("updateBy") String updateBy,
+                       @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動登録時の移動元ロケ番を在庫履歴から取得する
+     *
+     * @param transferNo 移動番号
+     * @param itemCode   品目コード
+     * @param palletNo   移動先パレット番号
+     * @return 移動元ロケ番
+     */
+    String selectMoveSourceLocCd(@Param("transferNo") String transferNo,
+                                 @Param("itemCode") String itemCode,
+                                 @Param("palletNo") String palletNo);
+
+    /**
+     * 移動管理を排他ロックして取得する
+     *
+     * @param transferNo 移動番号
+     * @return 移動管理
+     */
+    BssTransferEntity selectTransferForUpdate(@Param("transferNo") String transferNo);
+
+    /**
+     * 移動管理（明細）を物理削除する
+     *
+     * @param transferNo 移動番号
+     * @return 削除件数
+     */
+    int deleteTransferDetailsPhysically(@Param("transferNo") String transferNo);
+
+    /**
+     * 移動管理（ヘッダ）を物理削除する
+     *
+     * @param transferNo 移動番号
+     * @return 削除件数
+     */
+    int deleteTransferPhysically(@Param("transferNo") String transferNo);
+
+    /**
+     * 移動依頼明細の移動済数量を減算する
+     *
+     * @param requestNo 移動依頼番号
+     * @param detailNo  明細番号
+     * @param moveQty   移動数量
+     * @param status    減算後の明細状況
+     * @param updateBy  更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int subtractRequestDetailMovedQty(@Param("requestNo") String requestNo,
+                                      @Param("detailNo") Integer detailNo,
+                                      @Param("moveQty") BigDecimal moveQty,
+                                      @Param("status") String status,
+                                      @Param("updateBy") String updateBy,
+                                      @Param("updatePgId") String updatePgId);
+
+    /**
+     * 移動登録削除後、未完了の移動依頼を移動依頼に戻す
+     *
+     * @param requestNo 移動依頼番号
+     * @param status    戻す状況
+     * @param updateBy  更新者
+     * @param updatePgId 更新プログラムＩＤ
+     * @return 更新件数
+     */
+    int revertRequestStatus(@Param("requestNo") String requestNo,
+                            @Param("status") String status,
+                            @Param("updateBy") String updateBy,
+                            @Param("updatePgId") String updatePgId);
+
+    /**
      * 移動元の在庫明細を取得する
      *
      * @param searchBo 検索条件

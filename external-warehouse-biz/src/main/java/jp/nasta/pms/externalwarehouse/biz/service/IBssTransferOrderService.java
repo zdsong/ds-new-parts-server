@@ -1,6 +1,8 @@
 package jp.nasta.pms.externalwarehouse.biz.service;
 
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCancelBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCompleteBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveDeleteBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveRegisterBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveSearchBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveStockSearchBo;
@@ -107,4 +109,18 @@ public interface IBssTransferOrderService {
      * @param bo 移動完了の内容
      */
     void completeMove(BssMoveCompleteBo bo);
+
+    /**
+     * 移動完了取消を行う
+     *
+     * @param bo 移動完了取消の内容
+     */
+    void cancelMove(BssMoveCancelBo bo);
+
+    /**
+     * 移動登録を削除し、移動登録前の状態へ戻す
+     *
+     * @param bo 移動登録削除の内容
+     */
+    void deleteMove(BssMoveDeleteBo bo);
 }

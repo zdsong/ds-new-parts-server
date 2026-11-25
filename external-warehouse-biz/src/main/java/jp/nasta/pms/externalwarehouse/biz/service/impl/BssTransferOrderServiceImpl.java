@@ -17,6 +17,8 @@ import jp.nasta.pms.common.utils.SecurityUtils;
 import jp.nasta.pms.common.utils.StringUtils;
 import jp.nasta.pms.common.utils.uuid.IdUtils;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCompleteBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveCancelBo;
+import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveDeleteBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveRegisterBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveRegisterLineBo;
 import jp.nasta.pms.externalwarehouse.biz.domain.bo.BssMoveSearchBo;
@@ -37,6 +39,7 @@ import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferDetailVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferItemVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferListVo;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssInventoryMapper;
+import jp.nasta.pms.externalwarehouse.biz.mapper.BssPalletNumberMapper;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssTransferMapper;
 import jp.nasta.pms.externalwarehouse.biz.mapper.BssTransferOrderMapper;
 import jp.nasta.pms.externalwarehouse.biz.service.IBssPalletNumberService;
@@ -95,6 +98,11 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
     private static final String PG_ID_REGISTER = ExternalWarehousePgIdEnum.P402.getCode();
 
     /**
+     * 登録プログラムＩＤ：移動完了取消（P407）
+     */
+    private static final String PG_ID_CANCEL = ExternalWarehousePgIdEnum.P407.getCode();
+
+    /**
      * 登録プログラムＩＤ：パレット受取（SP406）
      */
     private static final String PG_ID_RECEIVE = ExternalWarehousePgIdEnum.SP406.getCode();
@@ -107,6 +115,9 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
 
     @Autowired
     private BssInventoryMapper bssInventoryMapper;
+
+    @Autowired
+    private BssPalletNumberMapper bssPalletNumberMapper;
 
     @Autowired
     private IExternalWarehouseCommonService commonService;
@@ -359,8 +370,18 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
                     MessageUtils.message("label.locationCd")));
         }
 
+        // 同時操作を防ぐため移動管理を排他ロックする
+        BssTransferEntity lockedTransfer = bssTransferMapper
+                .selectTransferForUpdate(bo.getTransferNo());
+        if (lockedTransfer == null) {
+            throw new ServiceException(MessageUtils.message("E0016",
+                    MessageUtils.message("label.transfer")));
+        }
+        if (!BssTransferStatusEnum.TF_P.getCode().equals(lockedTransfer.getStatus())) {
+            throw new ServiceException(MessageUtils.message("E0007"));
+        }
         BssMoveDetailVo move = selectMoveDetail(bo.getTransferNo());
-        if (move == null || !BssTransferStatusEnum.TF_P.getCode().equals(move.getStatus())) {
+        if (move == null) {
             throw new ServiceException(MessageUtils.message("E0016",
                     MessageUtils.message("label.transfer")));
         }
@@ -428,11 +449,190 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
                 StringUtils.trimToNull(bo.getCompletionMemo()), username, completedAt,
                 username, PG_ID_RECEIVE);
         if (rows == 0) {
-            throw new ServiceException(MessageUtils.message("E0016",
-                    MessageUtils.message("label.transfer")));
+            throw new ServiceException(MessageUtils.message("E0007"));
         }
         bssTransferMapper.updateTransferDetailStatus(bo.getTransferNo(),
                 BssTransferStatusEnum.TF_F.getCode(), username, PG_ID_RECEIVE);
+    }
+
+    /**
+     * 移動完了取消を行う（P407）。
+     * 移動完了時に更新した在庫を移動登録直後の状態へ戻し、
+     * 移動管理を移動登録済（TF_P）へ戻す。
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelMove(BssMoveCancelBo bo) {
+        if (bo == null || StringUtils.isEmpty(bo.getTransferNo())) {
+            throw new ServiceException(MessageUtils.message("E0029",
+                    MessageUtils.message("label.transferNo")));
+        }
+
+        // 同時操作を防ぐため移動管理を排他ロックする
+        BssTransferEntity lockedTransfer = bssTransferMapper
+                .selectTransferForUpdate(bo.getTransferNo());
+        if (lockedTransfer == null) {
+            throw new ServiceException(MessageUtils.message("E0016",
+                    MessageUtils.message("label.transfer")));
+        }
+        if (!BssTransferStatusEnum.TF_F.getCode().equals(lockedTransfer.getStatus())) {
+            throw new ServiceException(MessageUtils.message("E0007"));
+        }
+        BssMoveDetailVo move = selectMoveDetail(bo.getTransferNo());
+        if (move == null) {
+            throw new ServiceException(MessageUtils.message("E0016",
+                    MessageUtils.message("label.transfer")));
+        }
+        List<BssMoveDetailLineVo> lines = bssTransferMapper.selectMoveDetailLines(bo.getTransferNo());
+        if (CollectionUtils.isEmpty(lines)) {
+            throw new ServiceException(MessageUtils.message("E0070"));
+        }
+
+        Date now = new Date();
+        String username = SecurityUtils.getLoginUser().getUsername();
+        for (BssMoveDetailLineVo line : lines) {
+            String inventoryDetailId = line.getInventoryDetailId();
+            if (StringUtils.isEmpty(inventoryDetailId)) {
+                continue;
+            }
+            String destPalletNo = line.getDestPalletNo();
+            String sourceLocCd = bssTransferMapper.selectMoveSourceLocCd(
+                    bo.getTransferNo(), line.getItemCode(), destPalletNo);
+            if (StringUtils.isEmpty(sourceLocCd)) {
+                sourceLocCd = move.getSourceLocCd();
+            }
+            BssInventoryDetailEntity sourceStock = bssInventoryMapper.selectDetailById(inventoryDetailId);
+            boolean samePallet = sourceStock != null && destPalletNo != null
+                    && destPalletNo.equals(sourceStock.getPalletNo());
+            BigDecimal moveQty = line.getMoveQty() == null ? BigDecimal.ZERO : line.getMoveQty();
+            if (samePallet) {
+                // 同一パレットの場合は倉庫・ロケ番・引当数量を移動前に戻す
+                bssInventoryMapper.restoreMatchedInventoryForCancel(inventoryDetailId,
+                        move.getSourceWhCd(), sourceLocCd, moveQty,
+                        BssInventoryLastStatusEnum.TF_OUTED.getCode(), username, PG_ID_CANCEL);
+            } else {
+                // 別パレットの場合は移動完了で登録した在庫を削除する
+                bssInventoryMapper.deleteReceivedInventoryForCancel(destPalletNo, line.getItemCode(),
+                        PG_ID_RECEIVE, BssInventoryLastStatusEnum.TF_INED.getCode(),
+                        move.getCompletedDate());
+                if (sourceStock != null) {
+                    // 移動元の在庫が残っている場合は数量・引当数量を戻す
+                    bssInventoryMapper.restoreSourceInventoryForCancel(inventoryDetailId, moveQty,
+                            BssInventoryLastStatusEnum.TF_OUTED.getCode(), username, PG_ID_CANCEL);
+                } else {
+                    // 移動元の在庫が削除されている場合は移動前の内容で再登録する
+                    BssInventoryDetailEntity restored = new BssInventoryDetailEntity();
+                    restored.setId(inventoryDetailId);
+                    restored.setPalletNo(line.getSourcePalletNo());
+                    restored.setBarcode(line.getSourcePalletNo());
+                    restored.setWhCd(move.getSourceWhCd());
+                    restored.setLocCd(sourceLocCd);
+                    restored.setClassification(line.getClassificationCode());
+                    restored.setItemCode(line.getItemCode());
+                    restored.setItemName(line.getItemName());
+                    restored.setQty(moveQty);
+                    restored.setAllocationQty(moveQty);
+                    restored.setStatus(BssInventoryStatusEnum.PA.getCode());
+                    restored.setLastStatus(BssInventoryLastStatusEnum.TF_OUTED.getCode());
+                    restored.setDeleteFlg("0");
+                    restored.setVersion(1);
+                    EntityAuditHelper.fillForInsert(restored, now, username, PG_ID_CANCEL);
+                    bssInventoryMapper.insertDetail(restored);
+                }
+            }
+        }
+
+        int rows = bssTransferMapper.cancelTransfer(bo.getTransferNo(),
+                BssTransferStatusEnum.TF_P.getCode(), BssTransferStatusEnum.TF_F.getCode(),
+                username, PG_ID_CANCEL);
+        if (rows == 0) {
+            throw new ServiceException(MessageUtils.message("E0007"));
+        }
+        bssTransferMapper.updateTransferDetailStatus(bo.getTransferNo(),
+                BssTransferStatusEnum.TF_P.getCode(), username, PG_ID_CANCEL);
+    }
+
+    /**
+     * 移動登録を削除し、移動登録前の状態へ戻す（P407）。
+     * 在庫の割り当て数量・在庫履歴・移動依頼明細の移動済数量を移動登録前へ戻し、
+     * 移動管理と移動登録時に発番したパレットを物理削除する。
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMove(BssMoveDeleteBo bo) {
+        if (bo == null || StringUtils.isEmpty(bo.getTransferNo())) {
+            throw new ServiceException(MessageUtils.message("E0029",
+                    MessageUtils.message("label.transferNo")));
+        }
+
+        // 同時操作を防ぐため移動管理を排他ロックする
+        BssTransferEntity lockedTransfer = bssTransferMapper
+                .selectTransferForUpdate(bo.getTransferNo());
+        if (lockedTransfer == null) {
+            throw new ServiceException(MessageUtils.message("E0016",
+                    MessageUtils.message("label.transfer")));
+        }
+        if (!BssTransferStatusEnum.TF_P.getCode().equals(lockedTransfer.getStatus())) {
+            throw new ServiceException(MessageUtils.message("E0007"));
+        }
+        BssMoveDetailVo move = selectMoveDetail(bo.getTransferNo());
+        if (move == null) {
+            throw new ServiceException(MessageUtils.message("E0016",
+                    MessageUtils.message("label.transfer")));
+        }
+        List<BssMoveDetailLineVo> lines = bssTransferMapper.selectMoveDetailLines(bo.getTransferNo());
+        if (CollectionUtils.isEmpty(lines)) {
+            throw new ServiceException(MessageUtils.message("E0070"));
+        }
+
+        String username = SecurityUtils.getLoginUser().getUsername();
+        Set<String> requestNos = new HashSet<>();
+        Set<String> issuedPalletNos = new HashSet<>();
+        for (BssMoveDetailLineVo line : lines) {
+            BigDecimal moveQty = line.getMoveQty() == null ? BigDecimal.ZERO : line.getMoveQty();
+            String inventoryDetailId = line.getInventoryDetailId();
+            if (StringUtils.isNotEmpty(inventoryDetailId)) {
+                // 移動登録で増やした引当数量を戻し、最終状況を移動登録前へ戻す
+                bssInventoryMapper.revertAllocationForRegistrationDelete(inventoryDetailId,
+                        moveQty, BssInventoryLastStatusEnum.PO_INED.getCode(),
+                        username, PG_ID_CANCEL);
+            }
+
+            // 移動依頼明細の移動済数量を戻す
+            String requestNo = StringUtils.trimToNull(line.getTransferRequestNo());
+            if (requestNo != null && line.getTransferRequestDetailNo() != null) {
+                bssTransferMapper.subtractRequestDetailMovedQty(requestNo,
+                        line.getTransferRequestDetailNo(), moveQty,
+                        BssTransferStatusEnum.TF.getCode(), username, PG_ID_CANCEL);
+                requestNos.add(requestNo);
+            }
+
+            // 移動登録時に発番したパレットは物理削除する
+            String destPalletNo = line.getDestPalletNo();
+            if (StringUtils.isNotEmpty(destPalletNo)
+                    && !destPalletNo.equals(line.getSourcePalletNo())) {
+                issuedPalletNos.add(destPalletNo);
+            }
+        }
+        for (String requestNo : requestNos) {
+            // 未完了の移動依頼は移動依頼へ戻す
+            bssTransferMapper.revertRequestStatus(requestNo,
+                    BssTransferStatusEnum.TF.getCode(), username, PG_ID_CANCEL);
+        }
+
+        // 移動登録で登録した在庫履歴・移動管理を物理削除する
+        bssInventoryMapper.deleteHistoryByTransferNo(bo.getTransferNo());
+        bssTransferMapper.deleteTransferDetailsPhysically(bo.getTransferNo());
+        int rows = bssTransferMapper.deleteTransferPhysically(bo.getTransferNo());
+        if (rows == 0) {
+            throw new ServiceException(MessageUtils.message("E0007"));
+        }
+
+        // 移動登録で発番したパレットを物理削除する
+        for (String palletNo : issuedPalletNos) {
+            bssPalletNumberMapper.deleteDetailsPhysically(palletNo);
+            bssPalletNumberMapper.deletePhysically(palletNo);
+        }
     }
 
     /**
