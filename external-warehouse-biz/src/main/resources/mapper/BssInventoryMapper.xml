@@ -315,6 +315,7 @@
             d.item_name as itemName,
             d.classification as category,
             d.qty as storageQty,
+            d.allocation_qty as allocationQty,
             d.pallet_no as palletNo,
             d.status as status,
             d.version as version,

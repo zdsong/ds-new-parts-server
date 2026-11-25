@@ -325,9 +325,21 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
 
         List<BssPalletScanLineVo> lines = new ArrayList<>();
         for (BssPalletScanLineVo detail : details) {
-            detail.setMoveQty(detail.getStorageQty());
+            BigDecimal storageQty = detail.getStorageQty() == null
+                    ? BigDecimal.ZERO : detail.getStorageQty();
+            BigDecimal allocationQty = detail.getAllocationQty() == null
+                    ? BigDecimal.ZERO : detail.getAllocationQty();
+            BigDecimal availableQty = storageQty.subtract(allocationQty);
+            if (availableQty.compareTo(BigDecimal.ZERO) < 0) {
+                availableQty = BigDecimal.ZERO;
+            }
             BssTransferOpenLineVo request = requestByItem.get(detail.getItemCode());
-            if (request != null) {
+            if (request == null) {
+                // 依存がない品目は、保管数量から割り当て済み数量を除いた移動可能数量を表示する
+                detail.setMoveQty(availableQty);
+                detail.setStorageQty(availableQty);
+            } else {
+                detail.setMoveQty(storageQty);
                 BssPalletScanRequestVo requestVo = new BssPalletScanRequestVo();
                 requestVo.setRequestNo(request.getTransferRequestNo());
                 requestVo.setRequestDetailNo(request.getRequestDetailNo());
@@ -345,6 +357,10 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
                     detail.setMoveQty(remaining.compareTo(BigDecimal.ZERO) > 0
                             ? remaining : BigDecimal.ZERO);
                 }
+            }
+            if (availableQty.compareTo(BigDecimal.ZERO) <= 0) {
+                // 割り当て済みなどで移動可能数量（保管数量－割り当て数量）が無い品目は読み取り対象外とする
+                continue;
             }
             lines.add(detail);
         }

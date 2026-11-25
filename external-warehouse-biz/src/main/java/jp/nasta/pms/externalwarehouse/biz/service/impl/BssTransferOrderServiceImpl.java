@@ -898,7 +898,7 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
     }
 
     /**
-     * パレットの全品目を、在庫数量と同じ数量で移動するか判定する
+     * パレットの全品目を、移動可能数量（在庫数量－割り当て数量）と同じ数量で移動するか判定する
      */
     private boolean isWholePalletMove(BssMoveRegisterBo bo,
                                       Map<String, BssInventoryDetailEntity> detailById,
@@ -918,17 +918,30 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
             return false;
         }
         List<BssInventoryDetailEntity> palletDetails = bssInventoryMapper.selectPaDetailsByPalletNo(palletNo);
-        if (CollectionUtils.isEmpty(palletDetails) || palletDetails.size() != detailById.size()) {
+        if (CollectionUtils.isEmpty(palletDetails)) {
             return false;
         }
+        Set<String> movedDetailIds = new HashSet<>();
         for (BssInventoryDetailEntity palletDetail : palletDetails) {
+            BigDecimal qty = palletDetail.getQty() == null ? BigDecimal.ZERO : palletDetail.getQty();
+            BigDecimal allocationQty = palletDetail.getAllocationQty() == null
+                    ? BigDecimal.ZERO : palletDetail.getAllocationQty();
+            BigDecimal availableQty = qty.subtract(allocationQty);
             BigDecimal moveQty = moveQtyById.get(palletDetail.getId());
-            if (moveQty == null || palletDetail.getQty() == null
-                    || moveQty.compareTo(palletDetail.getQty()) != 0) {
+            if (availableQty.compareTo(BigDecimal.ZERO) <= 0) {
+                // 既に全量割り当て済みの品目は今回の移動対象外とする
+                if (moveQty != null) {
+                    return false;
+                }
+                continue;
+            }
+            // 移動可能数量が残っている品目はすべて、移動可能数量と同数で移動する必要がある
+            if (moveQty == null || moveQty.compareTo(availableQty) != 0) {
                 return false;
             }
+            movedDetailIds.add(palletDetail.getId());
         }
-        return true;
+        return movedDetailIds.size() == detailById.size();
     }
 
     /**

@@ -47,6 +47,11 @@ public class BssPalletScanLineVo implements Serializable {
     private BigDecimal storageQty;
 
     /**
+     * 割り当て数量
+     */
+    private BigDecimal allocationQty;
+
+    /**
      * パレット番号
      */
     private String palletNo;
