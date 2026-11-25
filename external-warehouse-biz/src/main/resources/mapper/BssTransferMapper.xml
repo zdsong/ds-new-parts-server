@@ -321,7 +321,7 @@
            and d.delete_flg = '0'
         where o.delete_flg = '0'
           and o.status = #{status}
-          and (d.dest_pallet_no = #{palletNo} or d.source_pallet_no = #{palletNo})
+          and d.dest_pallet_no = #{palletNo}
         order by o.transfer_no
         limit 1
     </select>
