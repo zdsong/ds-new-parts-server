@@ -238,6 +238,13 @@
           and delete_flg = '0'
     </update>
 
+    <!-- 数量が 0 になった在庫明細を物理削除する -->
+    <delete id="deleteInventoryIfEmpty">
+        delete from bss_inventory_detail
+        where id = #{id}
+          and coalesce(qty, 0) &lt;= 0
+    </delete>
+
     <!-- パレット番号の在庫明細を取得する -->
     <select id="selectScanLinesByPalletNo"
             resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletScanLineVo">

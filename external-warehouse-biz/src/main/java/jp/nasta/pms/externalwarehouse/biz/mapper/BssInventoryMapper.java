@@ -123,6 +123,14 @@ public interface BssInventoryMapper {
                                      @Param("updatePgId") String updatePgId);
 
     /**
+     * 数量が 0 になった在庫明細を物理削除する
+     *
+     * @param id 在庫情報詳細ID
+     * @return 削除件数
+     */
+    int deleteInventoryIfEmpty(@Param("id") String id);
+
+    /**
      * パレット番号の在庫明細を取得する
      *
      * @param palletNo パレット番号

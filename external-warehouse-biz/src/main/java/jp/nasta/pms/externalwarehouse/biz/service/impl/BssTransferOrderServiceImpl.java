@@ -400,6 +400,8 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
                 if (StringUtils.isNotEmpty(line.getInventoryDetailId())) {
                     bssInventoryMapper.decreaseInventoryForReceived(line.getInventoryDetailId(),
                             line.getMoveQty(), username, PG_ID_RECEIVE);
+                    // 移動元の数量が 0 になった明細は物理削除する
+                    bssInventoryMapper.deleteInventoryIfEmpty(line.getInventoryDetailId());
                 }
                 BssInventoryDetailEntity received = new BssInventoryDetailEntity();
                 received.setId(IdUtils.nextIdStr());
