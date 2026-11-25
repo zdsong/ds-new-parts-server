@@ -1016,6 +1016,8 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
             details.add(palletDetail);
         }
         pallet.setDetails(details);
+        // 移動登録で発番したパレットは印刷済みとする
+        pallet.setPrintedFlg(BssPrintedFlgEnum.PRINTED.getCode());
         bssPalletNumberService.insertPallet(pallet);
     }
 

@@ -167,8 +167,10 @@ public class BssPalletNumberServiceImpl implements IBssPalletNumberService {
         bo.setBarcode(bo.getPalletNo());
         bo.setId(IdUtils.nextIdStr());
         bo.setDeleteFlg(DELETE_FLG_NORMAL);
-        // 発番直後は未印刷とする
-        bo.setPrintedFlg(BssPrintedFlgEnum.UNPRINTED.getCode());
+        // 発番直後は未印刷とする（呼び出し元が指定した場合はその値を優先する）
+        if (StringUtils.isEmpty(bo.getPrintedFlg())) {
+            bo.setPrintedFlg(BssPrintedFlgEnum.UNPRINTED.getCode());
+        }
         bo.setVersion(1);
         bo.setCreateTime(now);
         bo.setCreateBy(username);
