@@ -34,6 +34,7 @@ import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssMoveItemVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssMoveListVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssMoveRegisterVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssMoveStockVo;
+import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssPalletNumberVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferCandidateVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferDetailVo;
 import jp.nasta.pms.externalwarehouse.biz.domain.vo.BssTransferItemVo;
@@ -768,9 +769,13 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
             classification = resolveClassification(bo, detailById);
         } else {
             classification = resolveClassification(bo, detailById);
+            String sourcePalletNo = StringUtils.trimToNull(bo.getPalletNo());
+            if (sourcePalletNo == null) {
+                sourcePalletNo = detailById.values().iterator().next().getPalletNo();
+            }
             palletNo = commonService.generatePalletNo(classification);
             // 発番したパレットはパレット情報（ヘッダ・積載明細）にも登録する
-            insertMovePallet(palletNo, classification, bo, detailById, moveQtyById);
+            insertMovePallet(palletNo, classification, sourcePalletNo, bo, detailById, moveQtyById);
         }
 
         // 移動管理（ヘッダ）を登録する
@@ -826,6 +831,34 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         Map<String, MastItemEntity> itemMap = loadItemMap(transferDetails.stream()
                 .map(BssTransferDetailEntity::getItemCode)
                 .toList());
+        // 依頼日時・依頼者は移動依頼から取得する
+        Map<String, BssTransferDetailVo> requestInfoByNo = new HashMap<>();
+        for (BssMoveRegisterLineBo line : bo.getLines()) {
+            String requestNo = StringUtils.trimToNull(line.getRequestNo());
+            if (requestNo == null || requestInfoByNo.containsKey(requestNo)) {
+                continue;
+            }
+            BssTransferDetailVo requestInfo = bssTransferOrderMapper
+                    .selectTransferDetailByRequestNo(requestNo);
+            if (requestInfo != null) {
+                requestInfoByNo.put(requestNo, requestInfo);
+            }
+        }
+        // 移動元パレットの積載明細（保管区分を在庫履歴へ引き継ぐ）
+        Set<String> sourcePalletNos = new HashSet<>();
+        for (BssInventoryDetailEntity detail : detailById.values()) {
+            if (StringUtils.isNotEmpty(detail.getPalletNo())) {
+                sourcePalletNos.add(detail.getPalletNo());
+            }
+        }
+        Map<String, BssPalletNumberDetailEntity> sourceDetailByPalletItem = new HashMap<>();
+        if (!sourcePalletNos.isEmpty()) {
+            for (BssPalletNumberDetailEntity sourceDetail : bssPalletNumberMapper
+                    .selectDetailsByPalletNos(new ArrayList<>(sourcePalletNos))) {
+                sourceDetailByPalletItem.put(
+                        sourceDetail.getPalletNo() + "\u0000" + sourceDetail.getItemCode(), sourceDetail);
+            }
+        }
         for (BssMoveRegisterLineBo line : bo.getLines()) {
             String detailId = line.getId().trim();
             BssInventoryDetailEntity detail = detailById.get(detailId);
@@ -836,9 +869,14 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
             if (rows == 0) {
                 throw new ServiceException(MessageUtils.message("E0007"));
             }
+            String requestNo = StringUtils.trimToNull(line.getRequestNo());
+            BssPalletNumberDetailEntity sourceDetail = sourceDetailByPalletItem.get(
+                    detail.getPalletNo() + "\u0000" + detail.getItemCode());
             insertMoveHistory(detail, itemMap.get(detail.getItemCode()), palletNo, transferNo,
-                    StringUtils.trimToNull(line.getRequestNo()), moveQtyById.get(detailId),
-                    bo.getRegistrar().trim(), registeredAt, now, username);
+                    requestNo, moveQtyById.get(detailId),
+                    sourceDetail == null ? null : sourceDetail.getStorageType(),
+                    requestNo == null ? null : requestInfoByNo.get(requestNo),
+                    registeredAt, now, username);
         }
 
         // 移動依頼の移動済数量を加算し、全明細が移動済みになったら依頼を移動登録完了にする
@@ -868,10 +906,23 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
     /**
      * 発番したパレットをパレット情報（ヘッダ・積載明細）へ登録する。
      * 移動先の倉庫・ロケ番を保管場所とし、明細は移動数量で登録する。
+     * 保管期間・入庫日・備考などのパレット情報は移動元パレットから引き継ぐ。
      */
-    private void insertMovePallet(String palletNo, String classification, BssMoveRegisterBo bo,
+    private void insertMovePallet(String palletNo, String classification, String sourcePalletNo,
+                                  BssMoveRegisterBo bo,
                                   Map<String, BssInventoryDetailEntity> detailById,
                                   Map<String, BigDecimal> moveQtyById) {
+        // 移動元パレットのヘッダ・積載明細を取得する
+        BssPalletNumberVo sourcePallet = StringUtils.isEmpty(sourcePalletNo)
+                ? null : bssPalletNumberMapper.selectByPalletNo(sourcePalletNo);
+        Map<String, BssPalletNumberDetailEntity> sourceDetailByItem = new HashMap<>();
+        if (StringUtils.isNotEmpty(sourcePalletNo)) {
+            for (BssPalletNumberDetailEntity sourceDetail : bssPalletNumberMapper
+                    .selectDetailsByPalletNos(List.of(sourcePalletNo))) {
+                sourceDetailByItem.put(sourceDetail.getItemCode(), sourceDetail);
+            }
+        }
+
         BssPalletNumberBo pallet = new BssPalletNumberBo();
         pallet.setPalletNo(palletNo);
         pallet.setClassification(classification == null ? StringUtils.EMPTY : classification);
@@ -879,9 +930,16 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         pallet.setLocCd(bo.getDestinationLocCd());
         pallet.setZoneCd(StringUtils.trimToNull(bssInventoryMapper.selectZoneCd(
                 bo.getDestinationWhCd(), bo.getDestinationLocCd())));
-        pallet.setStoragePeriod(StringUtils.EMPTY);
-        pallet.setMemo1(StringUtils.EMPTY);
-        pallet.setMemo2(StringUtils.EMPTY);
+        if (sourcePallet == null) {
+            pallet.setStoragePeriod(StringUtils.EMPTY);
+            pallet.setMemo1(StringUtils.EMPTY);
+            pallet.setMemo2(StringUtils.EMPTY);
+        } else {
+            pallet.setStoragePeriod(sourcePallet.getStoragePeriod());
+            pallet.setInboundDate(sourcePallet.getInboundDate());
+            pallet.setMemo1(sourcePallet.getMemo1());
+            pallet.setMemo2(sourcePallet.getMemo2());
+        }
 
         List<BssPalletNumberDetailEntity> details = new ArrayList<>();
         for (BssMoveRegisterLineBo line : bo.getLines()) {
@@ -891,6 +949,16 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
             palletDetail.setItemCode(detail.getItemCode());
             palletDetail.setItemName(detail.getItemName());
             palletDetail.setStorageQty(moveQtyById.get(detailId));
+            // 品目単位の保管情報は移動元パレットの積載明細から引き継ぐ
+            BssPalletNumberDetailEntity sourceDetail = sourceDetailByItem.get(detail.getItemCode());
+            if (sourceDetail != null) {
+                palletDetail.setProductGroup(sourceDetail.getProductGroup());
+                palletDetail.setArrangementNo(sourceDetail.getArrangementNo());
+                palletDetail.setStorageCapacity(sourceDetail.getStorageCapacity());
+                palletDetail.setStorageType(sourceDetail.getStorageType());
+                palletDetail.setUsableFlag(sourceDetail.getUsableFlag());
+                palletDetail.setRemarks(sourceDetail.getRemarks());
+            }
             details.add(palletDetail);
         }
         pallet.setDetails(details);
@@ -989,7 +1057,8 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
      */
     private void insertMoveHistory(BssInventoryDetailEntity detail, MastItemEntity item, String palletNo,
                                    String transferNo, String requestNo, BigDecimal moveQty,
-                                   String requester, String registeredAt, Date now, String username) {
+                                   String storageType, BssTransferDetailVo requestInfo,
+                                   String registeredAt, Date now, String username) {
         String zoneCd = StringUtils.trimToNull(bssInventoryMapper.selectZoneCd(
                 detail.getWhCd(), detail.getLocCd()));
         BssInventoryHistoryEntity history = new BssInventoryHistoryEntity();
@@ -1004,13 +1073,20 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
                 StringUtils.trimToNull(item.getPrztic()), 0, 10));
         history.setPalletNo(palletNo);
         history.setStatus(BssInventoryHistStatusEnum.TF_P.getCode());
+        // 保管区分は移動元パレットの積載明細から引き継ぐ
+        history.setStorageType(StringUtils.trimToNull(storageType));
         history.setStorageQty(moveQty);
         history.setUsedQty(moveQty);
         history.setLostDamagedQty(BigDecimal.ZERO);
+        // 移動登録日時は移動日時へ記録する
+        history.setTransferDatetime(registeredAt);
         history.setTransferNo(transferNo);
         history.setTransferRequestNo(requestNo);
-        history.setRequestDatetime(registeredAt);
-        history.setRequester(requester);
+        // 依頼日時・依頼者は移動依頼がある場合のみ設定する
+        if (requestInfo != null) {
+            history.setRequestDatetime(requestInfo.getRequestDate());
+            history.setRequester(requestInfo.getRequester());
+        }
         history.setVersion(1);
         EntityAuditHelper.fillForInsert(history, now, username, PG_ID_REGISTER);
         bssInventoryMapper.insertHistory(history);
