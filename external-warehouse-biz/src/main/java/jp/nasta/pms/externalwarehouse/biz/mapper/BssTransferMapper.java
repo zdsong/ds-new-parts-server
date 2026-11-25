@@ -57,10 +57,14 @@ public interface BssTransferMapper {
     /**
      * 移動番号のヘッダを取得する
      *
-     * @param transferNo 移動番号
+     * @param transferNo       移動番号
+     * @param registeredStatus 移動登録済の状況コード
+     * @param registeredLabel  移動登録済の状況名称
      * @return 移動情報。無い場合は null
      */
-    BssMoveDetailVo selectMoveDetail(@Param("transferNo") String transferNo);
+    BssMoveDetailVo selectMoveDetail(@Param("transferNo") String transferNo,
+                                     @Param("registeredStatus") String registeredStatus,
+                                     @Param("registeredLabel") String registeredLabel);
 
     /**
      * パレット番号から移動登録済みの移動番号を取得する

@@ -189,7 +189,7 @@
         from bss_inventory_detail
         where pallet_no = #{palletNo}
           and delete_flg = '0'
-          and status = 'PA'
+          and status = #{status}
         order by item_code, id
     </select>
 
@@ -263,6 +263,44 @@
     <delete id="deleteHistoryByTransferNo">
         delete from bss_inventory_history
         where transfer_no = #{transferNo}
+    </delete>
+
+    <!-- 移動登録時に登録した在庫履歴（移動予定）を取得する -->
+    <select id="selectPlannedHistoryByTransferNo"
+            resultType="jp.nasta.pms.common.biz.domain.entity.BssInventoryHistoryEntity">
+        select
+            h.id as id,
+            h.wh_cd as whCd,
+            h.zone_cd as zoneCd,
+            h.loc_cd as locCd,
+            h.item_code as itemCode,
+            h.item_name as itemName,
+            h.uom as uom,
+            h.pallet_no as palletNo,
+            h.status as status,
+            h.storage_type as storageType,
+            h.storage_qty as storageQty,
+            h.used_qty as usedQty,
+            h.lost_damaged_qty as lostDamagedQty,
+            h.transfer_datetime as transferDatetime,
+            h.transfer_request_no as transferRequestNo,
+            h.transfer_no as transferNo,
+            h.request_datetime as requestDatetime,
+            h.requester as requester,
+            h.io_datetime as ioDatetime,
+            h.io_operator as ioOperator,
+            h.storage_period as storagePeriod
+        from bss_inventory_history h
+        where h.transfer_no = #{transferNo}
+          and h.status = #{status}
+        order by h.create_time
+    </select>
+
+    <!-- 移動番号に紐づく移動完了の在庫履歴を物理削除する -->
+    <delete id="deleteCompletedHistoryByTransferNo">
+        delete from bss_inventory_history
+        where transfer_no = #{transferNo}
+          and status = #{status}
     </delete>
 
     <!-- 移動完了取消で同一パレットの在庫を移動前の状態に戻す -->

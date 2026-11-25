@@ -20,7 +20,7 @@ public class ExcelToSQLGenerator {
         List<String> fields;
     }
 
-    public static final String OWNER_TO_USER = "ew";
+    public static final String OWNER_TO_USER = "pms";
     public static final String CONST_ECODE = "○";
 	public static void main(String[] args) {
         // 文件路径配置

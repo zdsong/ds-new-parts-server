@@ -78,7 +78,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://8.147.128.107:5432/ew_dev?currentSchema=ew
+    url: jdbc:postgresql://8.147.128.107:5432/pms_dev?currentSchema=pms
     username: postgres
     password: postgres123$
 

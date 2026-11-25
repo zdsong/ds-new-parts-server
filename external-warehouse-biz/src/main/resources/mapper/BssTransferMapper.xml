@@ -251,7 +251,7 @@
             o.transfer_no as transferNo,
             o.status as status,
             case
-                when o.status = 'TF_P' then '移動登録完了'
+                when o.status = #{registeredStatus} then #{registeredLabel}
                 else coalesce(nullif(trim(st.dict_label), ''), o.status)
             end as statusLabel,
             o.transfer_fm_wh_cd as sourceWhCd,

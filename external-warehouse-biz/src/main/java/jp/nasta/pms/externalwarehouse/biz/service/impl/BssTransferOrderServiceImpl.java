@@ -315,7 +315,8 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         if (StringUtils.isEmpty(transferNo)) {
             return null;
         }
-        BssMoveDetailVo detail = bssTransferMapper.selectMoveDetail(transferNo);
+        BssMoveDetailVo detail = bssTransferMapper.selectMoveDetail(transferNo,
+                BssTransferStatusEnum.TF_P.getCode(), MessageUtils.message("label.moveRegistered"));
         if (detail == null) {
             return null;
         }
@@ -408,7 +409,7 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
 
         // 移動先パレットの在庫が明細と完全に一致するか判定する
         List<BssInventoryDetailEntity> destStock = bssInventoryMapper
-                .selectPaDetailsByPalletNo(destPalletNo);
+                .selectPaDetailsByPalletNo(destPalletNo, BssInventoryStatusEnum.PA.getCode());
         if (isSamePalletInventory(lines, destStock)) {
             // 同じパレット・同じ品目・同じ数量のため、倉庫とロケ番だけを移動先へ変更する
             for (BssInventoryDetailEntity stock : destStock) {
@@ -454,6 +455,56 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         }
         bssTransferMapper.updateTransferDetailStatus(bo.getTransferNo(),
                 BssTransferStatusEnum.TF_F.getCode(), username, PG_ID_RECEIVE);
+
+        // 移動完了の在庫履歴を登録する
+        insertCompleteMoveHistory(bo.getTransferNo(), lines, destPalletNo, bo.getDestinationWhCd(),
+                bo.getDestinationLocCd(), completedAt, now, username);
+    }
+
+    /**
+     * 移動完了の在庫履歴（移動完了）を登録する
+     */
+    private void insertCompleteMoveHistory(String transferNo, List<BssMoveDetailLineVo> lines,
+                                           String destPalletNo, String destWhCd, String destLocCd,
+                                           String completedAt, Date now, String username) {
+        // 移動登録時の在庫履歴から保管区分・移動依頼情報を引き継ぐ
+        List<BssInventoryHistoryEntity> plannedHistories = bssInventoryMapper
+                .selectPlannedHistoryByTransferNo(transferNo,
+                        BssInventoryHistStatusEnum.TF_P.getCode());
+        Map<String, BssInventoryHistoryEntity> plannedMap = plannedHistories.stream()
+                .collect(Collectors.toMap(BssInventoryHistoryEntity::getItemCode, h -> h, (a, b) -> a));
+        String zoneCd = StringUtils.trimToNull(bssInventoryMapper.selectZoneCd(destWhCd, destLocCd));
+        for (BssMoveDetailLineVo line : lines) {
+            BssInventoryHistoryEntity planned = plannedMap.get(line.getItemCode());
+            BssInventoryHistoryEntity history = new BssInventoryHistoryEntity();
+            history.setId(IdUtils.nextIdStr());
+            history.setWhCd(destWhCd);
+            // 保管エリアは必須のため、未設定は空文字で登録する
+            history.setZoneCd(zoneCd == null ? StringUtils.EMPTY : zoneCd);
+            history.setLocCd(destLocCd);
+            history.setItemCode(line.getItemCode());
+            history.setItemName(line.getItemName());
+            history.setUom(planned == null ? null : planned.getUom());
+            history.setPalletNo(destPalletNo);
+            history.setStatus(BssInventoryHistStatusEnum.TF.getCode());
+            history.setStorageType(planned == null ? null : planned.getStorageType());
+            history.setStorageQty(line.getMoveQty() == null ? BigDecimal.ZERO : line.getMoveQty());
+            history.setUsedQty(line.getMoveQty() == null ? BigDecimal.ZERO : line.getMoveQty());
+            history.setLostDamagedQty(BigDecimal.ZERO);
+            // 移動完了日時は移動日時と入出庫日時に記録する
+            history.setTransferDatetime(completedAt);
+            history.setTransferNo(transferNo);
+            history.setIoDatetime(completedAt);
+            history.setIoOperator(username);
+            if (planned != null) {
+                history.setTransferRequestNo(planned.getTransferRequestNo());
+                history.setRequestDatetime(planned.getRequestDatetime());
+                history.setRequester(planned.getRequester());
+            }
+            history.setVersion(1);
+            EntityAuditHelper.fillForInsert(history, now, username, PG_ID_RECEIVE);
+            bssInventoryMapper.insertHistory(history);
+        }
     }
 
     /**
@@ -551,6 +602,9 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         }
         bssTransferMapper.updateTransferDetailStatus(bo.getTransferNo(),
                 BssTransferStatusEnum.TF_P.getCode(), username, PG_ID_CANCEL);
+        // 移動完了時に登録した在庫履歴を取り除き、移動登録時の状態へ戻す
+        bssInventoryMapper.deleteCompletedHistoryByTransferNo(bo.getTransferNo(),
+                BssInventoryHistStatusEnum.TF.getCode());
     }
 
     /**
@@ -985,7 +1039,8 @@ public class BssTransferOrderServiceImpl implements IBssTransferOrderService {
         if (StringUtils.isNotEmpty(bo.getPalletNo()) && !palletNo.equals(bo.getPalletNo().trim())) {
             return false;
         }
-        List<BssInventoryDetailEntity> palletDetails = bssInventoryMapper.selectPaDetailsByPalletNo(palletNo);
+        List<BssInventoryDetailEntity> palletDetails = bssInventoryMapper.selectPaDetailsByPalletNo(palletNo,
+                BssInventoryStatusEnum.PA.getCode());
         if (CollectionUtils.isEmpty(palletDetails)) {
             return false;
         }

@@ -68,9 +68,11 @@ public interface BssInventoryMapper {
      * パレット番号の在庫中の明細を取得する（全量移動の判定用）
      *
      * @param palletNo パレット番号
+     * @param status   在庫状況コード
      * @return 在庫情報詳細
      */
-    List<BssInventoryDetailEntity> selectPaDetailsByPalletNo(@Param("palletNo") String palletNo);
+    List<BssInventoryDetailEntity> selectPaDetailsByPalletNo(@Param("palletNo") String palletNo,
+                                                             @Param("status") String status);
 
     /**
      * 割り当て数量を加算する。バージョン不一致の場合は更新しない
@@ -205,6 +207,26 @@ public interface BssInventoryMapper {
      * @return 削除件数
      */
     int deleteHistoryByTransferNo(@Param("transferNo") String transferNo);
+
+    /**
+     * 移動登録時に登録した在庫履歴（移動予定）を取得する
+     *
+     * @param transferNo 移動番号
+     * @param status     在庫履歴状況コード
+     * @return 在庫履歴
+     */
+    List<BssInventoryHistoryEntity> selectPlannedHistoryByTransferNo(@Param("transferNo") String transferNo,
+                                                                     @Param("status") String status);
+
+    /**
+     * 移動番号に紐づく移動完了の在庫履歴を物理削除する
+     *
+     * @param transferNo 移動番号
+     * @param status     在庫履歴状況コード
+     * @return 削除件数
+     */
+    int deleteCompletedHistoryByTransferNo(@Param("transferNo") String transferNo,
+                                           @Param("status") String status);
 
     /**
      * パレット番号の在庫明細を取得する
