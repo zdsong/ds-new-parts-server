@@ -121,6 +121,16 @@
         <if test="palletNo != null and palletNo != ''">
             and pn.pallet_no like concat('%', #{palletNo}, '%')
         </if>
+        <if test="storagePeriod != null and storagePeriod != ''">
+            and pn.storage_period like concat('%', #{storagePeriod}, '%')
+        </if>
+        <if test="classification != null and classification != ''">
+            and pn.classification = #{classification}
+        </if>
+        <if test="inboundDate != null and inboundDate != ''">
+            and replace(replace(coalesce(pn.inbound_date, ''), '/', ''), '-', '')
+                like concat(replace(replace(#{inboundDate}, '/', ''), '-', ''), '%')
+        </if>
         <if test="itemCode != null and itemCode != ''">
             and exists (
                 select 1

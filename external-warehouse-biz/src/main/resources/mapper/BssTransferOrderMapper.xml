@@ -51,9 +51,25 @@
             nullif(o.transfer_ship_date, '') as desiredDate,
             nullif(o.transfer_date, '') as requestDate,
             nullif(trim(o.registered_by), '') as registrar,
-            cast(null as varchar) as completer,
+            (
+                select string_agg(distinct nullif(trim(ct.completed_by), ''), ', ')
+                from bss_transfer_detail cd
+                inner join bss_transfer ct
+                    on ct.transfer_no = cd.transfer_no
+                   and ct.delete_flg = '0'
+                where cd.transfer_request_no = o.transfer_request_no
+                  and cd.delete_flg = '0'
+            ) as completer,
             nullif(o.registration_date, '') as registeredDate,
-            cast(null as varchar) as completedDate,
+            (
+                select max(nullif(ct.completed_at, ''))
+                from bss_transfer_detail cd
+                inner join bss_transfer ct
+                    on ct.transfer_no = cd.transfer_no
+                   and ct.delete_flg = '0'
+                where cd.transfer_request_no = o.transfer_request_no
+                  and cd.delete_flg = '0'
+            ) as completedDate,
             nullif(o.memo, '') as memo,
             o.requester_name as requester
         from bss_transfer_order o
@@ -95,8 +111,27 @@
         <if test="registrar != null and registrar != ''">
             and o.registered_by like concat('%', #{registrar}, '%')
         </if>
-        <if test="completer != null and completer != ''">
-            and 1 = 0
+        <if test="(completer != null and completer != '') or (completedFrom != null and completedFrom != '') or (completedTo != null and completedTo != '')">
+            and exists (
+                select 1
+                from bss_transfer_detail cd
+                inner join bss_transfer ct
+                    on ct.transfer_no = cd.transfer_no
+                   and ct.delete_flg = '0'
+                where cd.transfer_request_no = o.transfer_request_no
+                  and cd.delete_flg = '0'
+                <if test="completer != null and completer != ''">
+                    and ct.completed_by like concat('%', #{completer}, '%')
+                </if>
+                <if test="completedFrom != null and completedFrom != ''">
+                    and replace(replace(replace(coalesce(ct.completed_at, ''), '/', ''), '-', ''), ' ', '')
+                        &gt;= #{completedFrom}
+                </if>
+                <if test="completedTo != null and completedTo != ''">
+                    and replace(replace(replace(coalesce(ct.completed_at, ''), '/', ''), '-', ''), ' ', '')
+                        &lt;= concat(#{completedTo}, '999999')
+                </if>
+            )
         </if>
         <if test="registeredFrom != null and registeredFrom != ''">
             and <include refid="dateDigits"><property name="column" value="o.registration_date"/></include>
@@ -105,12 +140,6 @@
         <if test="registeredTo != null and registeredTo != ''">
             and <include refid="dateDigits"><property name="column" value="o.registration_date"/></include>
                 &lt;= #{registeredTo}
-        </if>
-        <if test="completedFrom != null and completedFrom != ''">
-            and 1 = 0
-        </if>
-        <if test="completedTo != null and completedTo != ''">
-            and 1 = 0
         </if>
         <if test="statuses != null and statuses.size() > 0">
             and o.status in

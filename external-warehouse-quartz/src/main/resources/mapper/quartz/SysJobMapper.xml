@@ -28,6 +28,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectJobList" parameterType="SysJob" resultMap="SysJobResult">
 		<include refid="selectJobVo"/>
 		<where>
+			<if test="jobId != null and jobId != ''">
+				AND cast(job_id as varchar) like concat('%', #{jobId}, '%')
+			</if>
 			<if test="jobName != null and jobName != ''">
 				AND job_name like concat('%', #{jobName}, '%')
 			</if>

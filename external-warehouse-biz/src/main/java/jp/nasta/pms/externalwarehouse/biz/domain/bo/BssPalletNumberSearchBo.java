@@ -40,4 +40,19 @@ public class BssPalletNumberSearchBo implements Serializable {
      * 品目名
      */
     private String itemName;
+
+    /**
+     * 保管期間（部分一致）
+     */
+    private String storagePeriod;
+
+    /**
+     * 区分
+     */
+    private String classification;
+
+    /**
+     * 入庫日（yyyy-MM-dd または yyyy/MM/dd）
+     */
+    private String inboundDate;
 }
