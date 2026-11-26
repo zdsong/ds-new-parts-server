@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.nasta.pms.externalwarehouse.biz.mapper.MastUserRelationMapper">
+
+    <!-- 辞書に定義された関係タイプだけを対象にする -->
+    <sql id="relationTypeJoin">
+        inner join sys_dict_data d
+            on d.dict_type = 'bss_user_relation_type'
+            and d.status = '0'
+            and d.dict_value = mur.mapping_type
+    </sql>
+
+    <sql id="selectRelationRow">
+        select
+            mur.id,
+            mur.user_name as "userName",
+            su.nick_name as "nickName",
+            mur.mapping_id as "whCd",
+            coalesce(mw.wh_nm, mur.mapping_name, mur.mapping_id) as "whNm",
+            mur.mapping_type as "mappingType",
+            mur.memo,
+            mur.version
+        from mast_user_relations mur
+        <include refid="relationTypeJoin"/>
+        left join sys_user su
+            on su.user_name = mur.user_name
+            and su.del_flag = '0'
+        left join mast_warehouse mw
+            on mw.wh_cd = mur.mapping_id
+            and mw.delete_flg = '0'
+    </sql>
+
+    <!-- 一覧検索。関係タイプの絞り込みはサービス側で組み合わせ単位に行う -->
+    <select id="selectRows"
+            parameterType="jp.nasta.pms.externalwarehouse.biz.domain.bo.MastUserRelationSearchBo"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.MastUserRelationRowVo">
+        <include refid="selectRelationRow"/>
+        where mur.delete_flg = '0'
+        <if test="whCd != null and whCd != ''">
+            and mur.mapping_id = #{whCd}
+        </if>
+        <if test="userName != null and userName != ''">
+            and (
+                mur.user_name like concat('%', #{userName}, '%')
+                or su.nick_name like concat('%', #{userName}, '%')
+            )
+        </if>
+        order by su.nick_name, mur.user_name, mur.mapping_id, d.dict_sort
+    </select>
+
+    <select id="selectActiveByUserAndWh"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.MastUserRelationRowVo">
+        <include refid="selectRelationRow"/>
+        where mur.delete_flg = '0'
+          and mur.user_name = #{userName}
+          and mur.mapping_id = #{whCd}
+        order by d.dict_sort
+    </select>
+
+    <select id="selectUsers"
+            resultType="jp.nasta.pms.externalwarehouse.biz.domain.vo.MastUserRelationRowVo">
+        select
+            user_name as "userName",
+            nick_name as "nickName"
+        from sys_user
+        where del_flag = '0'
+          and status = '0'
+        order by user_name
+    </select>
+
+    <select id="selectWarehouses" resultType="jp.nasta.pms.common.biz.domain.entity.MastWarehouseEntity">
+        select
+            wh_cd as "whCd",
+            wh_nm as "whNm"
+        from mast_warehouse
+        where delete_flg = '0'
+        order by wh_cd
+    </select>
+
+    <select id="selectWarehouse" resultType="jp.nasta.pms.common.biz.domain.entity.MastWarehouseEntity">
+        select
+            wh_cd as "whCd",
+            wh_nm as "whNm"
+        from mast_warehouse
+        where delete_flg = '0'
+          and wh_cd = #{whCd}
+    </select>
+
+    <select id="countActiveUser" resultType="int">
+        select count(1)
+        from sys_user
+        where user_name = #{userName}
+          and del_flag = '0'
+          and status = '0'
+    </select>
+
+    <insert id="insert" parameterType="jp.nasta.pms.common.biz.domain.entity.MastUserRelationsEntity">
+        insert into mast_user_relations (
+            id,
+            user_name,
+            mapping_type,
+            mapping_id,
+            mapping_name,
+            seq,
+            memo,
+            delete_flg,
+            create_time,
+            create_by,
+            create_pg_id,
+            update_time,
+            update_by,
+            update_pg_id,
+            version
+        ) values (
+            #{id},
+            #{userName},
+            #{mappingType},
+            #{mappingId},
+            #{mappingName},
+            #{seq},
+            #{memo},
+            #{deleteFlg},
+            #{createTime},
+            #{createBy},
+            #{createPgId},
+            #{updateTime},
+            #{updateBy},
+            #{updatePgId},
+            #{version}
+        )
+    </insert>
+
+    <!-- 論理削除。バージョンが一致しない場合は更新しない -->
+    <update id="deleteLogical" parameterType="jp.nasta.pms.common.biz.domain.entity.MastUserRelationsEntity">
+        update mast_user_relations
+        set
+            delete_flg = '1',
+            update_time = #{updateTime},
+            update_by = #{updateBy},
+            update_pg_id = #{updatePgId},
+            version = version + 1
+        where id = #{id}
+          and version = #{version}
+          and delete_flg = '0'
+    </update>
+
+</mapper>

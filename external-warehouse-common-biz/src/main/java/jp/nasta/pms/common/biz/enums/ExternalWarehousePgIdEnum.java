@@ -22,7 +22,8 @@ public enum ExternalWarehousePgIdEnum {
     SP406("SP406","パレット受取"),
     P601("P601","ロケ番一覧"),
     P602("P602","ロケ番新規登録"),
-    P603("P603","ロケ番更新");
+    P603("P603","ロケ番更新"),
+    P604("P604","ユーザー倉庫関係設定");
 
     private final String code;
     private final String info;
