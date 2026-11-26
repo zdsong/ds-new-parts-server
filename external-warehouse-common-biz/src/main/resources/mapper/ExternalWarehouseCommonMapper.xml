@@ -40,6 +40,42 @@
         </where>
     </select>
 
+    <!-- 未削除の倉庫をすべて取得する（ユーザー種別 90 用） -->
+    <select id="selectAllActiveWarehouses" resultMap="MastWarehouseEntityResult">
+        select
+            wh_cd,
+            wh_nm
+        from mast_warehouse
+        where delete_flg = '0'
+        order by wh_cd
+    </select>
+
+    <!-- 渡された辞書タイプに定義された関係がある倉庫だけを取得する -->
+    <select id="selectWarehousesByRelationDict" resultMap="MastWarehouseEntityResult">
+        select distinct
+            mw.wh_cd,
+            mw.wh_nm
+        from mast_warehouse mw
+        inner join mast_user_relations mur
+            on mur.mapping_id = mw.wh_cd
+            and mur.delete_flg = '0'
+            and mur.user_name = #{userName}
+        inner join sys_dict_data d
+            on d.dict_type = #{dictType}
+            and d.status = '0'
+            and d.dict_value = mur.mapping_type
+        where mw.delete_flg = '0'
+        order by mw.wh_cd
+    </select>
+
+    <!-- ユーザー種別を取得する -->
+    <select id="selectUserType" parameterType="String" resultType="String">
+        select user_type
+        from sys_user
+        where user_name = #{userName}
+          and del_flag = '0'
+    </select>
+
     <!-- 倉庫コードに紐づくロケーション一覧を取得する -->
     <select id="selectLocationOptionsList" parameterType="String" resultType="map">
         SELECT

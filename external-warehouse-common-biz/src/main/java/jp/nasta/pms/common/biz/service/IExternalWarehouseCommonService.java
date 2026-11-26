@@ -31,6 +31,17 @@ public interface IExternalWarehouseCommonService {
     public List<OptionsKeyValueVo> getWarehouseCommonOptions(String userName);
 
     /**
+     * ログインユーザーが参照できる倉庫を取得する。
+     * 渡された辞書タイプの値と一致する関係がある倉庫だけを返す。
+     * ユーザー種別が 90 のときは、辞書を見ずに未削除の倉庫をすべて返す。
+     *
+     * @param userName ログインユーザー名
+     * @param dictType 辞書タイプ
+     * @return 倉庫コンボボックスリスト
+     */
+    public List<OptionsKeyValueVo> getAccessibleWarehouseOptions(String userName, String dictType);
+
+    /**
      * コンボボックスデータ(倉庫ロケーション)を取得する
      *
      * @param whCd 倉庫コード

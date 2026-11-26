@@ -1,5 +1,6 @@
 package jp.nasta.pms.common.biz.service.impl;
 
+import jp.nasta.pms.common.biz.constants.ExternalWarehouseConstants;
 import jp.nasta.pms.common.biz.domain.bo.OptionsParamBo;
 
 import jp.nasta.pms.common.biz.domain.entity.MastItemEntity;
@@ -9,19 +10,26 @@ import jp.nasta.pms.common.biz.domain.vo.OptionsKeyValueVo;
 import jp.nasta.pms.common.biz.mapper.ExternalWarehouseCommonMapper;
 import jp.nasta.pms.common.biz.mapper.SysDictDataMapper;
 import jp.nasta.pms.common.biz.service.IExternalWarehouseCommonService;
+import jp.nasta.pms.common.biz.service.ISysConfigService;
+import jp.nasta.pms.common.constant.Constants;
 import jp.nasta.pms.common.core.domain.entity.SysDictData;
+import jp.nasta.pms.common.utils.ConvertUtils;
+import jp.nasta.pms.common.utils.StringUtils;
 
 import jp.nasta.pms.common.core.service.ISysRangedSeqService;
 import jp.nasta.pms.common.enums.ClassificationEnum;
+import jp.nasta.pms.common.utils.ValueUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static jp.nasta.pms.common.constant.Constants.SERIAL_PREFIX_PALLET;
 import static jp.nasta.pms.common.constant.Constants.SERIAL_PREFIX_PALLET_PART;
+import static jp.nasta.pms.common.constant.UserConstants.YES;
 
 /**
  * 共通のサービスクラス
@@ -39,6 +47,9 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
 
     @Autowired
     private ISysRangedSeqService sysRangedSeqService;
+
+    @Autowired
+    private ISysConfigService sysConfigService;
 
     /**
      * コンボボックスデータを取得する
@@ -68,7 +79,6 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
                 .collect(Collectors.toList());
     }
 
-
     /**
      * コンボボックスデータ(倉庫)を取得する
      *
@@ -76,7 +86,12 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
      * @return コンボボックスリスト
      */
     public List<OptionsKeyValueVo> getWarehouseCommonOptions(String userName) {
-        List<MastWarehouseEntity> mastWarehouseList =  ewCommonMapper.selectMstWarehouseList(userName);
+
+        // 削除されていないすべてのリポジトリ識別子
+        String allWhFlg = sysConfigService.selectConfigByKey(ExternalWarehouseConstants.WMS_MST_GET_ALL_WH);
+
+        List<MastWarehouseEntity> mastWarehouseList
+                = ValueUtils.isEqual(YES, allWhFlg) ? ewCommonMapper.selectAllActiveWarehouses() :ewCommonMapper.selectMstWarehouseList(userName);
         return mastWarehouseList.stream()
                 // 倉庫コード順に並べ替える（削除済みデータは SQL 側で除外済み）
                 .sorted(Comparator.comparing(
@@ -87,6 +102,38 @@ public class ExternalWarehouseCommonService implements IExternalWarehouseCommonS
                         .key(e.getWhCd())
                         .value(e.getWhNm())
 
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * ログインユーザーが参照できる倉庫を取得する。
+     * ユーザー種別が 90 のときは未削除の倉庫をすべて返す。
+     * それ以外は、渡された辞書タイプの値と一致する関係がある倉庫だけを返す。
+     *
+     * @param userName ログインユーザー名
+     * @param dictType 辞書タイプ
+     * @return 倉庫コンボボックスリスト
+     */
+    @Override
+    public List<OptionsKeyValueVo> getAccessibleWarehouseOptions(String userName, String dictType) {
+        String userType = ewCommonMapper.selectUserType(userName);
+        List<MastWarehouseEntity> warehouses;
+        if (Constants.USER_TYPE_SUPER_ADMIN.equals(userType)) {
+            warehouses = ewCommonMapper.selectAllActiveWarehouses();
+        } else if (StringUtils.isEmpty(dictType)) {
+            warehouses = Collections.emptyList();
+        } else {
+            warehouses = ewCommonMapper.selectWarehousesByRelationDict(userName, dictType);
+        }
+        return warehouses.stream()
+                .sorted(Comparator.comparing(
+                        MastWarehouseEntity::getWhCd,
+                        Comparator.nullsFirst(String::compareTo)
+                ))
+                .map(e -> OptionsKeyValueVo.builder()
+                        .key(e.getWhCd())
+                        .value(e.getWhNm())
                         .build())
                 .collect(Collectors.toList());
     }

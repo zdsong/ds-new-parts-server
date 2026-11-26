@@ -35,4 +35,9 @@ public class ExternalWarehouseConstants {
      */
     public static final String HALF_WIDTH_SPACE =" ";
 
+    /**
+     * 削除されていないすべてのリポジトリ識別子
+     */
+    public static final String WMS_MST_GET_ALL_WH = "wms.mast.get.all.warehouse.flg";
+
 }

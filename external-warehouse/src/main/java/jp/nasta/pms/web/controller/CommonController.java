@@ -67,6 +67,19 @@ public class CommonController
     }
 
     /**
+     * ログインユーザーが参照できる倉庫を取得する。
+     * 渡された辞書タイプの値と一致する関係がある倉庫だけを返す。
+     * ユーザー種別が 90 のときは、辞書を見ずに未削除の倉庫をすべて返す。
+     *
+     * @param dictType 辞書タイプ（例: bss_user_relation_type）
+     * @return 倉庫コンボボックスリスト
+     */
+    @GetMapping(value = "/wh/accessible/options")
+    public AjaxResult getAccessibleWarehouseOptions(@RequestParam("dictType") String dictType) {
+        return AjaxResult.success(commonService.getAccessibleWarehouseOptions(SecurityUtils.getUsername(), dictType));
+    }
+
+    /**
      * 倉庫ロケーション コンボボックスデータを取得する
      *
      * @param whCd 倉庫コード
